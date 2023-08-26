@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .credit-note-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+       
+    }
+
+    .left-side {
+        display: flex;
+        flex-direction: column; /* Add this to stack elements vertically */
+        align-items: flex-start; /* Align elements to the start */
+    }
+
+    .right-side {
+        display: flex;
+        align-items: center;
+    }
+
+    .search-filter {
+        margin-top: 10px; /* Add some margin to separate the search field from the heading */
+    }
+
+    .filter-icon-button,
+    .new-button {
+        font-size: 18px;
+        width: 120px;
+        padding: 8px 15px;
+        border: none;
+        background-color: #f0f0f0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .filter-icon-button {
+        margin-right: 10px;
+    }
+</style>
+
+<div class="credit-note-container">
+    <div class="left-side">
+        <h2>All Credit Notes</h2>
+        <div class="search-filter">
+            <input type="text" placeholder="Search...">
+        </div>
+    </div>
+    <div class="right-side">
+        <button class="filter-icon-button"><i class="fa fa-filter"></i> Filter</button>
+        <button class="new-button">&#43; New</button>
+    </div>
+
+
+
+</div>
+{% endblock %}
