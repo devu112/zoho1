@@ -9660,3 +9660,24 @@ def cust_Attach_files(request,id):
 
 def creditnotes(request):
     return render(request,'creditnotes.html')    
+
+def newcredit(request):
+    user = request.user
+    unit=Unit.objects.all()
+    sales=Sales.objects.all()
+    company = company_details.objects.get(user=user)
+    cust=addcustomerE.objects.all()
+    pay=payment_terms.objects.all()
+    itm=AddItem.objects.all()
+    purchase=Purchase.objects.all()
+    context={
+            "c":cust,
+            "pay":pay,
+            "itm":itm,
+            "company":company,
+            "unit":unit, 
+            "sales":sales,
+            "purchase":purchase,
+
+    }
+    return render(request,'newcredit.html')

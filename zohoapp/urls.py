@@ -453,7 +453,8 @@ urlpatterns = [
     path('sendmails/<int:id>', views.sendmails, name='sendmails'),
     path('cust_comments/<int:id>', views.cust_comments, name='cust_comments'),
     path('cust_Attach_files/<int:id>', views.cust_Attach_files, name='cust_Attach_files'),
-    path('creditnotes',views.creditnotes,name='creditnotes')
+    path('creditnotes',views.creditnotes,name='creditnotes'),
+    path('newcredit',views.newcredit,name='newcredit'),
     
     # re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     

@@ -1,7 +1,7 @@
-{% extends 'base.html' %}
+ {% extends 'base.html' %}
 {% load static %}
-{% block content %}
-<style>
+{% block content %} 
+ <!-- <style>
     .credit-note-container {
         display: flex;
         justify-content: space-between;
@@ -58,4 +58,286 @@
 
 
 </div>
+ -->
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<link href='https://unpkg.com/css.gg@2.0.0/icons/css/trash.css' rel='stylesheet'>
+<script src="https://cdn.jsdelivr.net/bootstrap.datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
+
+
+
+
+<style>
+    .card{
+        background: none;
+    }
+    tbody tr td{
+        border: none;
+        border-top: none;
+        border-style: none;
+        color:azure;
+        justify-content: center;
+    }
+    tr:hover{
+        cursor: pointer;
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+   
+    ul.image-bullets {
+        list-style-type: none;
+        padding-left: 30px;
+    }
+
+    ul.image-bullets li:before {
+        content: "";
+        background-image: url('static/images/bullet.png');
+        background-size: 15px 15px;
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        margin-right: 5px; 
+        margin-left: 26%;
+    }
+    .recurpoints ul li{
+        margin-bottom: 10px;
+    }
+
+    .flowchart {
+            
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px;
+    }
+    
+        .flowchart-item {
+            text-align: center;
+            padding: 10px;
+            background-color: lightblue;
+            border: 3px solid rgb(25, 91, 145);
+            border-radius: 5px;
+            width: 150px;
+            color: black;
+            font-size: 12px;
+        }
+        .flowchart-item i{
+            font-size: 15px;
+        }
+    
+        .flowchart-connector {
+            flex-grow: 1;
+            height: 2px;
+            background-color: #ccc;
+            margin-top: 0%;
+    
+        }
+        
+        @media (max-width: 768px) {
+            .flowchart {
+                flex-direction: column;
+                align-items: center;
+            }
+    
+            .flowchart-item {
+                width: 120px;
+            }
+            .flowchart-connector {
+                height: 50px;
+                width: 2px; 
+                margin-left: 0%; 
+                transform: translateX(-50%);
+            }
+        }
+   
+    
+    .box {
+      text-align: center;
+        padding: 10px;
+        background-color: lightblue;
+        border: 3px solid rgb(25, 91, 145);
+        border-radius: 5px;
+        width: 150px;
+        color: black;
+        font-size: 12px;
+        margin-top: 10px;
+        margin-left: 10px;
+    }
+    
+
+    .branch {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0;
+    }
+    
+    .branch .connector {
+      width: 0;
+      height: 50px;
+      border-top: 2px solid black;
+    }
+    
+    .branch .box {
+      margin-top: 10px;
+    }
+    .btn{
+        color: rgb(222, 220, 233);
+        outline-color: azure;
+        border: 2px solid rgb(25, 91, 145);
+    }
+    .btn:hover{
+        color: darkslategray;
+        background-color: lightblue;
+        outline: none;
+        
+    }
+    a{
+        list-style: none;
+        color: azure;
+    }
+     a:hover{
+        color: rgb(218, 164, 48);
+     }
+     ::-webkit-scrollbar {
+        width: 5px; 
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1; 
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #888; 
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555; 
+    }
+    
+</style>
+<div class="container-fluid " >
+    
+    
+        <div class="card radius-15">
+            <div class="card-body">
+                <div class="card-title">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <h2 class="mb-0 text-uppercase text-right">ALL CREDIT NOTES</h2>
+                        </div>
+                        <div class="col-md-2">
+                            
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card radius-15 mb-5">
+            <div class="card-body">
+                <div class="row">
+                    <div class=" col-md-3">
+                    
+                        <!-- <div class="d-flex"> -->
+                            <input type="text" name="usr_in" id="search" class="form-control text-dark bg-light" placeholder="search here..." autocomplete="off">
+                            <!-- </div> -->
+                        
+
+                    </div>
+                    <div class="col-md-6"></div>
+                    <div class="col-md-3">
+                        
+                        <a class="btn  btn-outline-warning text-center px-3 py-2 " data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                role="button"><i class="fa fa-filter mx-3"></i>
+                </a>
+                <div class="dropdown-menu ">
+                    <a class="dropdown-item" href="">All</a>
+                    <a class="dropdown-item" href="">Profile A-Z</a>
+                    <a class="dropdown-item" href="">Profile Z-A</a>
+
+                </div>
+                        <a href="{% url 'newcredit' %}" class="btn fa fa-plus text-right px-3 py-2" role="button">
+                            <span class="mt-2">&nbsp;&nbsp;NEW</span>
+                        </a>
+                    </div>
+                </div>
+                <hr>
+                <div class="container-fluid">
+                    <table class="table  text-white" id="table">
+                        <thead>
+                          <tr>
+            
+                            <th>Date</th>
+                            <th>Customer Name</th>
+                            <th>Email Id</th>
+                            <th>Creditnote No</th>
+                            <th>Amount</th>
+                            <th>Action</th>    
+                            
+            
+            
+            
+                          </tr>
+                        </thead>
+                         <tbody>
+                          
+                          <tr>
+                 
+                          
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td> 
+                            <td></td> 
+                            <td></td> 
+            
+                           
+                           </tr> 
+                          
+                        </tbody> 
+                      </table>
+                  
+                </div>
+            </div>
+        </div>       
+        <hr>
+        <div class="card mt-5" style="width:960px; height: 263px;margin-bottom:-100px;">
+            <div class="card-body">
+                <div class="card-title">
+                    <h3 class="mb-0 text-center">Life cycle of a Credit Note</h3>
+                    <br>
+                    <div class="flowchart">
+                        <div class="flowchart-item text-uppercase" style="width: 200px;">
+                            <i class="fa-sharp fa-solid fa-bag-shopping" style="color: #daa430;"></i> Product returned
+                        </div>
+                        <div class="flowchart-connector"></div>
+                        <div class="flowchart-item text-uppercase" style="width: 210px;">
+                            <i class="fa-sharp fa-solid fa-file" style="color: #daa430;"></i> Credit notes
+                        </div>
+                        <div class="flowchart-connector"></div>
+                        <div class="flowchart-item text-uppercase" >
+                            <i class="fa-sharp fa-solid fa-receipt" style="color: #daa430;"></i> CONVERT TO INVOICE
+                        </div>
+                        <div class="flowchart-connector">  </div>
+                        <div class="flowchart-item text-uppercase">
+                            <i class="fa-sharp fa-solid fa-money-check-dollar" style="color: #3ec61c;"></i>GET REIMBURSED
+                        </div>
+                    </div><br>
+                    <div class="flowchart-connector" style="height:65px;width: 2px;margin-left:122px;margin-top:-44px;"> </div>
+                    <div class="flowchart-connector" style="width:150px;margin-left:122px;margin-top:0px;margin-bottom: -25px;"></div>
+                    <div class="flowchart-item text-uppercase" style="margin-left:272px;">
+                        <i class="fa-sharp fa-solid fa-money-check-dollar" style="color: #3ec61c;"></i>order cancelled
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+        
+        
+</div>
+
 {% endblock %}
