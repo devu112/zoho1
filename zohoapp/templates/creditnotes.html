@@ -284,18 +284,23 @@
                         </thead>
                          <tbody>
                           
-                          <tr>
-                 
                           
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td> 
-                            <td></td> 
-                            <td></td> 
-            
-                           
+                 
+                            {% for v in cust %}
+     
+                            <tr>
+                   
+                            <td onclick="location.href ='' "></td>
+              
+                              <td>12/02/2022</td>
+                              <td>{{v.customer_name}}</td>
+                              <td>{{v.customerEmail}}</td>
+                              <td>{{v.}}</td> 
+                              <td>{{v.end}}</td> 
+                              <td>{{v.terms}}</td> 
+              
                            </tr> 
+                           {% endfor %}
                           
                         </tbody> 
                       </table>
@@ -319,11 +324,11 @@
                         </div>
                         <div class="flowchart-connector"></div>
                         <div class="flowchart-item text-uppercase" >
-                            <i class="fa-sharp fa-solid fa-receipt" style="color: #daa430;"></i> CONVERT TO INVOICE
+                            <i class="fa-sharp fa-solid fa-receipt" style="color: #daa430;"></i> REFUND
                         </div>
                         <div class="flowchart-connector">  </div>
                         <div class="flowchart-item text-uppercase">
-                            <i class="fa-sharp fa-solid fa-money-check-dollar" style="color: #3ec61c;"></i>GET REIMBURSED
+                            <i class="fa-sharp fa-solid fa-money-check-dollar" style="color: #3ec61c;"></i>CREDITED
                         </div>
                     </div><br>
                     <div class="flowchart-connector" style="height:65px;width: 2px;margin-left:122px;margin-top:-44px;"> </div>

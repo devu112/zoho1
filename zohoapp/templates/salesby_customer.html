@@ -112,17 +112,6 @@
 <script>
 
 
-// function exportToPDF() {
-//      console.log("Exporting to PDF...");
-//      var pdf = new jsPDF();
-//      var content = document.querySelector('.printable-wrapper');
-//      console.log("Content:", content);
-//      pdf.fromHTML(content, 10, 10, {
-//          width: 180
-//      }, function (dispose) {
-//          pdf.save('report.pdf');
-//      });
-// }
 function exportAsPDF() {
       const container = document.getElementById('container-to-print');
     
@@ -234,10 +223,6 @@ pdfExportLink.addEventListener('click', function (event) {
         cb(start, end);
     });
 
-    // function display() {
-    //     // Print the page
-    //     window.print();
-    // }
 
     function adjustTableForPrint() {
         

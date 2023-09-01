@@ -3866,7 +3866,7 @@ function toggleDateInput() {
                   data3 = response.pos
                   document.getElementById('rate13').value = data
 
-                  if (data3 == '{{ company.state }}') {
+                  if (data3 == '{{ company.state }}') { 
                       document.getElementById('tgst13').innerHTML = data1 + ' % GST';
                       document.getElementById('tgst13').value = data1
                   }
@@ -3877,6 +3877,8 @@ function toggleDateInput() {
           });
 
       });
+
+
 
       $(document).on('click', '#item14', function () {
           select = $('#item14').val();

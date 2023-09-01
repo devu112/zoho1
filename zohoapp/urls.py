@@ -455,6 +455,9 @@ urlpatterns = [
     path('cust_Attach_files/<int:id>', views.cust_Attach_files, name='cust_Attach_files'),
     path('creditnotes',views.creditnotes,name='creditnotes'),
     path('newcredit',views.newcredit,name='newcredit'),
+    path('creditnote_view',views.creditnote_view,name='creditnote_view'),
+    path('add_creditnotes ',views.add_creditnotes ,name='add_creditnotes'),
+    
     
     # re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     

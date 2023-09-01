@@ -9668,16 +9668,15 @@ def newcredit(request):
     company = company_details.objects.get(user=user)
     cust=addcustomerE.objects.all()
     pay=payment_terms.objects.all()
-    itm=AddItem.objects.all()
+    itm=sales_item.objects.all()
     purchase=Purchase.objects.all()
-    context={
-            "c":cust,
-            "pay":pay,
-            "itm":itm,
-            "company":company,
-            "unit":unit, 
-            "sales":sales,
-            "purchase":purchase,
+   
+    return render(request,'newcredit.html',{"c":cust, "pay":pay, "itm":itm,"company":company,"unit":unit, "sales":sales,"purchase":purchase })
 
-    }
-    return render(request,'newcredit.html')
+
+def creditnote_view(request):
+    return render(request,'creditnote_view.html')    
+
+def add_creditnotes(request):
+   
+     return render(request,'add_creditnotes.html')    
