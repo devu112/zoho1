@@ -9666,7 +9666,7 @@ def newcredit(request):
     unit=Unit.objects.all()
     sales=Sales.objects.all()
     company = company_details.objects.get(user=user)
-    cust=addcustomerE.objects.all()
+    cust=customer.objects.all()
     pay=payment_terms.objects.all()
     itm=sales_item.objects.all()
     purchase=Purchase.objects.all()

@@ -117,14 +117,53 @@
             <option value="">select customer</option>
             
             {% for cust in c %}
-            <option value="{{cust.id}}" data-pos="{{cust.placeofsupply}}" id="crt_cust">{{cust.customer_name}}</option>
+            <option value="{{cust.id}}" data-email="{{ cust.customerEmail }}" data-gst="{{ cust.GSTTreatment }}, GSTNO: {{cust.GSTIN}}" data-pos="{{cust.placeofsupply}}" data-billing_address="{{ cust.Address1 }} ,
+            {{cust.city}} , 
+            {{cust.state}} ,
+            {{cust.zipcode}},
+            {{cust.fax}}"9 id="crt_cust">{{cust.customerName}}</option>
             {% endfor %}
          
           </select>
           <a href="" data-toggle="modal" data-target="#newcustomer">+ Add New Customer</a>
         </div>
       </div>
-
+      <div class="row mt-2" id="email_row" style="display:none;">
+        <div class="col-md-3">
+          <label for="email">Email</label>
+        </div>
+        <div class="col-md-6">
+          <input type="text" class="form-control bg-light text-dark" id="email_input" name="email" disabled>
+        </div>
+      </div>
+      
+      <div class="row mt-2" id="pos_row" style="display:none;">
+        <div class="col-md-3">
+          <label for="pos">Place of Supply</label>
+        </div>
+        <div class="col-md-6">
+          <input type="text" class="form-control bg-light text-dark" id="pos_input" name="place_of_supply" disabled>
+        </div>
+      </div>
+      
+      <div class="row mt-2" id="gst_row" style="display:none;">
+        <div class="col-md-3">
+          <label for="gst">GST Treatment</label>
+        </div>
+        <div class="col-md-6">
+          <input type="text" class="form-control bg-light text-dark" id="gst_input" name="gst_treatment" disabled>
+        </div>
+      </div>
+      
+      <div class="row mt-2" id="billing_address_row" style="display:none;">
+        <div class="col-md-3">
+          <label for="billing_address">Billing Address</label>
+        </div>
+        <div class="col-md-6">
+          <textarea class="form-control bg-light text-dark" id="billing_address_input" name="billing_address" rows="10" disabled></textarea>
+        </div>
+      </div>
+      
       <div class="row mt-2">
         <div class="col-md-3">
           <label for="prof_name" >Invoice Number </label>
@@ -169,12 +208,39 @@
       </div>
 
       
+<!-------------------------- new-----------------------------------------  -->
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Change event listener for the customer dropdown
+    $('#customer_sel').change(function () {
+      var selectedCustomer = $('#customer_sel option:selected');
+      var email = selectedCustomer.data('email');
+      var placeOfSupply = selectedCustomer.data('pos');
+      var gstTreatment = selectedCustomer.data('gst');
+      var billingAddress = selectedCustomer.data('billing_address');
 
-      
+      // Content of the placeholders
+      $('#email_input').val(email);
+      $('#pos_input').val(placeOfSupply);
+      $('#gst_input').val(gstTreatment);
+      $('#billing_address_input').val(billingAddress);
 
-        
-
-
+      // Show or hide fields based on selection
+      if (selectedCustomer.val() !== '') {
+        $('#email_row').show();
+        $('#pos_row').show();
+        $('#gst_row').show();
+        $('#billing_address_row').show();
+      } else {
+        $('#email_row').hide();
+        $('#pos_row').hide();
+        $('#gst_row').hide();
+        $('#billing_address_row').hide();
+      }
+    });
+  });
+</script>
 
       
 
@@ -569,26 +635,7 @@
                   </div>       
                 </div>
 
-                <!-- <div class="row gstrow d-none">
-                  <div class="col-md-3 mt-2">
-                    <label id="glbl" style="color:rgb(190, 88, 88);">GSTIN/UIN *</label>
-                  </div>
-                  <div class="col-md-6 mt-2">
-                    <input type="text" class="form-control" id="v_gstin" name="v_gstin" placeholder="29APPCK7465F1Z1">
-                    <label id="gst_label"></label>
-                  </div>       
-                </div>
-
-                <div class="row">
-                  <div class="col-md-3 mt-2">
-                    <label for="v_pan">PAN Number</label>
-                  </div>
-                  <div class="col-md-6 mt-2">
-                    <input type="text" class="form-control" id="v_pan" name="v_pan" placeholder="APPCK7465F">
-                    <label id="pan_label"></label>
-                  </div>       
-                </div> -->
-
+              
                 <div class="row mt-2">
                   <div class="col-md-3 mt-2">
                     <label for="" style="color: rgb(190, 88, 88);">Place of Supply *</label>
