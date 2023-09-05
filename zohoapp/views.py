@@ -5961,11 +5961,13 @@ def purchase_item_dropdown(request):
     options = {}
     option_objects = AddItem.objects.all()
     for option in option_objects:
-       options[option.id] = {
+        options.append({
+            'id': option.id,
             'Name': option.Name,
-            'hsn': option.hsn,  
-            'rate': option.rate,  
-        }
+            'hsn': option.hsn,  # Include HSN field in the response
+            'rate': option.rate,  # Include rate field in the response
+        })
+
 
     return JsonResponse(options)
     
@@ -9696,17 +9698,6 @@ def load_initial_items(request):
     return JsonResponse(items_json, safe=False)
 
 
-def get_rate(request):
-
-    user = User.objects.get(id=request.user.id)
-    if request.method=='POST':
-        id=request.POST.get('id')
-
-        item = AddItem.objects.get( id = id, user = user)
-         
-        rate = 0 if item.s_price == "" else item.s_price
-
-        return JsonResponse({"rate": rate},safe=False)    
 
 
 def get_hsn_and_rate(request):

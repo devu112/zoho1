@@ -1071,6 +1071,7 @@
                       <input type="radio" id="item_type1" name="radioOption" value="Goods" >
                       <label for="option1">Goods</label>
                     </div>
+                    
                     <div class="radio_opt mx-5 ">
                       <input type="radio" id="item_type2" name="radioOption" value="Services" >
                       <label for="option2">Services</label>
@@ -1101,6 +1102,25 @@
                     </div>
                   </div>
                 </div>
+
+
+                <div class="row mt-2">
+                  <div class="col-md-3">
+                      <label for="hsn">HSN</label>
+                  </div>
+                  <div class="col-md-6">
+                      <input type="text" class="form-control bg-light text-dark" id="item_hsn" name="item_hsn">
+                  </div>
+              </div>
+              
+              <div class="row mt-2">
+                  <div class="col-md-3">
+                      <label for="rate">Rate</label>
+                  </div>
+                  <div class="col-md-6">
+                      <input type="text" class="form-control bg-light text-dark" id="item_rate" name="item_rate">
+                  </div>
+              </div>
  
                 <div class="row mt-2">
                   <div class="col-md-4 ">
@@ -1852,54 +1872,47 @@ function loadInitialItems() {
 //////////////item create///////////////////////////////////////////////////
 
 
-$(document).on("click","#itemSave",function(){
-
-  if ($('input[name="radioOption"]:checked').val() == 'Goods'){
-
-      itemtype = $('#item_type1').val();
-    }
-  else{
+$(document).on("click", "#itemSave", function () {
+  if ($('input[name="radioOption"]:checked').val() == 'Goods') {
+    itemtype = $('#item_type1').val();
+  } else {
     itemtype = $('#item_type2').val();
   }
 
-  if ($('input[name="radioOption1"]:checked').val() == 'Taxable'){
-      inter = $('#inter').val();
-      intra = $('#intra').val();
-    }
-  else{
+  if ($('input[name="radioOption1"]:checked').val() == 'Taxable') {
+    inter = $('#inter').val();
+    intra = $('#intra').val();
+  } else {
     inter = 0;
     intra = 0;
   }
 
-  
   $.ajax({
-    
-    type : 'POST',
-    url:"{% url 'purchase_item' %}",
-    
-    data:{
-        type : itemtype,
-        name : $("#item_name").val(),
-        unit : $("#item_units").val(),
-        inter : inter,
-        intra : intra,
-        sell_price : $("#sell_price").val(),
-        cost_price : $("#cost_price").val(),
-        sell_acc : $("#sell_acc").val(),
-        cost_acc : $("#cost_acc").val(),
-        sell_desc : $("#sell_desc").val(),
-        cost_desc : $("#cost_desc").val(),
-        
-        csrfmiddlewaretoken: '{{ csrf_token }}'
-        
-      },
-    
-      success: function(response) {
-        document.getElementById("modalItem").reset();
-        reloadItem();
-      },
-  });        
+    type: 'POST',
+    url: "{% url 'purchase_item' %}",
+    data: {
+      type: itemtype,
+      name: $("#item_name").val(),
+      unit: $("#item_units").val(),
+      inter: inter,
+      intra: intra,
+      sell_price: $("#sell_price").val(),
+      cost_price: $("#cost_price").val(),
+      sell_acc: $("#sell_acc").val(),
+      cost_acc: $("#cost_acc").val(),
+      sell_desc: $("#sell_desc").val(),
+      cost_desc: $("#cost_desc").val(),
+      hsn: $("#item_hsn").val(),  // Include HSN field
+      rate: $("#item_rate").val(),  // Include rate field
+      csrfmiddlewaretoken: '{{ csrf_token }}',
+    },
+    success: function (response) {
+      document.getElementById("modalItem").reset();
+      reloadItem();
+    },
+  });
 });
+
 
 
 function reloadItem() {
@@ -1907,19 +1920,21 @@ function reloadItem() {
     url: "{% url 'purchase_item_dropdown' %}",
     type: "GET",
     dataType: "json",
-    data: $(this).serialize(),
-    csrfmiddlewaretoken: '{{ csrf_token }}',
-
-    success: function(data) {
+    data: {
+      hsn: $("#item_hsn").val(),  // Include HSN field
+      rate: $("#item_rate").val(),  // Include rate field
+      csrfmiddlewaretoken: '{{ csrf_token }}',
+    },
+    success: function (data) {
       var dropdown = $('.itm');
       dropdown.empty();
 
-      $.each(data, function(key, value) {
-          dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
+      $.each(data, function (key, value) {
+        dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
       });
     },
-    error: function(xhr, status, error) {
-    console.error(xhr.responseText);
+    error: function (xhr, status, error) {
+      console.error(xhr.responseText);
     }
   });
 }
