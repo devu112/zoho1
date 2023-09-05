@@ -5763,67 +5763,62 @@ def purchase_vendor(request):
         
 @login_required(login_url='login')
 def purchase_customer(request):
-    if request.user.is_authenticated:
-        if request.method=='POST':
-            tax=request.POST.get('tax')
-            type=request.POST.get('title')
-            first=request.POST['firstname']
-            last=request.POST['lastname']
-            txtFullName= request.POST['display_name']
-            
-            itemtype=request.POST.get('itemtype')
-            cpname=request.POST['company_name']
-            
-            email=request.POST.get('email')
-            wphone=request.POST.get('work_mobile')
-            mobile=request.POST.get('pers_mobile')
-            skname=request.POST.get('skype')
-            desg=request.POST.get('desg')      
-            dept=request.POST.get('dpt')
-            wbsite=request.POST.get('website')
+   company = company_details.objects.get(user = request.user)
 
-            gstt=request.POST.get('gsttype')
-            posply=request.POST.get('placesupply')
-            crncy=request.POST.get('currency')
-            obal=request.POST.get('openingbalance')
+   if request.method=='POST':
 
-           
-            pterms=request.POST.get('paymentterms')
+        # title=request.POST.get('title')
+        # first_name=request.POST.get('firstname')
+        # last_name=request.POST.get('lastname')
+        # comp=request.POST.get('company_name')
+        cust_type = request.POST.get('customer_type')
+        name = request.POST.get('display_name')
+        comp_name = request.POST.get('company_name')
+        email=request.POST.get('email')
+        website=request.POST.get('website')
+        w_mobile=request.POST.get('work_mobile')
+        p_mobile=request.POST.get('pers_mobile')
+        fb = request.POST.get('facebook')
+        twitter = request.POST.get('twitter')
+        skype = request.POST.get('skype')
+        desg = request.POST.get('desg')
+        dpt = request.POST.get('dpt')
+        gsttype=request.POST.get('gsttype')
+        # gstin=request.POST.get('gstin')
+        # panno=request.POST.get('panno')
+        supply=request.POST.get('placeofsupply')
+        tax = request.POST.get('tax_preference')
+        currency=request.POST.get('currency')
+        balance=request.POST.get('openingbalance')
+        payment=request.POST.get('paymentterms')
+        street1=request.POST.get('street1')
+        street2=request.POST.get('street2')
+        city=request.POST.get('city')
+        state=request.POST.get('state')
+        pincode=request.POST.get('pincode')
+        country=request.POST.get('country')
+        fax=request.POST.get('fax')
+        phone=request.POST.get('phone')
+        # shipstreet1=request.POST.get('shipstreet1')
+        # shipstreet2=request.POST.get('shipstreet2')
+        # shipcity=request.POST.get('shipcity')
+        # shipstate=request.POST.get('shipstate')
+        # shippincode=request.POST.get('shippincode')
+        # shipcountry=request.POST.get('shipcountry')
+        # shipfax=request.POST.get('shipfax')
+        # shipphone=request.POST.get('shipphone')
 
-            plst=request.POST.get('plst')
-            plang=request.POST.get('plang')
-            fbk=request.POST.get('facebook')
-            twtr=request.POST.get('twitter')
-        
-            ctry=request.POST.get('country')
-            
-            street=request.POST.get('street')
-            shipstate=request.POST.get('shipstate')
-            shipcity=request.POST.get('shipcity')
-            bzip=request.POST.get('shippincode')
-            shipfax=request.POST.get('shipfax')
+        u = User.objects.get(id = request.user.id)
 
-            sal=request.POST.get('title')
-            addres=street +','+ shipcity+',' + shipstate+',' + bzip
-            adress2=addres
-            u = User.objects.get(id = request.user.id)
-
-            print(tax)
-            ctmr=customer(customerName=txtFullName,customerType=itemtype,
-                        companyName=cpname,customerEmail=email,customerWorkPhone=wphone,
-                         customerMobile=mobile,skype=skname,designation=desg,department=dept,
-                           website=wbsite,GSTTreatment=gstt,placeofsupply=posply, Taxpreference=tax,
-                             currency=crncy,OpeningBalance=obal,PaymentTerms=pterms,
-                                PriceList=plst,PortalLanguage=plang,Facebook=fbk,Twitter=twtr
-                                 ,country=ctry,Address1=addres,Address2=adress2,
-                                  city=shipcity,state=shipstate,zipcode=bzip,phone1=wphone,
-                                   fax=shipfax,CPsalutation=sal,Firstname=first,
-                                    Lastname=last,CPemail=email,CPphone=mobile,
-                                    CPmobile= wphone,CPskype=skname,CPdesignation=desg,
-                                     CPdepartment=dept,user=u )
-            ctmr.save()
+        cust = customer(customerName = name,customerType = cust_type, companyName= comp_name, GSTTreatment=gsttype, 
+                        customerWorkPhone = w_mobile,customerMobile = p_mobile, customerEmail=email,skype = skype,Facebook = fb, 
+                        Twitter = twitter,placeofsupply=supply,Taxpreference = tax,currency=currency, website=website, 
+                        designation = desg, department = dpt,OpeningBalance=balance,Address1=street1,Address2=street2, city=city, 
+                        state=state, PaymentTerms=payment,zipcode=pincode,country=country,  fax = fax,  phone1 = phone,user = u)
+        cust.save()
 
         return HttpResponse({"message": "success"})
+        
 
 @login_required(login_url='login')
 def purchase_pay(request):
@@ -5939,12 +5934,14 @@ def purchase_item(request):
         units=Unit.objects.get(id=ut)
         sel=Sales.objects.get(id=sell_acc)
         cost=Purchase.objects.get(id=cost_acc)
+        hsn = request.POST.get('hsn')  # Add HSN field
+        rate = request.POST.get('rate')  # Add rate field
 
         history="Created by " + str(request.user)
         user = User.objects.get(id = request.user.id)
 
         item=AddItem(type=type,unit=units,sales=sel,purchase=cost,Name=name,p_desc=cost_desc,s_desc=sell_desc,s_price=sell_price,p_price=cost_price,
-                    user=user,creat=history,interstate=inter,intrastate=intra)
+                    user=user,creat=history,interstate=inter,intrastate=intra ,hsn=hsn, rate=rate)
 
         item.save()
 
@@ -5964,7 +5961,11 @@ def purchase_item_dropdown(request):
     options = {}
     option_objects = AddItem.objects.all()
     for option in option_objects:
-        options[option.id] = option.Name
+       options[option.id] = {
+            'Name': option.Name,
+            'hsn': option.hsn,  
+            'rate': option.rate,  
+        }
 
     return JsonResponse(options)
     
@@ -9680,3 +9681,48 @@ def creditnote_view(request):
 def add_creditnotes(request):
    
      return render(request,'add_creditnotes.html')    
+
+
+from django.core import serializers
+
+def load_initial_items(request):
+    # Retrieve the initial items
+    initial_items = AddItem.objects.all()
+
+    # Serialize the items to JSON
+    items_json = serializers.serialize('json', initial_items)
+
+    # Return the serialized items as a JSON response
+    return JsonResponse(items_json, safe=False)
+
+
+def get_rate(request):
+
+    user = User.objects.get(id=request.user.id)
+    if request.method=='POST':
+        id=request.POST.get('id')
+
+        item = AddItem.objects.get( id = id, user = user)
+         
+        rate = 0 if item.s_price == "" else item.s_price
+
+        return JsonResponse({"rate": rate},safe=False)    
+
+
+def get_hsn_and_rate(request):
+    id = request.GET.get('id')
+    
+    try:
+        item = AddItem.objects.get(id=id)
+        hsn = item.hsn  
+        rate = item.rate 
+
+        data = {
+            'hsn': hsn,
+            'rate': rate,
+        }
+
+        return JsonResponse(data)
+    except AddItem.DoesNotExist:
+        # Handle the case where the item does not exist
+        return JsonResponse({'error': 'Item not found'}, status=404)

@@ -1057,6 +1057,6 @@ class customer_comments_table(models.Model):
     customr=models.ForeignKey(customer,on_delete=models.CASCADE,null=True)
     comment=models.TextField(max_length=500) 
 
-class Creditnote(models.Model):
-    user=models.ForeignKey(User,on_delete=models.CASCADE,null=True,default='')
+# class Creditnote(models.Model):
+    
     

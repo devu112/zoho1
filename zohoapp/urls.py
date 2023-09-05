@@ -457,6 +457,8 @@ urlpatterns = [
     path('newcredit',views.newcredit,name='newcredit'),
     path('creditnote_view',views.creditnote_view,name='creditnote_view'),
     path('add_creditnotes ',views.add_creditnotes ,name='add_creditnotes'),
+    path('load_initial_items/', views.load_initial_items, name='load_initial_items'),
+    path('get_hsn_and_rate/', views.get_hsn_and_rate, name='get_hsn_and_rate'),
     
     
     # re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
