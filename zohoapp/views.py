@@ -9673,8 +9673,9 @@ def newcredit(request):
     pay=payment_terms.objects.all()
     itm=sales_item.objects.all()
     purchase=Purchase.objects.all()
+    
    
-    return render(request,'newcredit.html',{"c":cust, "pay":pay, "itm":itm,"company":company,"unit":unit, "sales":sales,"purchase":purchase })
+    return render(request,'newcredit.html',{"c":cust, "pay":pay, "itm":itm,"company":company,"unit":unit, "sales":sales,"purchase":purchase, })
 
 
 def creditnote_view(request):
