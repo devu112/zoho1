@@ -1058,21 +1058,21 @@ class customer_comments_table(models.Model):
     comment=models.TextField(max_length=500) 
 
 class Creditnote(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE,null=True,default='')
     customer = models.ForeignKey(customer, on_delete=models.CASCADE)
     invoice_number = models.CharField(max_length=255)
     credit_note = models.CharField(max_length=255)
     reference = models.CharField(max_length=255, blank=True, null=True)
     creditnote_date = models.DateField()
-  
     customer_notes = models.TextField()
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     igst = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     cgst = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     sgst = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    total_taxamount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_tax = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     shipping_charge = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     terms_and_conditions = models.TextField()
-    attached_file = models.FileField(upload_to='creditnote_files/', null=True, blank=True)
+    attached_file = models.FileField(upload_to='image/', null=True, blank=True)
     
     

@@ -9662,7 +9662,12 @@ def cust_Attach_files(request,id):
     
 
 def creditnotes(request):
-    return render(request,'creditnotes.html')    
+    user = request.user
+    credit_notes = Creditnote.objects.all()
+    company = company_details.objects.get(user=user)
+    context = {'credit_notes': credit_notes , 'company':company}
+    return render(request, 'creditnotes.html', context)
+   
 
 def newcredit(request):
     user = request.user
@@ -9682,8 +9687,51 @@ def creditnote_view(request):
     return render(request,'creditnote_view.html')    
 
 def add_creditnotes(request):
-   
-     return render(request,'add_creditnotes.html')    
+    if request.method == 'POST':
+        # Retrieve data from the POST request
+        customer_id = request.POST.get('cx_name')
+        invoice_number = request.POST.get('sale_no')
+        credit_note = request.POST.get('credit_note')
+        reference = request.POST.get('ord_no')
+        creditnote_date = request.POST.get('cr_date')
+        customer_notes = request.POST.get('customer_note')
+        subtotal = request.POST.get('subtotal')
+        igst = request.POST.get('igst')
+        cgst = request.POST.get('cgst')
+        sgst = request.POST.get('sgst')
+        total_tax = request.POST.get('tax_total')
+        shipping_charge = request.POST.get('shipping_charge')
+        total = request.POST.get('t_total')
+        terms_and_conditions = request.POST.get('ter_cond')
+        attached_file = request.FILES.get('file')
+
+        # Create a new Creditnote instance and save it
+        credit_note_instance = Creditnote(
+            user=request.user,  # Assuming you have a logged-in user
+            customer_id=customer_id,
+            invoice_number=invoice_number,
+            credit_note=credit_note,
+            reference=reference,
+            creditnote_date=creditnote_date,
+            customer_notes=customer_notes,
+            subtotal=subtotal,
+            igst=igst,
+            cgst=cgst,
+            sgst=sgst,
+            total_tax=total_tax,
+            shipping_charge=shipping_charge,
+            total=total,
+            terms_and_conditions=terms_and_conditions,
+            attached_file=attached_file,
+            # Assign values to other fields
+        )
+        credit_note_instance.save()
+
+        return redirect('creditnotes')
+    
+    return render(request, 'creditnotes.html', {'c': [credit_note_instance]})
+
+      
 
 
 from django.core import serializers
