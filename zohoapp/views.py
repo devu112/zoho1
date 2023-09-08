@@ -9683,8 +9683,13 @@ def newcredit(request):
     return render(request,'newcredit.html',{"c":cust, "pay":pay, "itm":itm,"company":company,"unit":unit, "sales":sales,"purchase":purchase, })
 
 
-def creditnote_view(request):
-    return render(request,'creditnote_view.html')    
+def creditnote_view(request,creditnote_id):
+    user = request.user
+    cust=customer.objects.all()
+    company = company_details.objects.get(user=user)
+    creditnote = get_object_or_404(Creditnote, id=creditnote_id)
+    print(creditnote)
+    return render(request,'creditnote_view.html',{'company':company,'creditnote':creditnote,'cust':cust})    
 
 def add_creditnotes(request):
     if request.method == 'POST':
@@ -9766,3 +9771,38 @@ def get_hsn_and_rate(request):
     except AddItem.DoesNotExist:
         # Handle the case where the item does not exist
         return JsonResponse({'error': 'Item not found'}, status=404)
+
+def credit_template(request):
+    return render(request,'credit_template.html')    
+
+def file_download1(request,aid):
+    att= Creditnote.objects.get(id=aid)
+    file = att.attachment
+    response = FileResponse(file)
+    response['Content-Disposition'] = f'attachment; filename="{file.name}"'
+    return response     
+
+def deletefile1(request,aid):
+    att=Payrollfiles.objects.get(id=aid)
+    p=att.payroll
+    att.delete()
+    return redirect('payroll_view',p.id)
+
+
+def purchase_item_dropdown1(request):
+
+    user = User.objects.get(id=request.user.id)
+
+    options = {}
+    option_objects = AddItem.objects.all()
+    for option in option_objects:
+        options.append({
+            'id': option.id,
+            'Name': option.Name,
+            'hsn': option.hsn,  # Include HSN field in the response
+            'rate': option.rate,  # Include rate field in the response
+        })
+
+
+    return JsonResponse(options)
+           

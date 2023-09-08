@@ -1,64 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<!-- <style>
-    .credit-note-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px;
-       
-    }
-
-    .left-side {
-        display: flex;
-        flex-direction: column; /* Add this to stack elements vertically */
-        align-items: flex-start; /* Align elements to the start */
-    }
-
-    .right-side {
-        display: flex;
-        align-items: center;
-    }
-
-    .search-filter {
-        margin-top: 10px; /* Add some margin to separate the search field from the heading */
-    }
-
-    .filter-icon-button,
-    .new-button {
-        font-size: 18px;
-        width: 120px;
-        padding: 8px 15px;
-        border: none;
-        background-color: #f0f0f0;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .filter-icon-button {
-        margin-right: 10px;
-    }
-</style>
-
-<div class="credit-note-container">
-    <div class="left-side">
-        <h2>All Credit Notes</h2>
-        <div class="search-filter">
-            <input type="text" placeholder="Search...">
-        </div>
-    </div>
-    <div class="right-side">
-        <button class="filter-icon-button"><i class="fa fa-filter"></i> Filter</button>
-        <button class="new-button">&#43; New</button>
-    </div>
-
-
-
-</div>
- -->
 
 
 
@@ -254,6 +196,17 @@
                     <input type="text" name="usr_in" id="search" class="form-control text-dark bg-light"
                         placeholder="search here..."  autocomplete="off" oninput="searchTable()" >
                     <!-- </div> -->
+                    <div class="btn-group mt-5 ">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdownMenu"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Sort By
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="sortDropdownMenu">
+                            <a class="dropdown-item" href="#" onclick="sortTable('creditnote_number')">Creditnote No</a>
+                            <a class="dropdown-item" href="#" onclick="sortTable('customer_bill')">Customer Bill</a>
+                        </div>
+                    </div>
+                    
 
 
                 </div>
@@ -304,7 +257,7 @@
 
 
 
-                            <td><a href="{% url 'creditnote_view'  %}">{{ note.creditnote_date }}</a></td>
+                            <td><a href="{% url 'creditnote_view' note.id %}">{{ note.creditnote_date }}</a></td>
                             <td>{{ note.customer.customerName }}</td>
                             <td>{{ note.customer.customerEmail }}</td>
                             <td>{{ note.invoice_number }}</td>
@@ -418,7 +371,34 @@ function searchTable() {
 
 
 
-
+/////////////////////////sorttttt////////////////////////////////////////////
+function sortTable(column) {
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.getElementById("table");
+        switching = true;
+        
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("td")[column];
+                y = rows[i + 1].getElementsByTagName("td")[column];
+                
+                // Check if it should switch to ascending order
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+            
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+    }
 
 
 

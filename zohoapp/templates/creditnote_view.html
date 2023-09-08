@@ -117,7 +117,7 @@
     <div class="row p-3">
         <div class="list col-4 col-lg-4 col-md-3  col-sm-2 py-3">
             <div class="header">
-                <h5>CUSTOMERS</h5>
+                <h5>CREDIT NOTES</h5>
             </div>
             <div class="searchbar">
                 <input class="form-control" type="text" placeholder="Search by Name" name="search" id="search"
@@ -136,10 +136,10 @@
             <hr>
             <table class="table table-borderless" id="mytable">
                 <tr></tr>
-                {% for i in pay %}
-                <tr class='clickable-row' data-href="{% url 'payroll_view' i.id %}">
+                {% for i in cust %}
+                <tr class='clickable-row' data-href="{% url 'creditnote_view' i.id %}" onclick="populateSearchInput('{{i.customer.customerName}}')">
                     <td class="pt-2">
-                        <p class="bold">{{i.first_name}} {{i.last_name}}</p>
+                        <p class="bold">{{i.customerName}} </p>
                         <p>{{ i.joindate}}</p>
 
                     </td>
@@ -148,6 +148,13 @@
                 {% endfor %}
             </table>
         </div>
+        <script>
+        function populateSearchInput(name) {
+            document.getElementById("search").value = name;
+            // Call the search function to filter the table based on the populated search input
+            searchFunction();
+        }
+    </script>
         <div class="overview col-8 col-lg-8 col-md-9  col-sm-10 py-3">
             <div id="overview">
                 <div class="p-name">
@@ -157,6 +164,7 @@
                 <div class="bar pt-3">
                     <div class="left">
                         <a class="btn mx-1" href="#home">Overview</a>
+                        <a class="btn mx-1" href="#template">Template</a> 
                     </div>
                     <div class="right">
                         <a class="btn ml-1" href="" data-toggle="tooltip" title="Edit"><i
@@ -187,26 +195,25 @@
 
                             });
                         </script>
-                        
-                        <a class="btn ml-1" href="" id="dd1" data-bs-toggle="dropdown" aria-haspopup="true"
-                            data-toggle="tooltip" title="Download Attachments" aria-expanded="false" role="button">
-                            <i class="fas fa-download"></i>
-                        </a>
-                        <div class="dropdown-menu">
-                            {% if attach %}
-                            <table class="table table-borderless">
-                                {% for a in attach %}
-                                <tr>
-                                    <td>{{forloop.counter}}.</td>
-                                    <td><a href="{% url 'file_download' a.id %}">{{a.attachment.name}}</a></td>
-                                    <td><a href="{% url 'deletefile' a.id %}"><i class="fas fa-trash"></i></a></td>
-                                </tr>
-                                {% endfor %}
-                            </table>
-                            {% else %}
-                            <div class="text-center">No Attachment found</div>
-                            {% endif %}
-                        </div>
+                       <a class="btn ml-1" href="" id="dd1" data-bs-toggle="dropdown" aria-haspopup="true"
+                       data-toggle="tooltip" title="Download Attachments" aria-expanded="false" role="button">
+                       <i class="fas fa-download"></i>
+                   </a>
+                   <div class="dropdown-menu">
+                       {% if attach %}
+                       <table class="table table-borderless">
+                           {% for a in attach %}
+                           <tr>
+                               <td>{{forloop.counter}}.</td>
+                               <td><a href="{% url 'file_download1' a.id %}" target="_blank">{{a.attachment.name}}</a></td>
+                               <td><a href="{% url 'deletefile1' a.id %}"><i class="fas fa-trash"></i></a></td>
+                           </tr>
+                           {% endfor %}
+                       </table>
+                       {% else %}
+                       <div class="text-center">No Attachment found</div>
+                       {% endif %}
+                   </div>
 
                         <a class="btn ml-1" href="" data-toggle="tooltip"
                             title="Delete"><i class="fa fa-trash"></i></a>
@@ -222,15 +229,13 @@
                 </div>
                 <hr>
                 
-
+                
                 <div class="div-to-pdf row" id="div-to-pdf" style="height: 100%;background-color: rgb(90, 89, 101)">
                     <div class="bar pt-2 pb-4">
-                        <div class="left text-uppercase" style="font-size: 1rem;font-weight: 600;"> {{p.designation}}
-                        </div>
-                        <div class="right" style="font-size: 1rem;font-weight: 600;">Invoice no: {{p.emp_number}} <br>join
-                            Date: {{p.joindate}}</div>
+                        <div class="left text-uppercase" style="font-size: 1rem;font-weight: 600;">{{ creditnote.credit_note }}</div>
+                        <div class="right" style="font-size: 1rem;font-weight: 600;">Invoice no: {{ creditnote.invoice_number }} <br>Creditnote Date: {{ creditnote.creditnote_date }}</div>
                     </div>
-
+                
                     <div class="row text-center">
                         <h3 style="color: #000000;">CreditNote Details
                             <hr>
@@ -238,187 +243,78 @@
                     </div>
                     <div class="gen-info col-6 " style="padding-left: 3rem;">
                         <div class="photo text-center py-3" style="height: 30vh;">
-                            <a href="" download>
-                                <img class="img-fluid" src="{{p.image.url}}" alt="" width="150px" name="img">
-                            </a>
-
+                            <h3 class="h4 text-dark">Name : {{ creditnote.customer.customerName }}</h3>
+                            <div class="h5">Email : {{ creditnote.customer.customerEmail }} </div>
                         </div>
                         <div class="row text-center">
-                            <h5 class="h4 text-dark">{{p.title}} {{p.first_name}} {{p.last_name}}</h5>
-                            <div class="h5">({{p.alias}}) {{p.gender}}</div>
+                            
+                            
                         </div>
                         <div class="row mt-5">
-                            <div class="col-4"><label for="">Email :</label></div>
+                           
                             <div class="col-8">
-                                <p class="bold">{{p.email}}</p>
+                               
+                                <div class="bold">Place of supply : ({{ creditnote.customer.placeofsupply }})</div>
                             </div>
                         </div>
-                        <div class="row mt-3">
-                            <div class="col-4"><label for="">Phone :</label></div>
-                            <div class="col-8">
-                                <p class="bold">{{p.Phone}}</p>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-5"><label for="">Location :</label></div>
-                            <div class="col-7">
-                                <p class="bold">{{p.location}}</p>
-                            </div>
-                        </div>
-
-                        <div class="h4 mt-3">More info
-                            <hr>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-7"><label for="">Emergency Contact number :</label></div>
-                            <div class="col-5">
-                                <p class="bold">{{p.emergency_phone}}</p>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-7"><label for="">Permanent Address :</label></div>
-                            <div class="col-5">
-                                <p class="bold" style="max-width: 10rem;word-wrap: break-word;">{{p.permanent_address}}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-7"><label for="">Temperory Address :</label></div>
-                            <div class="col-5">
-                                <p class="bold" style="max-width: 10rem;word-wrap: break-word;">{{p.address}}</p>
-                            </div>
-                        </div>
+                        <!-- Continue to replace other fields from Creditnote model here -->
                     </div>
+                
                     <div class="p-info col-6 my-2" style="height: 100%;">
                         <div class="card" style="background-color: rgb(29, 23, 41); padding:1rem;">
                             <div class="row my-2">
-                                <div class="col-4"><label for="">Salary :</label></div>
+                                <div class="col-4"><label for="">Subtotal:</label></div>
                                 <div class="col-8">
-                                    <p class="h3">{{p.salary}} INR</p>
+                                    <p class="h3">{{ creditnote.subtotal }}</p>
                                 </div>
                             </div>
                             <hr>
-                            <!-- <div class="card-title my-2">General information <hr></div> -->
-
-                            <div class="row mt-4">
-                                {% if p.isTDS == 'Percentage' %}
-                                <div class="col-5"><label for="">TDS %</label></div>
-                                <div class="col-7">
-                                    <p class="bold">{{p.TDS}} %</p>
-                                </div>
-                                {% elif p.isTDS == 'Amount' %}
-                                <div class="col-5"><label for="">TDS amount</label></div>
-                                <div class="col-7">
-                                    <p class="bold">{{p.TDS}} ₹</p>
-                                </div>
-                                {% else %}
-                                <div class="col-5"><label for="">TDS </label></div>
-                                <div class="col-7">
-                                    <p class="bold">nill</p>
-                                </div>
-                                {% endif %}
-                            </div>
-
+                            <!-- Add other financial information fields here -->
                             <div class="row mt-2">
-                                <div class="col-5"><label for="">Gender :</label></div>
-                                <div class="col-7">
-                                    <p class="bold">{{p.gender}}</p>
+                                <div class="col-4"><label for="">IGST:</label></div>
+                                <div class="col-8">
+                                    <p class="bold">{{ creditnote.igst }}</p>
                                 </div>
                             </div>
                             <div class="row mt-2">
-                                <div class="col-5"><label for="">Date of birth :</label></div>
-                                <div class="col-7">
-                                    <p class="bold">{{p.dob}}</p>
+                                <div class="col-4"><label for="">CGST:</label></div>
+                                <div class="col-8">
+                                    <p class="bold">{{ creditnote.cgst }}</p>
                                 </div>
                             </div>
                             <div class="row mt-2">
-                                <div class="col-5"><label for="">Parent Name :</label></div>
-                                <div class="col-7">
-                                    <p class="bold">{{p.parent}}</p>
+                                <div class="col-4"><label for="">SGST:</label></div>
+                                <div class="col-8">
+                                    <p class="bold">{{ creditnote.sgst }}</p>
                                 </div>
                             </div>
                             <div class="row mt-2">
-                                <div class="col-5"><label for="">Spouse :</label></div>
-                                <div class="col-7">
-                                    <p class="bold">{{p.spouse_name}}</p>
-                                </div>
-                            </div>
-                            <div class="card-title h4 mt-4">Statutary Information
-                                <hr>
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col-5"><label for="">Income Tax Number :</label></div>
-                                <div class="col-7">
-                                    <p class="bold">{{p.ITN}}</p>
+                                <div class="col-4"><label for="">Total Tax:</label></div>
+                                <div class="col-8">
+                                    <p class="bold">{{ creditnote.total_tax }}</p>
                                 </div>
                             </div>
                             <div class="row mt-2">
-                                <div class="col-5"><label for="">Aadhar Number :</label></div>
-                                <div class="col-7">
-                                    <p class="bold">{{p.Aadhar}}</p>
+                                <div class="col-4"><label for="">Shipping Charge:</label></div>
+                                <div class="col-8">
+                                    <p class="bold">{{ creditnote.shipping_charge }}</p>
                                 </div>
                             </div>
                             <div class="row mt-2">
-                                <div class="col-5"><label for="">Universal Account Number(UAN) :</label></div>
-                                <div class="col-7">
-                                    <p class="bold">{{p.UAN}}</p>
+                                <div class="col-4"><label for="">Total:</label></div>
+                                <div class="col-8">
+                                    <p class="bold">{{ creditnote.total }}</p>
                                 </div>
                             </div>
-                            <div class="row mt-2">
-                                <div class="col-5"><label for="">PR Account Number(PRAN) :</label></div>
-                                <div class="col-7">
-                                    <p class="bold">{{p.PRAN}}</p>
-                                </div>
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col-5"><label for="">PF Account Number(PFN) :</label></div>
-                                <div class="col-7">
-                                    <p class="bold">{{p.PFN}}</p>
-                                </div>
-                            </div>
+                            <hr>
+                            <!-- Add other financial information fields here -->
+                        
                         </div>
                     </div>
-                    {% for bank in b %}
-                    <div class="row m-1">
-                        <div class="card bank-div" style="background-color: rgb(78, 72, 53);width: 100%;">
-                            <h4 class="text-center mt-4">Bank Details
-                                <hr>
-                            </h4>
-                            <div class="row mt-2 px-5">
-                                <div class="col-6"><label for="">Account Number</label></div>
-                                <div class="col-6">
-                                    <p class="bold">{{bank.acc_no}}</p>
-                                </div>
-                            </div>
-                            <div class="row mt-2 px-5">
-                                <div class="col-6"><label for="">Bank</label></div>
-                                <div class="col-6">
-                                    <p class="bold">{{bank.bank_name}}</p>
-                                </div>
-                            </div>
-                            <div class="row mt-2 px-5">
-                                <div class="col-6"><label for="">IFSC</label></div>
-                                <div class="col-6">
-                                    <p class="bold">{{bank.IFSC}}</p>
-                                </div>
-                            </div>
-                            <div class="row mt-2 px-5">
-                                <div class="col-6"><label for="">Branch Name</label></div>
-                                <div class="col-6">
-                                    <p class="bold">{{bank.branch}}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
+                   
+                   
                 </div>
-                <!-- </div> -->
-            </div>
-        </div>
-
-    </div>
-
-
+                
 
 
     <!-- Modal -->

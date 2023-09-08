@@ -453,13 +453,20 @@ urlpatterns = [
     path('sendmails/<int:id>', views.sendmails, name='sendmails'),
     path('cust_comments/<int:id>', views.cust_comments, name='cust_comments'),
     path('cust_Attach_files/<int:id>', views.cust_Attach_files, name='cust_Attach_files'),
+
+
+    
     path('creditnotes',views.creditnotes,name='creditnotes'),
     path('newcredit',views.newcredit,name='newcredit'),
-    path('creditnote_view',views.creditnote_view,name='creditnote_view'),
+    path('creditnote_view/<int:creditnote_id>/', views.creditnote_view, name='creditnote_view'),
     path('add_creditnotes ',views.add_creditnotes ,name='add_creditnotes'),
     path('load_initial_items/', views.load_initial_items, name='load_initial_items'),
     path('get_hsn_and_rate/', views.get_hsn_and_rate, name='get_hsn_and_rate'),
-    
+    path('credit_template',views.credit_template,name='credit_template'),
+    path(' purchase_item_dropdown1',views. purchase_item_dropdown1,name='purchase_item_dropdown1'),
+    path('file_download1',views.file_download1,name='file_download1'),
+     path('deletefile1',views.deletefile1,name='deletefile1'),
+   
     
     # re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     
