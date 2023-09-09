@@ -1075,4 +1075,12 @@ class Creditnote(models.Model):
     terms_and_conditions = models.TextField()
     attached_file = models.FileField(upload_to='image/', null=True, blank=True)
     
-    
+class Credititem(models.Model):
+    creditnote=models.ForeignKey(Creditnote,on_delete=models.CASCADE,null=True,default='')
+    item_name = models.CharField(max_length=100,null=True,blank=True)
+    hsn = models.PositiveIntegerField()
+    quantity = models.DecimalField(max_digits=10, decimal_places=2)
+    rate = models.DecimalField(max_digits=10, decimal_places=2)
+    tax = models.DecimalField(max_digits=5, decimal_places=2)
+    discount = models.DecimalField(max_digits=5, decimal_places=2)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)    

@@ -267,7 +267,7 @@
             <td style="width: 10%;">
                 <div ><select
                         class='form-control bg-light text-dark border-0 item_select itm'
-                        name='item[]' id='item1'>
+                        name='item_name[]' id='item1'>
                         <option value=" " selected disabled>Select Item</option>
                         {% for i in itm %}
                           <option value="{{i.Name}}">{{ i.Name  }} </option>
@@ -291,28 +291,12 @@
             </td>
             <td style="width: 15%;" class='text-right '> <select name='tax[]' id='tax1'
                     class='form-control bg-light text-dark  text-right border-0 tax' onclick="toggleDateInput()">
-                    <!-- <optgroup class="text-center" label="">
-                      <option value="0" selected></option>
-                      <option value="0">0% GST(0%)</option>
-                      <option value="3">3.0% GST(3%)</option>
-                      <option value="5">5.0% GST(5%)</option>
-                      <option value="12">12.0% GST(12%)</option>
-                      <option value="18">18.0% GST(18%)</option>
-                      <option value="28">28.0% GST(28%)</option>
-                    </optgroup>
-                    <optgroup  class="text-center" label="">
-                      <option value="0">0% IGST(0%)</option>
-                      <option value="3">3.0% IGST(3%)</option>
-                      <option value="5">5.0% IGST(5%)</option>
-                      <option value="12">12.0% IGST(12%)</option>
-                      <option value="18">18.0% IGST(18%)</option>
-                      <option value="28">28.0% IGST(28%)</option>             
-                      </optgroup> -->
+                   
                 </select></td>
-            <td style="display: none;">
+            <!-- <td style="display: none;">
                 <input type="text" name='taxamount' id="taxamount1"
                     class=" taxamount text-dark" />
-            </td>
+            </td> -->
             <td style="width: 15%;" class='text-right'><input type='number' id='discount'
               class=' text-right form-control amount bg-light text-dark' name='discount[]'
               value='0.00'></td>

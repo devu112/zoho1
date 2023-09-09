@@ -26,6 +26,7 @@ from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 from django.http import FileResponse
 from django.urls import reverse
+from .forms import EditCreditnoteForm
 
 
 def index(request):
@@ -9670,6 +9671,7 @@ def creditnotes(request):
    
 
 def newcredit(request):
+    item=AddItem.objects.all()
     user = request.user
     unit=Unit.objects.all()
     sales=Sales.objects.all()
@@ -9680,16 +9682,18 @@ def newcredit(request):
     purchase=Purchase.objects.all()
     
    
-    return render(request,'newcredit.html',{"c":cust, "pay":pay, "itm":itm,"company":company,"unit":unit, "sales":sales,"purchase":purchase, })
+    return render(request,'newcredit.html',{"c":cust, "pay":pay, "itm":itm,"company":company,"unit":unit, "sales":sales,"purchase":purchase,'item':item })
 
 
 def creditnote_view(request,creditnote_id):
     user = request.user
+    item=AddItem.objects.all()
     cust=customer.objects.all()
     company = company_details.objects.get(user=user)
     creditnote = get_object_or_404(Creditnote, id=creditnote_id)
+    credititems = Credititem.objects.filter(creditnote=creditnote)
     print(creditnote)
-    return render(request,'creditnote_view.html',{'company':company,'creditnote':creditnote,'cust':cust})    
+    return render(request,'creditnote_view.html',{'company':company,'creditnote':creditnote,'cust':cust ,'credititems': credititems})    
 
 def add_creditnotes(request):
     if request.method == 'POST':
@@ -9731,6 +9735,28 @@ def add_creditnotes(request):
             # Assign values to other fields
         )
         credit_note_instance.save()
+        # Retrieve item data from the POST request and save Credititem objects
+        item_names = request.POST.getlist('item_name[]')
+        hsns = request.POST.getlist('hsn')
+        quantities = request.POST.getlist('quantity[]')
+        rates = request.POST.getlist('rate[]')
+        taxes = request.POST.getlist('tax[]')
+        discounts = request.POST.getlist('discount[]')
+        amounts = request.POST.getlist('amount[]')
+
+        for item_name, hsn, quantity, rate, tax, discount, amount in zip(item_names, hsns, quantities, rates, taxes, discounts, amounts):
+            item = Credititem(
+                creditnote=credit_note_instance,
+                item_name=item_name,
+                hsn=hsn,
+                quantity=quantity,
+                rate=rate,
+                tax=tax,
+                discount=discount,
+                amount=amount,
+                               )
+            item.save()
+
 
         return redirect('creditnotes')
     
@@ -9774,6 +9800,20 @@ def get_hsn_and_rate(request):
 
 def credit_template(request):
     return render(request,'credit_template.html')    
+
+def edit_creditnote(request, pk):
+    creditnote = get_object_or_404(Creditnote, pk=pk)
+
+    if request.method == 'POST':
+        form = EditCreditnoteForm(request.POST, instance=creditnote)
+        if form.is_valid():
+            form.save()
+            return redirect('creditnote_view', creditnote_id=creditnote.id)
+    else:
+        form = EditCreditnoteForm(instance=creditnote)
+
+    return render(request, 'edit_creditnote.html', {'form': form, 'creditnote': creditnote})
+
 
 def file_download1(request,aid):
     att= Creditnote.objects.get(id=aid)

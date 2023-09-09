@@ -455,7 +455,7 @@ urlpatterns = [
     path('cust_Attach_files/<int:id>', views.cust_Attach_files, name='cust_Attach_files'),
 
 
-    
+
     path('creditnotes',views.creditnotes,name='creditnotes'),
     path('newcredit',views.newcredit,name='newcredit'),
     path('creditnote_view/<int:creditnote_id>/', views.creditnote_view, name='creditnote_view'),
@@ -465,7 +465,10 @@ urlpatterns = [
     path('credit_template',views.credit_template,name='credit_template'),
     path(' purchase_item_dropdown1',views. purchase_item_dropdown1,name='purchase_item_dropdown1'),
     path('file_download1',views.file_download1,name='file_download1'),
-     path('deletefile1',views.deletefile1,name='deletefile1'),
+    path('deletefile1',views.deletefile1,name='deletefile1'),
+    # path('credit_edit/<int:pk>',views.credit_edit,name='credit_edit'),
+    path('edit_creditnote/<int:pk>',views.edit_creditnote,name='edit_creditnote'),
+    
    
     
     # re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
