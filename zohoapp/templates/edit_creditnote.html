@@ -1,13 +1,118 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Credit Note</title>
+    <!-- Add Bootstrap CSS link here -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Edit Credit Note</h1>
+        <form method="post" enctype="multipart/form-data" action="{% url 'editdb' creditnote.id %}">
+            {% csrf_token %}
+            
+            <!-- Customer Information -->
+            <div class="form-group">
+                <label for="cx_name">Customer Name</label>
+                <input type="text" class="form-control" id="cx_name" name="cx_name" value="{{ creditnote.customer_id }}">
+            </div>
+            
+            <!-- Credit Note Information -->
+            <div class="form-group">
+                <label for="sale_no">Invoice Number</label>
+                <input type="text" class="form-control" id="sale_no" name="sale_no" value="{{ creditnote.invoice_number }}">
+            </div>
+            <div class="form-group">
+                <label for="credit_note">Credit Note</label>
+                <input type="text" class="form-control" id="credit_note" name="credit_note" value="{{ creditnote.credit_note }}">
+            </div>
+            <div class="form-group">
+                <label for="ord_no">Reference</label>
+                <input type="text" class="form-control" id="ord_no" name="ord_no" value="{{ creditnote.reference }}">
+            </div>
+            <div class="form-group">
+                <label for="cr_date">Credit Note Date</label>
+                <input type="date" class="form-control" id="cr_date" name="cr_date" value="{{ creditnote.creditnote_date }}">
+            </div>
+            <div class="form-group">
+                <label for="customer_note">Customer Notes</label>
+                <textarea class="form-control" id="customer_note" name="customer_note">{{ creditnote.customer_notes }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="subtotal">Subtotal</label>
+                <input type="text" class="form-control" id="subtotal" name="subtotal" value="{{ creditnote.subtotal }}">
+            </div>
+            <div class="form-group">
+                <label for="igst">IGST</label>
+                <input type="text" class="form-control" id="igst" name="igst" value="{{ creditnote.igst }}">
+            </div>
+            <div class="form-group">
+                <label for="cgst">CGST</label>
+                <input type="text" class="form-control" id="cgst" name="cgst" value="{{ creditnote.cgst }}">
+            </div>
+            <div class="form-group">
+                <label for="sgst">SGST</label>
+                <input type="text" class="form-control" id="sgst" name="sgst" value="{{ creditnote.sgst }}">
+            </div>
+            <div class="form-group">
+                <label for="tax_total">Total Tax</label>
+                <input type="text" class="form-control" id="tax_total" name="tax_total" value="{{ creditnote.total_tax }}">
+            </div>
+            <div class="form-group">
+                <label for="shipping_charge">Shipping Charge</label>
+                <input type="text" class="form-control" id="shipping_charge" name="shipping_charge" value="{{ creditnote.shipping_charge }}">
+            </div>
+            <div class="form-group">
+                <label for="t_total">Total</label>
+                <input type="text" class="form-control" id="t_total" name="t_total" value="{{ creditnote.total }}">
+            </div>
+            <div class="form-group">
+                <label for="ter_cond">Terms and Conditions</label>
+                <textarea class="form-control" id="ter_cond" name="ter_cond">{{ creditnote.terms_and_conditions }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="file">Attached File</label>
+                <input type="file" class="form-control" id="file" name="file">
+            </div>
+            
+            <!-- Credit Items -->
+            <h2>Credit Items</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>HSN</th>
+                        <th>Quantity</th>
+                        <th>Rate</th>
+                        <th>Tax</th>
+                        <th>Discount</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for credititem in credititems %}
+                        <tr>
+                            <td><input type="text" class="form-control" name="item_name[]" value="{{ credititem.item_name }}"></td>
+                            <td><input type="text" class="form-control" name="hsn[]" value="{{ credititem.hsn }}"></td>
+                            <td><input type="text" class="form-control" name="quantity[]" value="{{ credititem.quantity }}"></td>
+                            <td><input type="text" class="form-control" name="rate[]" value="{{ credititem.rate }}"></td>
+                            <td><input type="text" class="form-control" name="tax[]" value="{{ credititem.tax }}"></td>
+                            <td><input type="text" class="form-control" name="discount[]" value="{{ credititem.discount }}"></td>
+                            <td><input type="text" class="form-control" name="amount[]" value="{{ credititem.amount }}"></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
 
-{% block content %}
-<h2>Edit Credit Note</h2>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-</form>
-
-<a href="{% url 'creditnote_view' creditnote_id=creditnote.id %}">Back to Credit Note Details</a>
-{% endblock %}
+    <!-- Add Bootstrap JS and jQuery scripts here (if needed) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

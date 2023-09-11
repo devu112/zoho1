@@ -277,21 +277,87 @@
                     <div class="row p-0 d-flex">
                         <div class="col-md-7">
                             <input type="text" id="search" placeholder="Search..." class="form-control text-dark bg-light" autocomplete="off" >
-                            <script>
-                                document.getElementById("search").addEventListener("keyup", searchFunction);
-                            </script>
+                           
                         </div>
+                        <script>
+                            $(document).ready(function () {
+                                // Function to perform the search and filter results
+                                function filterResults() {
+                                    var searchValue = $('#search').val().toLowerCase();
+                                    
+                                    // Loop through each customer
+                                    $('.bills a').each(function () {
+                                        var customerName = $(this).find('.pname').text().toLowerCase();
+                                        var creditNoteNumber = $(this).find('.credit-note-number').text().toLowerCase();
+                                        var amount = $(this).find('.amount').text().toLowerCase();
+                                        
+                                        // Check if the search value is found in any of the fields
+                                        if (customerName.indexOf(searchValue) !== -1 ||
+                                            creditNoteNumber.indexOf(searchValue) !== -1 ||
+                                            amount.indexOf(searchValue) !== -1) {
+                                            // Show the customer if it matches the search criteria
+                                            $(this).show();
+                                        } else {
+                                            // Hide the customer if it does not match
+                                            $(this).hide();
+                                        }
+                                    });
+                                }
+                            
+                                // Attach the filter function to the input field's keyup event
+                                $('#search').keyup(filterResults);
+                            });
+                            </script>
+                        
 
                         <div class="col-md-2 mt-2 mx-1">
-                            <a   id="sort-button"  class="btn text-center btn-primary bi bi-funnel px-3 py-1" data-bs-toggle="dropdown"
-                                role="button"></a>
-                            {% comment %} <div class="dropdown-menu " style="z-index: 1;">
-                                 <a class="dropdown-item" href="">Customer A-Z</a>
-                                <a class="dropdown-item" href="">Customer Z-A</a>
-                                
-
-                            </div> {% endcomment %}
+                            <a id="sort-button" class="btn text-center btn-primary bi bi-funnel px-3 py-1" data-bs-toggle="dropdown" role="button"></a>
+                            <div class="dropdown-menu " style="z-index: 1;">
+                                <a class="dropdown-item" href="#" data-sort="customer-az">Customer A-Z</a>
+                                <a class="dropdown-item" href="#" data-sort="customer-za">Customer Z-A</a>
+                                <a class="dropdown-item" href="#" data-sort="amount">Amount</a>
+                            </div>
                         </div>
+                        
+                        <script>
+                        $(document).ready(function () {
+                            // Sort customers based on the selected option
+                            $(".dropdown-item").click(function (e) {
+                                e.preventDefault();
+                                var sortOption = $(this).data("sort");
+                                sortCustomers(sortOption);
+                            });
+                        
+                            // Function to sort customers
+                            function sortCustomers(sortOption) {
+                                var $customers = $(".bills a");
+                                switch (sortOption) {
+                                    case "customer-az":
+                                        $customers.sort(function (a, b) {
+                                            var textA = $(a).find('.pname').text().toLowerCase();
+                                            var textB = $(b).find('.pname').text().toLowerCase();
+                                            return textA.localeCompare(textB);
+                                        });
+                                        break;
+                                    case "customer-za":
+                                        $customers.sort(function (a, b) {
+                                            var textA = $(a).find('.pname').text().toLowerCase();
+                                            var textB = $(b).find('.pname').text().toLowerCase();
+                                            return textB.localeCompare(textA);
+                                        });
+                                        break;
+                                    case "amount":
+                                        $customers.sort(function (a, b) {
+                                            var amountA = parseFloat($(a).find('.amount').text().replace("₹", "").trim());
+                                            var amountB = parseFloat($(b).find('.amount').text().replace("₹", "").trim());
+                                            return amountA - amountB;
+                                        });
+                                        break;
+                                }
+                                $(".bills").empty().append($customers);
+                            }
+                        });
+                        </script>
                         <div class="col-md-2 mr-4 mt-2">
                             <a href="{% url 'newcredit' %}" class="btn btn-primary fa fa-plus px-3 pt-1"
                                 role="button">
@@ -303,7 +369,7 @@
                 <div class="border-bottom"></div>
 
                 <div id="expenses-container" class="row mt-5 bills">
-                  {% for e in expenses %}
+                
                         <a href="" class="my-3">
                             
                             <div class="row mt-3">
@@ -319,7 +385,7 @@
                             </div>
 
                         </a> 
-                    {% endfor %}
+                   
                 </div>
             </div>
         </div>
@@ -338,8 +404,10 @@
                     </div>
 
                     <div class="mx-4">
-                        <a href="{% url 'edit_creditnote' pk=creditnote.pk %}" class=" fa fa-pencil btns px-2 py-2"
+                        
+                        <a href="{% url 'edit_creditnote' creditnote.id %}" class=" fa fa-pencil btns px-2 py-2"
                               data-toggle="tooltip" title="EDIT"> </a>
+                        
                         <a href=" " class="delete fa fa-trash btns px-2 py-2"
                          data-toggle="tooltip" title="DELETE" onclick="return confirm('Do you want to Delete this Recurring Bill?');"> </a>
                     </div>
@@ -431,13 +499,7 @@
 
                             <div class="col-1 "></div>
                             <div class="col-5">
-                                <p style=" font-size: 18px;  font-weight: 700;">Bill To,</p>
-                                <h6  class="mx-3 text-capitalize" style="color: black; ">{{ Creditnote.cust.customerName }}  </h6>
-                                <p class="address col-6 mx-4 p-2" style="margin-left: -14px;"><br>
-                                    {{vendor.bcity}}<br>
-                                    {{vendor.bstate}}<br> 
-                                    {{vendor.bpin}}<br> 
-                                </p>
+                               
                             </div>
                             <div class="col-1"></div>
                             <!-- <div class="col-5 mt-5">
@@ -448,14 +510,12 @@
                             </div> -->
 
                             <div class="col-5">
-                                <p style=" font-size: 18px;  font-weight: 700;">Deliver To,</p>
-                                <h6  class="mx-2 text-capitalize" style="color: black;">{{customer.Firstname}}{{customer.Lastname}}</h6>
-                                <p class="address col-6 mx-3 p-2" style="margin-left: -14px;">{{customer.bAddress1}} <br>
-                                    {{customer.bAddress2}}<br>
-                                    {{customer.bcity}}<br>
-                                    {{customer.state}}<br>
-
-                                    
+                                <p style=" font-size: 18px;  font-weight: 700;">Bill To,</p>
+                                <h6  class="mx-3 text-capitalize" style="color: black; ">{{ creditnote.customer.customerName }} </h6>
+                                <p class="address col-6 mx-4 p-2" style="margin-left: -14px;">
+                                    {{ creditnote.customer.city }}<br>
+                                    {{ creditnote.customer.state }}<br>
+                                    {{ creditnote.customer.zipcode }}<br>
                                 </p>
 
                             </div>
@@ -464,39 +524,14 @@
                     </div>
                 </section>
 
-                <script>
-                    //////////////////////////searchhhhhhhhhhhh///////////////////
-                    function searchFunction() {
-    var input, filter, table, tr, td, i, j, txtValue;
-    input = document.getElementById("search");
-    filter = input.value.toLowerCase();
-    table = document.getElementById("mytable");
-    tr = table.getElementsByTagName("tr");
-
-    for (i = 0; i < tr.length; i++) {
-        let rowVisible = false;
-        td = tr[i].getElementsByTagName("td");
-        for (j = 0; j < td.length; j++) {
-            txtValue = td[j].textContent || td[j].innerText;
-            if (txtValue.toLowerCase().includes(filter)) {
-                rowVisible = true;
-                break;
-            }
-        }
-
-        // Show/hide the row based on the search results
-        tr[i].style.display = rowVisible ? "" : "none";
-    }
-}
-                    
-                    </script>
+                
                     
 
                 <section class="product-area mt-0">
                     <table class="table ">
                         <thead style="background-color:burlywood; color: black;">
                             <tr>
-                                <td>#</td>
+                                
                                 <td>item Name</td>
                                 <td>HSN</td>
                                 <td>Quantity</td>
@@ -508,8 +543,8 @@
                         <tbody style=":hover{color: #ddd; background-color: transparent;}">
                             {% for credititem in credititems %}
                             <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{credititem.sales_item.product}}</td>
+                                
+                                <td>{{credititem.item_name}}</td>
                                 <td>{{credititem.hsn}}</td>
                                 <td>{{credititem.quantity}}</td>
                                 <td>{{credititem.tax}}</td>
@@ -577,7 +612,7 @@
             <div id="Overview" class="tabcontent mt-0 border-0 p-4 mx-0" style="overflow-x: hidden; border-top: #ccc double 2px; background-color: burlywood ;border-radius: 5px;">
                 <h3 class="mb-0 mx-5 text-muted" style="color: rgb(161, 195, 226);">{{ company.company_name }}</h3>
                 <center>
-                    <h2 class="mb-4" style=" color: #434141;">CreditNote</h2>
+                    <h2 class="mb-4" style=" color: #434141;">CreditNote Bill</h2>
                 </center>
             
                 <div class="row g-0">
@@ -592,6 +627,14 @@
                                 </b>
                             </div>
                             <hr class="my-4">
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-6 mt-3">
+                                    <h6 class="mb-0 text-black">Customer Name:</h6>
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <p class="mb-0 " style="font-size: 18px; color: #434141;">{{ creditnote.customer.customerName }}</p>
+                                </div>
+                            </div>
             
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-6 mt-3">
@@ -714,43 +757,7 @@
                                 </div>
                             </div>
             
-                            {% comment %} <div class=" justify-content-between mb-5 d-none" id="cgst">
-                                <div class="col-md-4 mt-3">
-                                    <h6 style="color: #ccc;">Paid Through :</h5><br>
-                                </div>
-                                <div class="col-md-8 mt-3 mx-3">
-                                    <input type="text" value="{{ expense.paidthrough }} " class="amnt"
-                                        style="font-size: 16px; color: azure;" readonly>
-                                </div>
-                            </div>
-                            <div class=" justify-content-between mb-5  d-none" id="sgst">
-                                <div class="col-md-4 mt-3">
-                                    <h6 style="color: #ccc;">Paid Through  :</h5><br>
-                                </div>
-                                <div class="col-md-8 mt-3 mx-3">
-                                    <input type="text" value="{{ expense.paidthrough }}" class="amnt"
-                                        style="font-size: 16px; color: azure;" readonly>
-                                </div>
-                            </div> {% endcomment %}
-                            <div class="d-flex justify-content-between mb-5">
-                                <div class="col-md-8 mt-3">
-                                    <h6 style="color: #ccc;">Paid Through :</h5><br>
-                                </div>
-                                <div class="col-md-4 mt-3 mx-3">
-                                    <input type="text" value="{{ expense.paidthrough }} " class="amnt"
-                                        style="font-size: 16px; color: azure;" readonly>
-                                </div>
-                            </div>
-
-                            <div class="d-flex justify-content-between mb-5">
-                                <div class="col-md-6 mt-3">
-                                    <h6 style="color: #ccc;">Expense Type:</h5><br>
-                                </div>
-                                <div class="col-md-6 mt-3 mx-3">
-                                    <input type="text" value="{{ expense.expense_type }} "
-                                        class="amnt " style="font-size: 16px; color: azure;" readonly>
-                                </div>
-                            </div>
+                           
 
                         </div>
                     </div>

@@ -3,10 +3,7 @@ from django import forms
 from django.forms import TextInput,EmailInput
 from .models import Creditnote
 
-class EditCreditnoteForm(forms.ModelForm):
-    class Meta:
-        model = Creditnote
-        fields = '__all__'  
+
 
 class EmailForm(forms.Form):
     email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Email ','style': 'width: 50%;','class':'text-dark'}))

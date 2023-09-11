@@ -26,7 +26,7 @@ from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 from django.http import FileResponse
 from django.urls import reverse
-from .forms import EditCreditnoteForm
+
 
 
 def index(request):
@@ -9693,7 +9693,7 @@ def creditnote_view(request,creditnote_id):
     creditnote = get_object_or_404(Creditnote, id=creditnote_id)
     credititems = Credititem.objects.filter(creditnote=creditnote)
     print(creditnote)
-    return render(request,'creditnote_view.html',{'company':company,'creditnote':creditnote,'cust':cust ,'credititems': credititems})    
+    return render(request,'creditnote_view.html',{'company':company,'creditnote':creditnote,'cust':cust ,'credititems': credititems,'item':item})    
 
 def add_creditnotes(request):
     if request.method == 'POST':
@@ -9762,9 +9762,60 @@ def add_creditnotes(request):
     
     return render(request, 'creditnotes.html', {'c': [credit_note_instance]})
 
+def edit_creditnote(request, creditnote_id):
+    creditnote = get_object_or_404(Creditnote, id=creditnote_id)
+    credititems = Credititem.objects.filter(creditnote=creditnote)
+    
+    return render(request, 'edit_creditnote.html', {'creditnote': creditnote, 'credititems': credititems})    
       
 
+def editdb(request, creditnote_id):
+    creditnote = get_object_or_404(Creditnote, id=creditnote_id)
 
+    if request.method == 'POST':
+        # Update the credit note fields
+        creditnote.customer_id = request.POST.get('cx_name')
+        creditnote.invoice_number = request.POST.get('sale_no')
+        creditnote.credit_note = request.POST.get('credit_note')
+        creditnote.reference = request.POST.get('ord_no')
+        creditnote.creditnote_date = request.POST.get('cr_date')
+        creditnote.customer_notes = request.POST.get('customer_note')
+        creditnote.subtotal = request.POST.get('subtotal')
+        creditnote.igst = request.POST.get('igst')
+        creditnote.cgst = request.POST.get('cgst')
+        creditnote.sgst = request.POST.get('sgst')
+        creditnote.total_tax = request.POST.get('tax_total')
+        creditnote.shipping_charge = request.POST.get('shipping_charge')
+        creditnote.total = request.POST.get('t_total')
+        creditnote.terms_and_conditions = request.POST.get('ter_cond')
+        creditnote.attached_file = request.FILES.get('file')
+        creditnote.save()
+
+        # Update credit item records
+        item_ids = request.POST.getlist('item_id[]')
+        item_names = request.POST.getlist('item_name[]')
+        hsns = request.POST.getlist('hsn')
+        quantities = request.POST.getlist('quantity[]')
+        rates = request.POST.getlist('rate[]')
+        taxes = request.POST.getlist('tax[]')
+        discounts = request.POST.getlist('discount[]')
+        amounts = request.POST.getlist('amount[]')
+
+        for item_id, item_name, hsn, quantity, rate, tax, discount, amount in zip(item_ids, item_names, hsns, quantities, rates, taxes, discounts, amounts):
+            credititem = Credititem.objects.get(id=item_id)
+            credititem.item_name = item_name
+            credititem.hsn = hsn
+            credititem.quantity = quantity
+            credititem.rate = rate
+            credititem.tax = tax
+            credititem.discount = discount
+            credititem.amount = amount
+            credititem.save()
+
+        # Redirect to a confirmation page or the creditnote_view page
+        return redirect('creditnote_view', creditnote_id=creditnote.pk)
+
+    return render(request, 'creditnote_view', {'creditnote': creditnote})
 from django.core import serializers
 
 def load_initial_items(request):
@@ -9803,16 +9854,34 @@ def credit_template(request):
 
 def edit_creditnote(request, pk):
     creditnote = get_object_or_404(Creditnote, pk=pk)
+    credititems = Credititem.objects.filter(creditnote=creditnote)
 
     if request.method == 'POST':
-        form = EditCreditnoteForm(request.POST, instance=creditnote)
-        if form.is_valid():
-            form.save()
-            return redirect('creditnote_view', creditnote_id=creditnote.id)
-    else:
-        form = EditCreditnoteForm(instance=creditnote)
+        # Process the form data here
+        creditnote.customer = request.POST.get('customer')
+        creditnote.invoice_number = request.POST.get('invoice_number')
+        creditnote.credit_note = request.POST.get('credit_note')
+        creditnote.reference = request.POST.get('reference')
+        creditnote.creditnote_date = request.POST.get('creditnote_date')
+        creditnote.customer_notes = request.POST.get('customer_notes')
+        creditnote.subtotal = request.POST.get('subtotal')
+        creditnote.igst = request.POST.get('igst')
+        creditnote.cgst = request.POST.get('cgst')
+        creditnote.sgst = request.POST.get('sgst')
+        creditnote.total_tax = request.POST.get('total_tax')
+        creditnote.shipping_charge = request.POST.get('shipping_charge')
+        creditnote.total = request.POST.get('total')
+        creditnote.terms_and_conditions = request.POST.get('terms_and_conditions')
 
-    return render(request, 'edit_creditnote.html', {'form': form, 'creditnote': creditnote})
+        # Update and save the credit note
+        creditnote.save()
+
+        # Handle updating credit items (you need to implement this)
+
+        return redirect('creditnote_view', creditnote_id=creditnote.id)
+
+    # Make sure to return an HttpResponse here for GET requests
+    return HttpResponse("edit_creditnote")  # You can replace this with your actual GET response
 
 
 def file_download1(request,aid):
