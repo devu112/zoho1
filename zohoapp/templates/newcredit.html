@@ -313,7 +313,7 @@
 </tr>
 </tbody>
 </table>
-<button type="button" class="btn btn-sm text-white" style="background-color: rgb(210, 132, 30);" id="add-row">Add another line</button>
+<button type="button" class="btn btn-sm text-white" style="background-color: rgb(210, 132, 30);" id="add-row-button">Add another line</button>
         </div>
     </div>
     <div class="row border-bottom pb-5">
@@ -1406,7 +1406,81 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
+<script>
+  $(document).ready(function () {
+  var rowCount = 2; // Initialize rowCount to the next available number
 
+  // Event handler for clone button
+  $('#item_table').on('click', '.clone-row', function () {
+    var row = $(this).closest('tr');
+    var clonedRow = row.clone(); // Clone the current row
+    var newRowId = 'row' + rowCount; // Generate a new ID for the cloned row
+    clonedRow.attr('id', newRowId); // Set the new ID for the cloned row
+
+    // Clone the options for tax, account, and item (if needed)
+    // ...
+
+    rowCount++; // Increment row counter
+
+    $('#item_table tbody').append(clonedRow);
+    calculateRowAmount(row);
+    calculateSubtotal();
+    calculateGrandTotal();
+    toggleDateInput();
+    calculateTaxAmount();
+    toggleDateInput();
+  });
+
+  // Event handler for "Add another line" button
+  $('#add-row-button').click(function () {
+    var lastRow = $('#item_table tbody tr:last'); // Get the last row
+    var newRow = lastRow.clone(); // Clone the last row
+    var newRowId = 'row' + rowCount; // Generate a new ID for the cloned row
+    newRow.attr('id', newRowId); // Set the new ID for the cloned row
+
+    // Clear input values in the cloned row if needed
+    newRow.find('input[type="number"]').val(0);
+
+    $('#item_table tbody').append(newRow);
+    rowCount++; // Increment row counter
+  });
+});
+
+
+// Change event listener for the tax dropdown
+$('#item_table').on('change', 'select[name^="tax"]', function () {
+    // Calculate CGST, SGST, or IGST based on the selected tax type
+    var selectedTaxType = $(this).val();
+    var subtotal = parseFloat($('#subtotal').val()) || 0;
+
+    if (selectedTaxType === '0' || selectedTaxType === '3' || selectedTaxType === '5' || selectedTaxType === '12' || selectedTaxType === '18' || selectedTaxType === '28') {
+        // GST selected
+        var gstPercentage = parseFloat(selectedTaxType);
+        var cgst = (subtotal * (gstPercentage / 2)) / 100;
+        var sgst = cgst;
+
+        $('#tr_cgst').show();
+        $('#tr_sgst').show();
+        $('#tr_igst').hide();
+
+        $('#cgst').val(cgst.toFixed(2));
+        $('#sgst').val(sgst.toFixed(2));
+        $('#igst').val('0.00');
+    } else {
+        // IGST selected
+        $('#tr_cgst').hide();
+        $('#tr_sgst').hide();
+        $('#tr_igst').show();
+
+        $('#cgst').val('0.00');
+        $('#sgst').val('0.00');
+        $('#igst').val(subtotal.toFixed(2));
+    }
+
+    // Update tax total
+    calculateTaxTotal();
+});
+</script>
    
 <script>
      
@@ -2245,21 +2319,21 @@ $('#add-row').click(function () {
 
 
   // Add an event listener to the fields in the item table
-$('#item_table').on('click', '.item_select, .acnt, .rate, .qty, .tax, .discount', function () {
-  var row = $(this).closest('tr');
-  var taxElement = row.find('.tax');
+// $('#item_table').on('click', '.item_select, .acnt, .rate, .qty, .tax, .discount', function () {
+//   var row = $(this).closest('tr');
+//   var taxElement = row.find('.tax');
 
-  var checkbox = document.getElementById("srcofsupply");
-  var vale = checkbox.value;
+//   var checkbox = document.getElementById("srcofsupply");
+//   var vale = checkbox.value;
 
-  if (vale === "[KL] Kerala") {
-    taxElement.find('optgroup[label="GST"]').show();
-    taxElement.find('optgroup[label="IGST"]').hide();
-  } else {
-    taxElement.find('optgroup[label="GST"]').hide();
-    taxElement.find('optgroup[label="IGST"]').show();
-  }
-});
+//   if (vale === "[KL] Kerala") {
+//     taxElement.find('optgroup[label="GST"]').show();
+//     taxElement.find('optgroup[label="IGST"]').hide();
+//   } else {
+//     taxElement.find('optgroup[label="GST"]').hide();
+//     taxElement.find('optgroup[label="IGST"]').show();
+//   }
+// });
 
 // Event handler for clone button
 $('#item_table').on('click', '.clone-row', function () {
@@ -2398,7 +2472,7 @@ $(document).ready(function () {
         // Determine the selected tax type (GST or IGST)
         var selectedTaxType = $('select[name^="tax"]').first().val();
 
-        // Calculate tax based on the selected tax type
+       // Calculate tax based on the selected tax type
         if (selectedTaxType === '0' || selectedTaxType === '3' || selectedTaxType === '5' || selectedTaxType === '12' || selectedTaxType === '18' || selectedTaxType === '28') {
             // GST selected
             // Calculate CGST and SGST based on the selected GST percentage (half of the GST percentage each)

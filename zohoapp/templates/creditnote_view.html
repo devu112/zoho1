@@ -281,6 +281,34 @@
                         </div>
                         <script>
                             $(document).ready(function () {
+                                // Function to populate customers based on credit notes
+                                function populateCustomers() {
+                                    // Fetch and populate the customer data associated with credit notes from the backend
+                                    // Replace this with the actual data retrieval logic
+                                    $.ajax({
+                                        url: '{% url "fetch_customers_from_creditnotes" %}',
+                                        dataType: 'json',
+                                        success: function (data) {
+                                            var customerListHTML = "";
+                                            data.forEach(function (customer) {
+                                                customerListHTML += '<a class="bills" href="#">';
+                                                customerListHTML += '<span class="pname">' + customer.customerName + '</span>';
+                                                customerListHTML += '<span class="credit-note-number">' + customer.creditNoteNumber + '</span>';
+                                                customerListHTML += '<span class="amount">₹' + customer.amount + '</span>';
+                                                customerListHTML += '</a>';
+                                            });
+
+                                            // Append the customer list to the container
+                                            $("#customer-list").html(customerListHTML);
+                                        }
+                                    });
+                                }
+                            });
+
+                
+                        </script>
+                        <script>
+                            $(document).ready(function () {
                                 // Function to perform the search and filter results
                                 function filterResults() {
                                     var searchValue = $('#search').val().toLowerCase();
@@ -374,13 +402,13 @@
                             
                             <div class="row mt-3">
                                 <div class="col-md-7">
-                                    <label style="color: azure; font-size: 18px;" class="mx-3 text-capitalize text-center pname" >{{e.profile_name}} </label><br>
+                                    <label style="color: azure; font-size: 18px;" class="mx-3 text-capitalize text-center pname" >{{creditnote.customer.customerName}} </label><br>
                                         <!-- <label style="color: rgb(129, 126, 126); font-size: 15px;" class="mx-3 px-2"># RB- {{ b.id }} </label> -->
-                                        <label style="color: rgb(129, 126, 126); font-size: 15px; "class="mx-2 px-2"> {{ e.start_date }} </label>
+                                        <label style="color: rgb(129, 126, 126); font-size: 15px; "class="mx-2 px-2"> {{ creditnote.credit_note }} </label>
                                 </div>
                                 <!-- <div class="col-md-1"></div> -->
                                 <div class="col-md-5 mt-3">
-                                    <label style="color: rgb(129, 126, 126); font-size: 15px;">₹ {{ e.amount|floatformat:2 }} </label>
+                                    <label style="color: rgb(129, 126, 126); font-size: 15px;">₹ {{ creditnote.total|floatformat:2 }} </label>
                                 </div>
                             </div>
 
@@ -405,11 +433,11 @@
 
                     <div class="mx-4">
                         
-                        <a href="{% url 'edit_creditnote' creditnote.id %}" class=" fa fa-pencil btns px-2 py-2"
+                        <a href="{% url 'edit_creditnote' pk=creditnote.pk %}" class=" fa fa-pencil btns px-2 py-2"
                               data-toggle="tooltip" title="EDIT"> </a>
                         
-                        <a href=" " class="delete fa fa-trash btns px-2 py-2"
-                         data-toggle="tooltip" title="DELETE" onclick="return confirm('Do you want to Delete this Recurring Bill?');"> </a>
+                        <a href="{% url 'delete_creditnote' pk=creditnote.id  %} " class="delete fa fa-trash btns px-2 py-2"
+                         data-toggle="tooltip" title="DELETE" onclick="return confirm('Do you want to Delete this creditnote?');"> </a>
                     </div>
 
                     <div class="mx-1">
@@ -418,12 +446,7 @@
                         data-toggle="tooltip" title="PDF"></a>
 
                         <a href="" class=" fa fa-print btns px-2 py-2"   data-toggle="tooltip"
-                            title="PRINT" onclick="window.print()"> </a>
-
-                        <a href="" class="fa fa-envelope btns px-2 py-2" 
-                            title="MAIL" data-toggle="modal" data-target="#emails" > </a>
-
-                        
+                            title="PRINT" onclick="window.print()"> </a>     
                     </div>
                     <div class="m-0">
                         <div class="dropdown m-0 p-0">
@@ -1060,7 +1083,7 @@ $(document).ready(function () {
             var opt =
             {
                 margin: 0,
-                filename: 'recurring bill_'+$("#pid").text() + '.pdf',
+                filename: 'creditnote_'+$("#pid").text() + '.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 3 },
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
@@ -1080,7 +1103,7 @@ $(document).ready(function () {
   <div class="row fixed-top" style="top: 7rem; margin-left: 18rem;">
     <div class="col-md-12" style="right: 0;">
       <div class="row">
-        <div class="col-md-3" style="border-right: 1px solid white;height: 100vh;margin-left:;position: fixed;">
+        <div class="col-md-3" style="border-right: 1px solid white;height: 100vh; position: fixed;">
           <div class="row">
             <div class="col-md-4"><a class="text-white" style="font-size: 1.5rem;">All Expense</a></div>
             <div class="col-md-4" style="margin-top: -3rem;">

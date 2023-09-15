@@ -9692,8 +9692,9 @@ def creditnote_view(request,creditnote_id):
     company = company_details.objects.get(user=user)
     creditnote = get_object_or_404(Creditnote, id=creditnote_id)
     credititems = Credititem.objects.filter(creditnote=creditnote)
+    creditnote_customers = customer.objects.filter(creditnote=creditnote)
     print(creditnote)
-    return render(request,'creditnote_view.html',{'company':company,'creditnote':creditnote,'cust':cust ,'credititems': credititems,'item':item})    
+    return render(request,'creditnote_view.html',{'company':company, 'cust': creditnote_customers,'creditnote':creditnote,'cust':cust ,'credititems': credititems,'item':item})    
 
 def add_creditnotes(request):
     if request.method == 'POST':
@@ -9710,6 +9711,7 @@ def add_creditnotes(request):
         sgst = request.POST.get('sgst')
         total_tax = request.POST.get('tax_total')
         shipping_charge = request.POST.get('shipping_charge')
+        adjustment = request.POST.get('adjustment')
         total = request.POST.get('t_total')
         terms_and_conditions = request.POST.get('ter_cond')
         attached_file = request.FILES.get('file')
@@ -9732,6 +9734,7 @@ def add_creditnotes(request):
             total=total,
             terms_and_conditions=terms_and_conditions,
             attached_file=attached_file,
+            adjustment=adjustment
             # Assign values to other fields
         )
         credit_note_instance.save()
@@ -9762,35 +9765,69 @@ def add_creditnotes(request):
     
     return render(request, 'creditnotes.html', {'c': [credit_note_instance]})
 
-def edit_creditnote(request, creditnote_id):
-    creditnote = get_object_or_404(Creditnote, id=creditnote_id)
+def edit_creditnote(request, pk):
+    cust=customer.objects.all()
+    creditnote = get_object_or_404(Creditnote, id=pk)
     credititems = Credititem.objects.filter(creditnote=creditnote)
+    itm = AddItem.objects.all()
+    print(credititems)  
     
-    return render(request, 'edit_creditnote.html', {'creditnote': creditnote, 'credititems': credititems})    
+    return render(request, 'edit_creditnote.html', {'creditnote': creditnote, 'credititems': credititems,'cust':cust,'itm':itm})    
       
 
-def editdb(request, creditnote_id):
-    creditnote = get_object_or_404(Creditnote, id=creditnote_id)
+def editdb(request, pk):
+    creditnote = get_object_or_404(Creditnote, id=pk)
+    cust = customer.objects.all()
+    itm = AddItem.objects.all()
 
     if request.method == 'POST':
-        # Update the credit note fields
-        creditnote.customer_id = request.POST.get('cx_name')
-        creditnote.invoice_number = request.POST.get('sale_no')
-        creditnote.credit_note = request.POST.get('credit_note')
-        creditnote.reference = request.POST.get('ord_no')
-        creditnote.creditnote_date = request.POST.get('cr_date')
-        creditnote.customer_notes = request.POST.get('customer_note')
-        creditnote.subtotal = request.POST.get('subtotal')
-        creditnote.igst = request.POST.get('igst')
-        creditnote.cgst = request.POST.get('cgst')
-        creditnote.sgst = request.POST.get('sgst')
-        creditnote.total_tax = request.POST.get('tax_total')
-        creditnote.shipping_charge = request.POST.get('shipping_charge')
-        creditnote.total = request.POST.get('t_total')
-        creditnote.terms_and_conditions = request.POST.get('ter_cond')
-        creditnote.attached_file = request.FILES.get('file')
-        creditnote.save()
+        # Retrieve customer_id from the form
+        customer_id = request.POST.get('customer', None)
+     
+        invoice_number = request.POST.get('sale_no')
+        credit_note = request.POST.get('credit_note')
+        reference = request.POST.get('ord_no')
+        creditnote_date = request.POST.get('cr_date')
+        customer_notes = request.POST.get('customer_note')
+        subtotal = request.POST.get('subtotal')
+        igst = request.POST.get('igst')
+        cgst = request.POST.get('cgst')
+        sgst = request.POST.get('sgst')
+        total_tax = request.POST.get('tax_total')
+        shipping_charge = request.POST.get('shipping_charge')
+        total = request.POST.get('t_total')
+        terms_and_conditions = request.POST.get('ter_cond')
+        attached_file = request.FILES.get('file')
+        adjustment = request.POST.get('adjustment')
 
+        # Ensure that customer_id is a valid integer
+        try:
+            customer_id = int(customer_id)
+        except (ValueError, TypeError):
+            customer_id = None
+
+        # Update the fields of the existing Creditnote object
+        creditnote.invoice_number = invoice_number
+        creditnote.credit_note = credit_note
+        creditnote.reference = reference
+        creditnote.creditnote_date = creditnote_date
+        creditnote.customer_notes = customer_notes
+        creditnote.subtotal = subtotal
+        creditnote.igst = igst
+        creditnote.cgst = cgst
+        creditnote.sgst = sgst
+        creditnote.total_tax = total_tax
+        creditnote.shipping_charge = shipping_charge
+        creditnote.total = total
+        creditnote.terms_and_conditions = terms_and_conditions
+        creditnote.adjustment = adjustment
+
+        # Set the customer_id field
+        if customer_id is not None:
+            creditnote.customer_id = customer_id
+
+        # Save the updated Creditnote object
+        creditnote.save()
         # Update credit item records
         item_ids = request.POST.getlist('item_id[]')
         item_names = request.POST.getlist('item_name[]')
@@ -9810,12 +9847,13 @@ def editdb(request, creditnote_id):
             credititem.tax = tax
             credititem.discount = discount
             credititem.amount = amount
+          
             credititem.save()
 
-        # Redirect to a confirmation page or the creditnote_view page
         return redirect('creditnote_view', creditnote_id=creditnote.pk)
 
-    return render(request, 'creditnote_view', {'creditnote': creditnote})
+    return render(request, 'creditnote_view.html', {'creditnote': creditnote, 'cust': cust, 'itm': itm})
+
 from django.core import serializers
 
 def load_initial_items(request):
@@ -9852,36 +9890,7 @@ def get_hsn_and_rate(request):
 def credit_template(request):
     return render(request,'credit_template.html')    
 
-def edit_creditnote(request, pk):
-    creditnote = get_object_or_404(Creditnote, pk=pk)
-    credititems = Credititem.objects.filter(creditnote=creditnote)
 
-    if request.method == 'POST':
-        # Process the form data here
-        creditnote.customer = request.POST.get('customer')
-        creditnote.invoice_number = request.POST.get('invoice_number')
-        creditnote.credit_note = request.POST.get('credit_note')
-        creditnote.reference = request.POST.get('reference')
-        creditnote.creditnote_date = request.POST.get('creditnote_date')
-        creditnote.customer_notes = request.POST.get('customer_notes')
-        creditnote.subtotal = request.POST.get('subtotal')
-        creditnote.igst = request.POST.get('igst')
-        creditnote.cgst = request.POST.get('cgst')
-        creditnote.sgst = request.POST.get('sgst')
-        creditnote.total_tax = request.POST.get('total_tax')
-        creditnote.shipping_charge = request.POST.get('shipping_charge')
-        creditnote.total = request.POST.get('total')
-        creditnote.terms_and_conditions = request.POST.get('terms_and_conditions')
-
-        # Update and save the credit note
-        creditnote.save()
-
-        # Handle updating credit items (you need to implement this)
-
-        return redirect('creditnote_view', creditnote_id=creditnote.id)
-
-    # Make sure to return an HttpResponse here for GET requests
-    return HttpResponse("edit_creditnote")  # You can replace this with your actual GET response
 
 
 def file_download1(request,aid):
@@ -9914,4 +9923,38 @@ def purchase_item_dropdown1(request):
 
 
     return JsonResponse(options)
-           
+
+def fetch_customers_from_creditnotes(request):
+    # Retrieve all CreditNote objects
+    creditnotes = Creditnote.objects.all()
+
+    # Initialize an empty list to store customer data
+    customer_data = []
+
+    # Iterate through credit notes and get associated customers
+    for creditnote in creditnotes:
+        customer = creditnote.customer  # Assuming there's a ForeignKey from CreditNote to Customer
+        if customer:
+            customer_data.append({
+                'customerName': customer.customerName,
+                'creditNoteNumber': creditnote.credit_note,
+                'amount': creditnote.total,  # Assuming you want to display the total amount
+            })
+
+    # Return the customer data as JSON response
+    return JsonResponse(customer_data, safe=False)
+
+def delete_creditnote(request, pk):
+    
+    creditnote = get_object_or_404(Creditnote, pk=pk)
+
+    
+    creditnote_items = Credititem.objects.filter(creditnote=creditnote)
+
+   
+    creditnote_items.delete()
+
+    creditnote.delete()
+
+    
+    return redirect('creditnotes')

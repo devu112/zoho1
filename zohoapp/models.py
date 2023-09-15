@@ -1059,7 +1059,7 @@ class customer_comments_table(models.Model):
 
 class Creditnote(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE,null=True,default='')
-    customer = models.ForeignKey(customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(customer, on_delete=models.CASCADE, null=True)
     invoice_number = models.CharField(max_length=255)
     credit_note = models.CharField(max_length=255)
     reference = models.CharField(max_length=255, blank=True, null=True)
@@ -1074,6 +1074,8 @@ class Creditnote(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     terms_and_conditions = models.TextField()
     attached_file = models.FileField(upload_to='image/', null=True, blank=True)
+    shipping_charge = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    adjustment = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     
 class Credititem(models.Model):
     creditnote=models.ForeignKey(Creditnote,on_delete=models.CASCADE,null=True,default='')

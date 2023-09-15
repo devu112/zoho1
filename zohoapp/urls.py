@@ -466,8 +466,10 @@ urlpatterns = [
     path(' purchase_item_dropdown1',views. purchase_item_dropdown1,name='purchase_item_dropdown1'),
     path('file_download1',views.file_download1,name='file_download1'),
     path('deletefile1',views.deletefile1,name='deletefile1'),
-    path('editdb/<int:creditnote_id>/', views.editdb, name='editdb'),
-    path('edit_creditnote/<int:creditnote_id>/', views.edit_creditnote, name='edit_creditnote'),
+    path('editdb/<int:pk>', views.editdb, name='editdb'),
+    path('edit_creditnote/<int:pk>', views.edit_creditnote, name='edit_creditnote'),
+    path('fetch_customers_from_creditnotes/', views.fetch_customers_from_creditnotes, name='fetch_customers_from_creditnotes'),
+    path('delete_creditnote/<int:pk>/', views.delete_creditnote, name='delete_creditnote')
     
    
     

@@ -6,8 +6,15 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <link href='https://unpkg.com/css.gg@2.0.0/icons/css/trash.css' rel='stylesheet'>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+
 <script src="https://cdn.jsdelivr.net/bootstrap.datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
 <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
+
+
 
 
 
@@ -192,20 +199,25 @@
             <div class="row">
                 <div class=" col-md-3">
 
-                    <!-- <div class="d-flex"> -->
+                    <div class="d-flex">
                     <input type="text" name="usr_in" id="search" class="form-control text-dark bg-light"
                         placeholder="search here..."  autocomplete="off" oninput="searchTable()" >
-                    <!-- </div> -->
-                    <div class="btn-group mt-5 ">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdownMenu"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Sort By
-                        </button>
+                    </div>
+                    <div class="btn-group mt-5">
+                        <a class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" type="button" id="sortDropdownMenuButton">
+                            <i class="fas fa-sort-amount-up"></i> Sort
+                        </a>
+                        
+                        
                         <div class="dropdown-menu" aria-labelledby="sortDropdownMenu">
-                            <a class="dropdown-item" href="#" onclick="sortTable('creditnote_number')">Creditnote No</a>
-                            <a class="dropdown-item" href="#" onclick="sortTable('customer_bill')">Customer Bill</a>
+                            <a class="dropdown-item" href="#" onclick="sortTable(3)">Creditnote No</a>
+                            <a class="dropdown-item" href="#" onclick="sortTable(4)">Amount</a>
                         </div>
                     </div>
+                    
+                   
+                    
+                    
                     
 
 
@@ -263,7 +275,10 @@
                             <td>{{ note.invoice_number }}</td>
                             <td>{{ note.total }}</td>
                             <td>
-                                
+                                <!-- Add the delete icon and a link/button for delete action -->
+                                <a href="{% url 'delete_creditnote' pk=note.id  %}" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -372,7 +387,8 @@ function searchTable() {
 
 
 /////////////////////////sorttttt////////////////////////////////////////////
-function sortTable(column) {
+function sortTable(columnIndex) {
+    console.log('Sorting table by column index:', columnIndex);
         var table, rows, switching, i, x, y, shouldSwitch;
         table = document.getElementById("table");
         switching = true;
@@ -383,11 +399,11 @@ function sortTable(column) {
             
             for (i = 1; i < (rows.length - 1); i++) {
                 shouldSwitch = false;
-                x = rows[i].getElementsByTagName("td")[column];
-                y = rows[i + 1].getElementsByTagName("td")[column];
+                x = parseFloat(rows[i].getElementsByTagName("td")[columnIndex].innerText); // Parse as a float
+                y = parseFloat(rows[i + 1].getElementsByTagName("td")[columnIndex].innerText); // Parse as a float
                 
                 // Check if it should switch to ascending order
-                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                if (x > y) {
                     shouldSwitch = true;
                     break;
                 }
