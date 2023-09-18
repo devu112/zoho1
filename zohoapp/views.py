@@ -9958,3 +9958,38 @@ def delete_creditnote(request, pk):
 
     
     return redirect('creditnotes')
+
+
+
+
+def add_comment_creditnotes(request, creditnote_id):
+    creditnote = get_object_or_404(Creditnote, pk=creditnote_id)
+
+    if request.method == 'POST':
+        comment_text = request.POST.get('comment')
+        user = request.user  # Assuming you're using Django's authentication
+
+        # Create a new comment instance and save it
+        comment = creditnote_comments(user=user, creditnote=creditnote, comment=comment_text)
+        comment.save()
+
+    return redirect('creditnote_view', creditnote_id=creditnote_id)
+
+
+def creditnote_add_file(request, pk):
+    creditnote = get_object_or_404(Creditnote, user=request.user, pk=pk)
+
+    if request.method == 'POST':
+        uploaded_file = request.FILES.get('file')
+
+        if uploaded_file:
+           
+            creditnote_doc_upload = Creditnote_doc_upload(
+                user=request.user,
+                creditnote=creditnote,
+                title="Attachment",  # Set an appropriate title
+                document=uploaded_file
+            )
+            creditnote_doc_upload.save()
+
+    return redirect('creditnote_view', pk=pk)    

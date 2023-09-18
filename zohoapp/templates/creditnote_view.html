@@ -431,7 +431,7 @@
                             data-toggle="modal" data-target="#cmnts"> </a>
                     </div>
 
-                    <div class="mx-4">
+                    <div class="mx-1">
                         
                         <a href="{% url 'edit_creditnote' pk=creditnote.pk %}" class=" fa fa-pencil btns px-2 py-2"
                               data-toggle="tooltip" title="EDIT"> </a>
@@ -466,6 +466,7 @@
                     </div>
 
                 </div>
+    
 
                 <div class="tab">
                     <a class="tablinks mx-2 btns px-2 py-2" onclick="openTab(event, 'Template')" role="button"><i
@@ -792,34 +793,28 @@
 
     <!-- comment modal -->
 
-    <div class="modal fade " id="cmnts"
-        style="width: 750px; margin-left: 350px; justify-content: center; overflow: hidden;">
+    <div class="modal fade" id="cmnts" style="width: 750px; margin-left: 350px; justify-content: center; overflow: hidden;">
         <div class="modal-dialog modal-xl m-5 p-5">
-            <div class="modal-content" style="background: rgb(32, 35, 37);border-radius: 20px;">
-                <div class="modal-header " style="background: rgb(32, 35, 37);">
+            <div class="modal-content" style="background: rgb(32, 35, 37); border-radius: 20px;">
+                <div class="modal-header" style="background: rgb(32, 35, 37);">
                     <h5 class="m-3 text-uppercase text-light">Enter Comment</h5>
-                    <button type="button" class="close text-dark bg-none" data-dismiss="modal"
-                        aria-label="Close">&times;</button>
-
+                    <button type="button" class="close text-dark bg-none" data-dismiss="modal" aria-label="Close">&times;</button>
                 </div>
                 <div class="modal-body" style="background: rgb(32, 35, 37); justify-content: center; overflow: hidden;">
                     <div class="card p-0 m-0">
-                        <form action="" method="post"  id="modalComment">
+                        <form action="{% url 'add_comment_creditnotes' creditnote.id %}" method="post" id="modalComment">
                             {% csrf_token %}
+                            <input type="hidden" value="" id="com_id">
                             <div class="row mt-2">
-                                <input type="hidden" value="" id="com_id">
                                 <div class="col-md-6 mt-2">
-                                    <textarea class="form-control text-dark bg-light" id="comment1" name="comment" required
-                                        style="height: 200px; width: 550px;"/></textarea>
-                                  
+                                    <textarea class="form-control text-dark bg-light" id="comment1" name="comment" required style="height: 200px; width: 550px;"></textarea>
                                 </div>
                             </div>
-                        
                             <div class="row mt-5">
                                 <div class="col-md-4"></div>
                                 <div class="col-md-4">
                                     <div class="d-flex">
-                                        <button  type="submit" class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"  id="commentSave">Save</button>
+                                        <button type="submit" class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3" id="commentSave">Save</button>
                                         <button type="button" class="close btn save_btn rounded-pill text-grey w-50 my-4" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">Cancel</span>
                                         </button>
@@ -827,35 +822,13 @@
                                 </div>
                                 <div class="col-md-4"></div>
                             </div>
-
-
-                            <div class="container-fluid">
-                                <div class="comments">
-                                    {% for com in comments %} {# Use 'comments' instead of 'comment' #}
-                                        <div class="comment">
-                                            <div class="user-info">
-                                                <p class="text-uppercase">Profile name:{{ com.profile_name }}</p> {# Display the user's profile name #}
-                                            </div>
-                                            <div class="comment-content">
-                                                <p class="text-uppercase">{{ com.comment }}</p>
-                                            </div>
-                                            <div class="comment-actions">
-                                                <a href="" class="btn btn-danger btn-sm">Delete</a>
-                                                <!-- Add other comment actions like Reply, Like, etc. -->
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            
-                            
                         </form>
-                        
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
 
     <!-- attach file modal -->
 
@@ -869,12 +842,10 @@
                 </div>
                 <div class="modal-body" style="background: rgb(32, 35, 37); justify-content: center; overflow: hidden;">
                     <div class="card p-0 m-0">
-                        <form action="" id="modalAddfile">
-                            <div class="row mt-2 mx-5 text-center">
-                                <input type="hidden" value="{{recur_bill.id}}" id="file_id">
-                                <input type="file" class="form-control text-dark bg-light" name="file" id="filess" style="width: 400px;">
-
-                            </div>
+                        
+                            <form action="{% url 'creditnote_add_file' pk=creditnote.id %}" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="file" name="file" accept="image/*" required>
 
                             <div class="row mt-5">
                                 <div class="col-md-4"></div>

@@ -454,7 +454,7 @@ urlpatterns = [
     path('cust_comments/<int:id>', views.cust_comments, name='cust_comments'),
     path('cust_Attach_files/<int:id>', views.cust_Attach_files, name='cust_Attach_files'),
 
-
+#################################DEVIKA##########################################################
 
     path('creditnotes',views.creditnotes,name='creditnotes'),
     path('newcredit',views.newcredit,name='newcredit'),
@@ -469,7 +469,9 @@ urlpatterns = [
     path('editdb/<int:pk>', views.editdb, name='editdb'),
     path('edit_creditnote/<int:pk>', views.edit_creditnote, name='edit_creditnote'),
     path('fetch_customers_from_creditnotes/', views.fetch_customers_from_creditnotes, name='fetch_customers_from_creditnotes'),
-    path('delete_creditnote/<int:pk>/', views.delete_creditnote, name='delete_creditnote')
+    path('delete_creditnote/<int:pk>/', views.delete_creditnote, name='delete_creditnote'),
+    path('add_comment_creditnotes/<int:creditnote_id>',views.add_comment_creditnotes,name='add_comment_creditnotes'),
+    path('creditnote_add_file/<int:pk>',views.creditnote_add_file,name = "creditnote_add_file"),
     
    
     

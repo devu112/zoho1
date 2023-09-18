@@ -1086,3 +1086,15 @@ class Credititem(models.Model):
     tax = models.DecimalField(max_digits=5, decimal_places=2)
     discount = models.DecimalField(max_digits=5, decimal_places=2)
     amount = models.DecimalField(max_digits=10, decimal_places=2)    
+
+
+class creditnote_comments(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE,null=True,default='')
+    creditnote=models.ForeignKey(Creditnote,on_delete=models.CASCADE,null=True)
+    comment=models.TextField(max_length=500)  
+
+class Creditnote_doc_upload(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE,null=True,default='')
+    creditnote=models.ForeignKey(Creditnote,on_delete=models.CASCADE,null=True)
+    title=models.TextField(max_length=200)
+    document=models.FileField(upload_to='image/')
