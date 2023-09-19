@@ -270,7 +270,7 @@
 
 
                             <td><a href="{% url 'creditnote_view' note.id %}">{{ note.creditnote_date }}</a></td>
-                            <td>{{ note.customer.customerName }}</td>
+                            <td><a href="{% url 'creditnote_view' note.id %}">{{ note.customer.customerName }}</a></td>
                             <td>{{ note.customer.customerEmail }}</td>
                             <td>{{ note.invoice_number }}</td>
                             <td>{{ note.total }}</td>

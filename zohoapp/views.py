@@ -9693,8 +9693,9 @@ def creditnote_view(request,creditnote_id):
     creditnote = get_object_or_404(Creditnote, id=creditnote_id)
     credititems = Credititem.objects.filter(creditnote=creditnote)
     creditnote_customers = customer.objects.filter(creditnote=creditnote)
+    creditnotes = Creditnote.objects.all()  # Fetch all Creditnote objects
     print(creditnote)
-    return render(request,'creditnote_view.html',{'company':company, 'cust': creditnote_customers,'creditnote':creditnote,'cust':cust ,'credititems': credititems,'item':item})    
+    return render(request,'creditnote_view.html',{'company':company, 'cust': creditnote_customers,'creditnote':creditnote,'cust':cust ,'credititems': credititems,'item':item,'creditnotes': creditnotes})    
 
 def add_creditnotes(request):
     if request.method == 'POST':
