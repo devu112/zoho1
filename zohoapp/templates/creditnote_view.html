@@ -587,7 +587,7 @@
                     </table>
                 </section>
 
-                {% comment %} <section class="balance-info p-5">
+                <section class="balance-info p-5">
                     <div class="row">
                         <div class="col-8 btn-group">
                             <!-- <p class="m-0 font-weight-bold" style="color: black;"> Note: </p>
@@ -597,42 +597,35 @@
                             <table class="table border-0 table-hover">
                                 <tr>
                                     <td style="font-weight:bold">Sub Total :</td>
-                                    <td style="font-weight:bold">{{recur_bill.sub_total|floatformat:2}}</td>
+                                    <td style="font-weight:bold">{{ creditnote.subtotal|floatformat:2 }}</td>
                                 </tr>
-                                {% if recur_bill.igst != "" %}
                                 <tr>
                                     <td style="font-weight:bold">IGST :</td>
-                                    <td style="font-weight:bold">{% if recur_bill.igst == None %} 0 {% else %} {{recur_bill.igst|floatformat:2}} {% endif %}</td>
+                                    <td style="font-weight:bold">{{ creditnote.igst|floatformat:2 }}</td>
                                 </tr>
-                                {% endif %}
-                                {% if recur_bill.cgst != "" %}
                                 <tr>
                                     <td style="font-weight:bold">CGST :</td>
-                                    <td style="font-weight:bold">{% if recur_bill.cgst == None %} 0 {% else %} {{recur_bill.cgst|floatformat:2}} {% endif %}</td>
+                                    <td style="font-weight:bold">{{ creditnote.cgst|floatformat:2 }}</td>
                                 </tr>
-                                {% endif %}
-                                {% if recur_bill.sgst != "" %}
                                 <tr>
                                     <td style="font-weight:bold">SGST:</td>
-                                    <td style="font-weight:bold">{% if recur_bill.sgst == None %} 0 {% else %} {{recur_bill.sgst|floatformat:2}} {% endif %}</td>
+                                    <td style="font-weight:bold">{{ creditnote.sgst|floatformat:2 }}</td>
                                 </tr>
-                                {% endif %}
-                                {% if recur_bill.shipping_charge != "" %}
                                 <tr>
                                     <td style="font-weight:bold">Shipping Charge:</td>
-                                    <td style="font-weight:bold">{{recur_bill.shipping_charge|floatformat:2}}</td>
+                                    <td style="font-weight:bold">{{ creditnote.shipping_charge|floatformat:2 }}</td>
                                 </tr>
-                                {% endif %}
-                                <tfoot>
-                                    <tr>
+                                <tr>
+                                    <tfoot>
                                         <td style="font-weight:bold">Total:</td>
-                                        <td style="font-weight:bold ;">{{recur_bill.grand_total|floatformat:2}}</td>
-                                    </tr>
-                                </tfoot>
+                                        <td style="font-weight:bold;">{{ creditnote.total|floatformat:2 }}</td>
+                                    </tfoot>
+                                </tr>
+                               
                             </table>
                         </div>
                     </div>
-                </section> {% endcomment %}
+                </section> 
 
             </div>
 

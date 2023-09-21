@@ -472,7 +472,8 @@ urlpatterns = [
     path('delete_creditnote/<int:pk>/', views.delete_creditnote, name='delete_creditnote'),
     path('add_comment_creditnotes/<int:creditnote_id>',views.add_comment_creditnotes,name='add_comment_creditnotes'),
     path('creditnote_add_file/<int:pk>',views.creditnote_add_file,name = "creditnote_add_file"),
-    
+    path('credit_customer',views.credit_customer,name='credit_customer'),
+    path('customer_dropdown_credit',views.customer_dropdown_credit,name='customer_dropdown_credit'),
    
     
     # re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
