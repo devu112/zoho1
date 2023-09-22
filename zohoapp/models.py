@@ -1056,7 +1056,7 @@ class customer_comments_table(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE,null=True,default='')
     customr=models.ForeignKey(customer,on_delete=models.CASCADE,null=True)
     comment=models.TextField(max_length=500) 
-
+# #######################################devika############################################
 class Creditnote(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE,null=True,default='')
     customer = models.ForeignKey(customer, on_delete=models.CASCADE, null=True)
@@ -1076,6 +1076,7 @@ class Creditnote(models.Model):
     attached_file = models.FileField(upload_to='image/', null=True, blank=True)
     shipping_charge = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     adjustment = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    active = models.BooleanField(default=True)
     
 class Credititem(models.Model):
     creditnote=models.ForeignKey(Creditnote,on_delete=models.CASCADE,null=True,default='')

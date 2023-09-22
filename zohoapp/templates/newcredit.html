@@ -118,10 +118,8 @@
             
             {% for cust in c %}
             <option value="{{cust.id}}" data-email="{{ cust.customerEmail }}" data-gst="{{ cust.GSTTreatment }}, GSTNO: {{cust.GSTIN}}" data-pos="{{cust.placeofsupply}}" data-billing_address="{{ cust.Address1 }} ,
-            {{cust.city}} , 
-            {{cust.state}} ,
-            {{cust.zipcode}},
-            {{cust.fax}}"9 id="crt_cust">{{cust.customerName}}</option>
+            {{cust.state}}
+            "9 id="crt_cust">{{cust.customerName}}</option>
             {% endfor %}
          
           </select>
@@ -160,7 +158,7 @@
           <label for="billing_address">Billing Address</label>
         </div>
         <div class="col-md-6">
-          <textarea class="form-control bg-light text-dark" id="billing_address_input" name="billing_address" rows="2" style="height: 100px;"  disabled></textarea>
+          <input type="text" class="form-control bg-light text-dark" id="billing_address_input" name="billing_address" rows="2" style="height: 100px;"  disabled>
         </div>
       </div>
       

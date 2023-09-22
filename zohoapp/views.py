@@ -9735,7 +9735,8 @@ def add_creditnotes(request):
             total=total,
             terms_and_conditions=terms_and_conditions,
             attached_file=attached_file,
-            adjustment=adjustment
+            adjustment=adjustment,
+            active=True
             # Assign values to other fields
         )
         credit_note_instance.save()
@@ -10055,3 +10056,22 @@ def customer_dropdown_credit(request):
         options[option.id] = [option.id , option.customerName]
 
     return JsonResponse(options)
+
+
+def update_creditnote_status(request, creditnote_id):
+    try:
+        # Get the Creditnote object by ID
+        creditnote = get_object_or_404(Creditnote, id=creditnote_id)
+
+        # Update the status
+        creditnote.active = not creditnote.active
+        creditnote.save()
+
+        # Determine the new status
+        new_status = "Active" if creditnote.active else "Inactive"
+
+        return JsonResponse({"success": True, "newStatus": new_status})
+
+    except Exception as e:
+        print(str(e))
+        return JsonResponse({"success": False})

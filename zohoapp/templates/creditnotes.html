@@ -197,52 +197,46 @@
     <div class="card radius-15 mb-5">
         <div class="card-body">
             <div class="row">
-                <div class=" col-md-3">
-
-                    <div class="d-flex">
-                    <input type="text" name="usr_in" id="search" class="form-control text-dark bg-light"
-                        placeholder="search here..."  autocomplete="off" oninput="searchTable()" >
-                    </div>
-                    <div class="btn-group mt-5">
-                        <a class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" type="button" id="sortDropdownMenuButton">
-                            <i class="fas fa-sort-amount-up"></i> Sort
-                        </a>
-                        
-                        
-                        <div class="dropdown-menu" aria-labelledby="sortDropdownMenu">
-                            <a class="dropdown-item" href="#" onclick="sortTable(3)">Creditnote No</a>
-                            <a class="dropdown-item" href="#" onclick="sortTable(4)">Amount</a>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <input type="text" name="usr_in" id="search" class="form-control text-dark bg-light"
+                            placeholder="Search here..." autocomplete="off" oninput="searchTable()">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-sort-amount-up"></i> Sort
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="sortDropdownMenu">
+                                <a class="dropdown-item" href="#" onclick="sortTable(3)">Creditnote No</a>
+                                <a class="dropdown-item" href="#" onclick="sortTable(4)">Amount</a>
+                            </div>
                         </div>
                     </div>
-                    
-                   
-                    
-                    
-                    
-
-
                 </div>
-                <div class="col-md-6"></div>
+                <div class="col-md-5"></div>
                 <div class="col-md-3">
-                    <a class="btn  btn-outline-warning text-center px-3 py-2 " data-bs-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false" role="button"><i class="fa fa-filter mx-3"></i>
+                    <a class="btn  btn-outline-warning text-center px-3 py-2" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false" role="button">
+                        <i class="fa fa-filter mx-3"></i>
                     </a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="#" onclick="filterTable('all')">All</a>
-                        <a class="dropdown-item" href="#" onclick="filterTable('customer_name_a_z')">Customer Name A-Z</a>
-                        <a class="dropdown-item" href="#" onclick="filterTable('credit_note_number_a_z')">Creditnote No A-Z</a>
+                        <a class="dropdown-item" href="#" onclick="filterTable('active')">Active</a>
+                        <a class="dropdown-item" href="#" onclick="filterTable('inactive')">Inactive</a>
                     </div>
+                    
                     <a href="{% url 'newcredit' %}" class="btn fa fa-plus text-right px-3 py-2" role="button">
                         <span class="mt-2">&nbsp;&nbsp;NEW</span>
                     </a>
                 </div>
-                
             </div>
+        </div>
+    </div>
+    
             <hr>
             <div class="container-fluid">
                 <table class="table  text-white" id="table">
                     <thead>
-                        <tr>
+                        <tr >
 
                             <th>Date</th>
                             <th>Customer Name</th>
@@ -264,7 +258,7 @@
 
                         {% for note in credit_notes %}
                       
-                        <tr>
+                        <tr data-creditnote-status="{{ note.active|lower }}">
                             
 
 
@@ -333,34 +327,31 @@
 
 <script>
    ////////////////////////////filteerrrrrrrrrrrr/////////////////////////////
-    function filterTable(filterOption) {
-        var table = document.getElementById("table");
-        var rows = table.getElementsByTagName("tr");
+   function filterTable(filterOption) {
+    var table = document.getElementById("table");
+    var rows = table.getElementsByTagName("tr");
+    console.log("Filter option selected:", filterOption);
 
-        var dataRows = [];
+    for (var i = 1; i < rows.length; i++) { // Start from 1 to skip the table header row
+        var isActive = rows[i].getAttribute("data-creditnote-status");
+        console.log("Row " + i + " isActive:", isActive);
 
-        for (var i = 1; i < rows.length; i++) { // Start from 1 to skip the table header row
-            var customerName = rows[i].getElementsByTagName("td")[1].innerText.toLowerCase();
-            var creditNoteNumber = rows[i].getElementsByTagName("td")[3].innerText.toLowerCase();
-            dataRows.push({ row: rows[i], customerName: customerName, creditNoteNumber: creditNoteNumber });
+        // Check if the row should be displayed or hidden based on the filter option
+        if (
+            (filterOption === 'all') ||
+            (filterOption === 'active' && isActive === 'Active') ||
+            (filterOption === 'inactive' && isActive === 'Inactive')
+        ) {
+            rows[i].style.display = ""; // Display the row
+        } else {
+            rows[i].style.display = "none"; // Hide the row
         }
-
-        // Sort data rows based on the filter option
-        dataRows.sort(function (a, b) {
-            if (filterOption === 'customer_name_a_z') {
-                return a.customerName.localeCompare(b.customerName);
-            } else if (filterOption === 'credit_note_number_a_z') {
-                return a.creditNoteNumber.localeCompare(b.creditNoteNumber);
-            } else {
-                return 0; // No sorting for "All"
-            }
-        });
-
-        // Reorder the table rows based on the sorted data
-        for (var i = 0; i < dataRows.length; i++) {
-            table.tBodies[0].appendChild(dataRows[i].row);
-        }
+        console.log("Row " + i + " style.display:", rows[i].style.display);
     }
+    console.log("Filtering complete.");
+}
+
+
 
 /////////////////searchhhhhhhhhhhhh////////////////////////////////
 

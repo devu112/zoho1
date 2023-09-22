@@ -474,6 +474,8 @@ urlpatterns = [
     path('creditnote_add_file/<int:pk>',views.creditnote_add_file,name = "creditnote_add_file"),
     path('credit_customer',views.credit_customer,name='credit_customer'),
     path('customer_dropdown_credit',views.customer_dropdown_credit,name='customer_dropdown_credit'),
+    path('update_creditnote_status/<int:creditnote_id>/', views.update_creditnote_status, name='update_creditnote_status'),
+
    
     
     # re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
