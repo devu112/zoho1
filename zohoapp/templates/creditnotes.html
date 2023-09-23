@@ -201,11 +201,12 @@
                     <div class="input-group">
                         <input type="text" name="usr_in" id="search" class="form-control text-dark bg-light"
                             placeholder="Search here..." autocomplete="off" oninput="searchTable()">
-                        <div class="input-group-append">
+                        <div class="input-group-append">.
                             <button class="btn btn-outline-secondary" type="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-sort-amount-up"></i> Sort
                             </button>
                             <div class="dropdown-menu" aria-labelledby="sortDropdownMenu">
+                                <a class="dropdown-item" href="#" onclick="sortTable(2)">All</a>
                                 <a class="dropdown-item" href="#" onclick="sortTable(3)">Creditnote No</a>
                                 <a class="dropdown-item" href="#" onclick="sortTable(4)">Amount</a>
                             </div>
@@ -328,28 +329,29 @@
 <script>
    ////////////////////////////filteerrrrrrrrrrrr/////////////////////////////
    function filterTable(filterOption) {
-    var table = document.getElementById("table");
-    var rows = table.getElementsByTagName("tr");
-    console.log("Filter option selected:", filterOption);
+  var table = document.getElementById("table");
+  var rows = table.getElementsByTagName("tr");
+  console.log("Filter option selected:", filterOption);
 
-    for (var i = 1; i < rows.length; i++) { // Start from 1 to skip the table header row
-        var isActive = rows[i].getAttribute("data-creditnote-status");
-        console.log("Row " + i + " isActive:", isActive);
+  for (var i = 1; i < rows.length; i++) { // Start from 1 to skip the table header row
+    var isActive = rows[i].dataset.creditnoteStatus;
+    console.log("Row " + i + " isActive:", isActive);
 
-        // Check if the row should be displayed or hidden based on the filter option
-        if (
-            (filterOption === 'all') ||
-            (filterOption === 'active' && isActive === 'Active') ||
-            (filterOption === 'inactive' && isActive === 'Inactive')
-        ) {
-            rows[i].style.display = ""; // Display the row
-        } else {
-            rows[i].style.display = "none"; // Hide the row
-        }
-        console.log("Row " + i + " style.display:", rows[i].style.display);
+    // Check if the row should be displayed or hidden based on the filter option
+    if (
+      (filterOption === 'all') ||
+      (filterOption === 'active' && isActive === 'true') ||
+      (filterOption === 'inactive' && isActive === 'false')
+    ) {
+      rows[i].style.display = ""; // Display the row
+    } else {
+      rows[i].style.display = "none"; // Hide the row
     }
-    console.log("Filtering complete.");
+  }
+
+  console.log("Filtering complete.");
 }
+
 
 
 
@@ -378,35 +380,55 @@ function searchTable() {
 
 
 /////////////////////////sorttttt////////////////////////////////////////////
-function sortTable(columnIndex) {
-    console.log('Sorting table by column index:', columnIndex);
-        var table, rows, switching, i, x, y, shouldSwitch;
-        table = document.getElementById("table");
-        switching = true;
-        
-        while (switching) {
-            switching = false;
-            rows = table.rows;
-            
-            for (i = 1; i < (rows.length - 1); i++) {
-                shouldSwitch = false;
-                x = parseFloat(rows[i].getElementsByTagName("td")[columnIndex].innerText); // Parse as a float
-                y = parseFloat(rows[i + 1].getElementsByTagName("td")[columnIndex].innerText); // Parse as a float
-                
-                // Check if it should switch to ascending order
-                if (x > y) {
-                    shouldSwitch = true;
-                    break;
-                }
-            }
-            
-            if (shouldSwitch) {
-                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                switching = true;
-            }
-        }
-    }
+function searchTable() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("search");
+    filter = input.value.toLowerCase();
+    table = document.getElementById("table");
+    tr = table.getElementsByTagName("tr");
 
+    for (i = 1; i < tr.length; i++) { // Start from 1 to skip the table header row
+      td = tr[i].getElementsByTagName("td")[1]; // Assuming you want to search by customer name (change [1] as needed)
+      if (td) {
+        txtValue = td.innerText.toLowerCase();
+        if (txtValue.indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  }
+
+  /////////////////////////sorttttt////////////////////////////////////////////
+  function sortTable(columnIndex) {
+    console.log('Sorting table by column index:', columnIndex);
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("table");
+    switching = true;
+
+    while (switching) {
+      switching = false;
+      rows = table.rows;
+
+      for (i = 1; i < (rows.length - 1); i++) {
+        shouldSwitch = false;
+        x = rows[i].getElementsByTagName("td")[columnIndex].textContent.trim(); // Use textContent
+        y = rows[i + 1].getElementsByTagName("td")[columnIndex].textContent.trim(); // Use textContent
+
+        // Check if it should switch to ascending order
+        if (x.localeCompare(y) > 0) { // Use localeCompare for string comparison
+          shouldSwitch = true;
+          break;
+        }
+      }
+
+      if (shouldSwitch) {
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
+    }
+  }
 
 
 

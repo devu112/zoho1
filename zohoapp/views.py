@@ -10046,16 +10046,21 @@ def credit_customer(request):
                         state=state, PaymentTerms=payment,zipcode=pincode,country=country,  fax = fax,  phone1 = phone,user = u)
         cust.save()
 
-        return HttpResponse({"message": "success"})
+        
+        response_data = {
+            "customer_name": cust.customerName,
+            "customer_id": cust.id
+        }
+
+        # Return the JSON response
+        return JsonResponse(response_data)
+
+
 def customer_dropdown_credit(request):
-    user = User.objects.get(id=request.user.id)
+    customers = customer.objects.all()
+    customer_names = [{'id': c.id, 'name':c.customerName} for c in customers]
+    return JsonResponse(customer_names, safe=False)
 
-    options = {}
-    option_objects = customer.objects.filter(user = user)
-    for option in option_objects:
-        options[option.id] = [option.id , option.customerName]
-
-    return JsonResponse(options)
 
 
 def update_creditnote_status(request, creditnote_id):

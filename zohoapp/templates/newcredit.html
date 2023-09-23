@@ -1793,168 +1793,110 @@ $(document).on("click", "#payment", function() {
   });
 });
 
+
+
 //------customer create 
+$(document).on("click", "#customersave", function () {
+  if ($('input[name="radioCust"]:checked').val() == 'Business') {
+    itemtype = $('#business').val();
+  } else {
+    itemtype = $('#individual').val();
+  }
 
-//------customer create 
-          
-          $(document).on("click","#customersave",function(){
-            if ($('input[name="radioCust"]:checked').val() == 'Business'){
-          
-              itemtype = $('#business').val();
-            }
-            else{
-              itemtype = $('#individual').val();
-            }
-          
-            if ($('input[name="radioOption2"]:checked').val() == 'Taxable'){
-              inte = $('#item-tax3').val();
-              
-            }
-            else{
-              inte = $('#item-tax4').val();
-            }
-          
-          
-            $.ajax({
-              
-              type : 'POST',
-              url:"{% url 'credit_customer' %}",
-          
-              data:{
-                  tax:inte,
-                  itemtype:itemtype,
-                  title : $("#ctitle").val(),
-                  firstname : $("#cfname").val(),
-                  lastname : $("#clname").val(),
-                  company_name : $("#ccompany").val(),
-                  display_name : $('#cdisplayname').text(),
-                  email : $("#cemail").val(),
-                  website :$("#cwsite").val(),
-                  work_mobile :$("#cw_mobile").val(),
-                  pers_mobile :$("#cp_mobile").val(),
-                  skype :$("#cskype").val(),
-                  facebook :$("#facebook").val(),
-                  twitter :$("#twitter").val(),
-                  desg :$("#c_desg").val(),
-                  dpt :$("#c_dpt").val(),
-                  gsttype :$("#c_gsttype").val(),
-                  gstin :$("#c_gstin").val(),
-                  panno : $("#c_pan").val(),
-                  placesupply :$("#placesupply").val(),
-                  currency : $("#c_curn").val(),
-                  openingbalance : $("#c_open").val(),
-                  paymentterms : $("#c_terms").val(),
-                  street : $("#cstreet").val(),
-                  city : $("#ccity").val(),
-                  state : $("#cstate").val(),
-                  pincode : $("#cpincode").val(),
-                  fax : $("#cfax").val(),
-                  phone : $("#cphone").val(),
-                  country : $("#ccountry").val(),
-                  shipstreet : $("csstreet").val(),
-                  shipcity : $("#cscity").val(),
-                  shipstate : $("#csstate").val(),
-                  shippincode : $("#cspincode").val(),
-                  shipcountry : $("#cscountry").val(),
-                  shipfax : $("#csfax").val(),
-                  shipphone : $("#csphone").val(),
-                  radioCust: $("input[name='radioCust']:checked").val(),
-                  csrfmiddlewaretoken: '{{ csrf_token }}',
-                },
-                
-                success: function(response) {
-    document.getElementById("modalCustomer").reset();
-    reloadcustomer(); // Call the reloadcustomer function to update the dropdown
+  if ($('input[name="radioOption2"]:checked').val() == 'Taxable') {
+    inte = $('#item-tax3').val();
+  } else {
+    inte = $('#item-tax4').val();
+  }
 
+  $.ajax({
+    type: 'POST',
+    url: "{% url 'credit_customer' %}",
+    data: {
+      tax: inte,
+      itemtype: itemtype,
+     
+      display_name: $('#cdisplayname').text(),
+      email: $("#cemail").val(),
+      website: $("#cwsite").val(),
+      work_mobile: $("#cw_mobile").val(),
+      pers_mobile: $("#cp_mobile").val(),
+      skype: $("#cskype").val(),
+      facebook: $("#facebook").val(),
+      twitter: $("#twitter").val(),
+      desg: $("#c_desg").val(),
+      dpt: $("#c_dpt").val(),
+      gsttype: $("#c_gsttype").val(),
+      gstin: $("#c_gstin").val(),
+      panno: $("#c_pan").val(),
+      placesupply: $("#placesupply").val(),
+      currency: $("#c_curn").val(),
+      openingbalance: $("#c_open").val(),
+      paymentterms: $("#c_terms").val(),
+      street: $("#cstreet").val(),
+      city: $("#ccity").val(),
+      state: $("#cstate").val(),
+      pincode: $("#cpincode").val(),
+      fax: $("#cfax").val(),
+      phone: $("#cphone").val(),
+      country: $("#ccountry").val(),
+      shipstreet: $("csstreet").val(),
+      shipcity: $("#cscity").val(),
+      shipstate: $("#csstate").val(),
+      shippincode: $("#cspincode").val(),
+      shipcountry: $("#cscountry").val(),
+      shipfax: $("#csfax").val(),
+      shipphone: $("#csphone").val(),
+      radioCust: $("input[name='radioCust']:checked").val(),
+      csrfmiddlewaretoken: '{{ csrf_token }}',
+    },
+    success: function (response) {
+      console.log("Customer Save Success. Response:", response);
 
-                  
-                },
-            });        
-          });
-          
-          function reloadcustomer() {
-    $.ajax({
-        url: "{% url 'customer_dropdown_credit' %}",
-        type: "GET",
-        dataType: "json",
-        data: {}, // You can pass additional data if needed
-        success: function(data) {
-            var dropdown = $('#customer');
-            dropdown.empty();
-            $.each(data, function(key, value) {
-                dropdown.append($('<option></option>').attr('value', key).text(value[1]).val(value[0] + ' ' + value[1]));
-            });
-        },
-        error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-        }
-    });
-}
+      setTimeout(function () {
+  var dropdown = $('#customer');
+  var optionText = response.customer_name;
+  var optionValue = response.customer_id;
+
+  dropdown.append($('<option></option>').attr('value', optionValue).text(optionText).val(optionValue + ' ' + optionText));
+
+  // Select the newly added customer in the dropdown
+  dropdown.val(optionValue);
+
+  // Trigger the change event on the dropdown
+  dropdown.trigger('change');
+}, 100); // Delay for 100 milliseconds
 
 
-
-
-$(document).ready(function() {
-    $('#customer_sel').change(function() {
-
-        var name = $("#customer_sel").val();
-        var na = name.split(' ')[0];
-        var table = document.getElementById("item_table");
-        $.ajax({
-
-            url: "{% url 'get_customerdet' %}", 
-
-            data: { 
-                    id : na,
-                    csrfmiddlewaretoken: '{{ csrf_token }}' 
-                },
-
-            type : 'POST',
-
-            success: function(data) {
-
-              $("#cemail_row").removeClass('d-none');
-              $("#cemail_row").addClass('d-flex');
-              
-              
-              $('#customer_mail').val(' '+ data.customer_email);
-              $('#cus_place').val(data.cust_place_supply);
-              $('#customer_id').val(data.cust_id);
-              var x=document.getElementById("cus_place").value
-              
-              var y=document.getElementById("state").value
-                                if ( x == y )
-                                {
-                                   document.getElementById("item_table").style.display="block"
-                                   document.getElementById("item_tablee").style.display="none"
-                                   document.getElementById("label_tab1").style.display="block"
-                                   document.getElementById("label_tab2").style.display="none"
-                                   document.getElementById("add-row").style.display="block"
-                                   document.getElementById("add-roww").style.display="none"
-                                  
-
-
-                                    
-                        
-                                }
-                                else
-                                {
-                                   document.getElementById("item_table").style.display="none"
-                                   document.getElementById("item_tablee").style.display="block"
-                                   document.getElementById("label_tab1").style.display="none"
-                                   document.getElementById("label_tab2").style.display="block"
-                                   document.getElementById("add-row").style.display="none"
-                                   document.getElementById("add-roww").style.display="block"
-                                    
-                                    
-                                }
-                    
-              
-            }
-           
-        });
-    });
+      reloadcustomer();
+    },
+    error: function (xhr, status, error) {
+      console.error("Customer Save Error:", error);
+    },
+  });
 });
+
+
+// Function to reload the customer dropdown
+function reloadcustomer() {
+  $.ajax({
+    url: "{% url 'customer_dropdown_credit' %}",
+    type: "GET",
+    dataType: "json",
+    data: {}, // You can pass additional data if needed
+    success: function(data) {
+      var dropdown = $('#customer');
+      dropdown.empty();
+      $.each(data, function(index, customerData) {
+        // Append the option to the dropdown using the new JSON format
+        dropdown.append($('<option></option>').attr('value', customerData.id).text(customerData.name));
+      });
+    },
+    error: function(xhr, status, error) {
+      console.error(xhr.responseText);
+    },
+  });
+}
 
 
 

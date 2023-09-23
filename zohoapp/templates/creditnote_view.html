@@ -481,55 +481,65 @@
                 </div>
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
-                        const creditnoteButtons = document.querySelectorAll(".creditnote-toggle-button");
-                        console.log("Found buttons:", creditnoteButtons);
-                
-                        // Function to get CSRF token from cookies
-                        function getCookie(name) {
-                            const value = `; ${document.cookie}`;
-                            const parts = value.split(`; ${name}=`);
-                            if (parts.length === 2) return parts.pop().split(";").shift();
-                        }
-                
-                        creditnoteButtons.forEach(function (button) {
-                            console.log("Adding click listener to button:", button);
-                            button.addEventListener("click", function (event) {
-                                event.preventDefault();
-                                const creditnoteId = this.getAttribute("data-creditnote-id");
-                                console.log("Clicked on button with creditnoteId: ", creditnoteId);
-                
-                                // Get the CSRF token from the cookie
-                                const csrfToken = getCookie("csrftoken");
-                
-                                // Include the CSRF token in the fetch request
-                                const timestamp = new Date().getTime();
-                                fetch(`/update_creditnote_status/${creditnoteId}/?timestamp=${timestamp}`, {
-                                    method: "POST",
-                                    headers: {
-                                        "X-CSRFToken": csrfToken, // Include your CSRF token
-                                        "Content-Type": "application/json",
-                                    },
-                                })
-                                    .then((response) => response.json())
-                                    .then((data) => {
-                                        console.log("Response from server:", data);
-                                        if (data.success) {
-                                            // Toggle the status text
-                                            const statusElement = document.querySelector(`#status${creditnoteId}`);
-                                            statusElement.textContent = data.newStatus;
-                                        } else {
-                                            console.error("Failed to update status.");
-                                        }
-                                    })
-                                    .catch((error) => {
-                                        console.error(error);
-                                    });
+                      const creditnoteButtons = document.querySelectorAll(".creditnote-toggle-button");
+                      console.log("Found buttons:", creditnoteButtons);
+                    
+                      function getCookie(name) {
+                        const value = `; ${document.cookie}`;
+                        const parts = value.split(`; ${name}=`);
+                        if (parts.length === 2) return parts.pop().split(";").shift();
+                      }
+                    
+                      creditnoteButtons.forEach(function (button) {
+                        console.log("Adding click listener to button:", button);
+                    
+                        button.addEventListener("click", function (event) {
+                          event.preventDefault();
+                    
+                          const creditnoteId = this.getAttribute("data-creditnote-id");
+                          console.log("Clicked on button with creditnoteId: ", creditnoteId);
+                    
+                          const csrfToken = getCookie("csrftoken");
+                    
+                          const timestamp = new Date().getTime();
+                    
+                          fetch(`/update_creditnote_status/${creditnoteId}/?timestamp=${timestamp}`, {
+                            method: "POST",
+                            headers: {
+                              "X-CSRFToken": csrfToken,
+                              "Content-Type": "application/json",
+                            },
+                          })
+                            .then((response) => response.json())
+                            .then((data) => {
+                              console.log("Response from server:", data);
+                    
+                              if (data.success) {
+                                // Update the button text
+                                this.textContent = data.newStatus;
+                    
+                                // Update the data-creditnote-status attribute
+                                const creditnoteElement = document.querySelector(`#creditnote${creditnoteId}`);
+                                if (creditnoteElement) {
+                                  creditnoteElement.setAttribute("data-creditnote-status", data.newStatus);
+                                }
+                    
+                                // Update the status element
+                                const statusElement = document.querySelector(`#status${creditnoteId}`);
+                                if (statusElement) {
+                                  statusElement.textContent = data.newStatus;
+                                }
+                              } else {
+                                console.error("Failed to update status.");
+                              }
+                            })
+                            .catch((error) => {
+                              console.error(error);
                             });
                         });
+                      });
                     });
-                </script>
-                
-    
+                    </script>
 
                 <div class="tab">
                     <a class="tablinks mx-2 btns px-2 py-2" onclick="openTab(event, 'Template')" role="button"><i
