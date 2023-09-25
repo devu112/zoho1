@@ -9697,6 +9697,8 @@ def creditnote_view(request,creditnote_id):
     print(creditnote)
     return render(request,'creditnote_view.html',{'company':company, 'cust': creditnote_customers,'creditnote':creditnote,'cust':cust ,'credititems': credititems,'item':item,'creditnotes': creditnotes})    
 
+
+
 def add_creditnotes(request):
     if request.method == 'POST':
         # Retrieve data from the POST request
@@ -9740,6 +9742,7 @@ def add_creditnotes(request):
             # Assign values to other fields
         )
         credit_note_instance.save()
+        
         # Retrieve item data from the POST request and save Credititem objects
         item_names = request.POST.getlist('item_name[]')
         hsns = request.POST.getlist('hsn')
@@ -9750,22 +9753,33 @@ def add_creditnotes(request):
         amounts = request.POST.getlist('amount[]')
 
         for item_name, hsn, quantity, rate, tax, discount, amount in zip(item_names, hsns, quantities, rates, taxes, discounts, amounts):
-            item = Credititem(
-                creditnote=credit_note_instance,
-                item_name=item_name,
-                hsn=hsn,
-                quantity=quantity,
-                rate=rate,
-                tax=tax,
-                discount=discount,
-                amount=amount,
-                               )
-            item.save()
+            # Assuming you have a way to retrieve the AddItem instance based on the item_name
+            try:
+                add_item = AddItem.objects.get(Name=item_name)
+            except AddItem.DoesNotExist:
+                # Handle the case where the AddItem with the given name doesn't exist
+                add_item = None
 
+            if add_item:
+                item = Credititem(
+                    creditnote=credit_note_instance,
+                    item_name=add_item,  # Assign the AddItem instance
+                    hsn=hsn,
+                    quantity=quantity,
+                    rate=rate,
+                    tax=tax,
+                    discount=discount,
+                    amount=amount,
+                )
+                item.save()
+            else:
+                # Handle the case where the AddItem doesn't exist
+                pass
 
         return redirect('creditnotes')
-    
+
     return render(request, 'creditnotes.html', {'c': [credit_note_instance]})
+
 
 def edit_creditnote(request, pk):
     cust=customer.objects.all()
@@ -10056,10 +10070,19 @@ def credit_customer(request):
         return JsonResponse(response_data)
 
 
+
 def customer_dropdown_credit(request):
-    customers = customer.objects.all()
-    customer_names = [{'id': c.id, 'name':c.customerName} for c in customers]
-    return JsonResponse(customer_names, safe=False)
+    user = User.objects.get(id=request.user.id)
+
+    options = {}
+    option_objects = customer.objects.filter(user = user)
+    for option in option_objects:
+        options[option.id] = {
+            "customer_id": option.id,
+            "customer_name": option.customerName
+        }
+
+    return JsonResponse(options)
 
 
 

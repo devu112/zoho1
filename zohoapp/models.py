@@ -1080,7 +1080,7 @@ class Creditnote(models.Model):
     
 class Credititem(models.Model):
     creditnote=models.ForeignKey(Creditnote,on_delete=models.CASCADE,null=True,default='')
-    item_name = models.CharField(max_length=100,null=True,blank=True)
+    item_name = models.ForeignKey(AddItem,on_delete=models.CASCADE,null=True,default='')
     hsn = models.PositiveIntegerField()
     quantity = models.DecimalField(max_digits=10, decimal_places=2)
     rate = models.DecimalField(max_digits=10, decimal_places=2)

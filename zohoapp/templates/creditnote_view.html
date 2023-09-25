@@ -641,14 +641,12 @@
                             {% for credititem in credititems %}
                             <tr>
                                 
-                                <td>{{credititem.item_name}}</td>
-                                <td>{{credititem.hsn}}</td>
-                                <td>{{credititem.quantity}}</td>
-                                <td>{{credititem.tax}}</td>
-                                <td>{{credititem.discount}}</td>
-                                <td>{{creditnote.subtotal}}</td>
-                                
-                               
+                                <td>{{ credititem.item_name.Name }}</td>
+                                <td>{{ credititem.hsn }}</td>
+                                <td>{{ credititem.quantity }}</td>
+                                <td>{{ credititem.rate }}</td>
+                                <td>{{ credititem.discount }}</td>
+                                <td>{{ credititem.amount }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
