@@ -9,6 +9,11 @@
 </body>
 
 <style>
+    .table-hover-custom:hover {
+    background-color: #8e8c8c; /* Change this to your desired hover background color */
+    color: #f6f6f6; /* Change this to your desired hover text color */
+    
+    }
    
     .containerprof {
         min-height: 450px;
@@ -660,28 +665,34 @@
                             <p class="py-0 px-5" style="color: black;">{{recur_bill.note}}</p> -->
                         </div>
                         <div class="col-4">
-                            <table class="table border-0 table-hover">
-                                <tr>
+                            <table class="table border-0 ">
+                                <tr class="table-hover-custom">
                                     <td style="font-weight:bold">Sub Total :</td>
                                     <td style="font-weight:bold">{{ creditnote.subtotal|floatformat:2 }}</td>
                                 </tr>
-                                <tr>
-                                    <td style="font-weight:bold">IGST :</td>
-                                    <td style="font-weight:bold">{{ creditnote.igst|floatformat:2 }}</td>
-                                </tr>
-                                <tr>
+                                 
+                                {% if creditnote.igst == 0 %}
+                                <tr class="table-hover-custom">
                                     <td style="font-weight:bold">CGST :</td>
                                     <td style="font-weight:bold">{{ creditnote.cgst|floatformat:2 }}</td>
                                 </tr>
-                                <tr>
+                                <tr class="table-hover-custom">
                                     <td style="font-weight:bold">SGST:</td>
                                     <td style="font-weight:bold">{{ creditnote.sgst|floatformat:2 }}</td>
                                 </tr>
-                                <tr>
+                               {% else %}
+                                <tr class="table-hover-custom">
+                                    <td style="font-weight:bold">IGST :</td>
+                                    <td style="font-weight:bold">{{ creditnote.igst|floatformat:2 }}</td>
+                                </tr>
+                               {% endif %}
+                      
+                               <tr class="table-hover-custom">
+
                                     <td style="font-weight:bold">Shipping Charge:</td>
                                     <td style="font-weight:bold">{{ creditnote.shipping_charge|floatformat:2 }}</td>
                                 </tr>
-                                <tr>
+                                <tr class="table-hover-custom">
                                     <tfoot>
                                         <td style="font-weight:bold">Total:</td>
                                         <td style="font-weight:bold;">{{ creditnote.total|floatformat:2 }}</td>
@@ -784,8 +795,8 @@
                                     <p class="mb-0" style="font-size: 18px; color: #fbf3f3;">{{ creditnote.subtotal }}</p>
                                 </div>
                             </div>
-            
-                            <!-- IGST -->
+            <!-- IGST -->
+                            {% if creditnote.igst > 0 %}
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-6 mt-3">
                                     <h6 class="mb-0 text-black">IGST:</h6>
@@ -794,8 +805,10 @@
                                     <p class="mb-0" style="font-size: 18px; color: #fbf3f3;">{{ creditnote.igst }}</p>
                                 </div>
                             </div>
-            
+                            {% endif %}
+
                             <!-- CGST -->
+                            {% if creditnote.cgst > 0 %}
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-6 mt-3">
                                     <h6 class="mb-0 text-black">CGST:</h6>
@@ -804,8 +817,10 @@
                                     <p class="mb-0" style="font-size: 18px; color: #fbf3f3;">{{ creditnote.cgst }}</p>
                                 </div>
                             </div>
-            
+                            {% endif %}
+
                             <!-- SGST -->
+                            {% if creditnote.sgst > 0 %}
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-6 mt-3">
                                     <h6 class="mb-0 text-black">SGST:</h6>
@@ -814,7 +829,8 @@
                                     <p class="mb-0" style="font-size: 18px; color:#fbf3f3;">{{ creditnote.sgst }}</p>
                                 </div>
                             </div>
-            
+                            {% endif %}
+
                             <!-- Total Tax -->
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-6 mt-3">

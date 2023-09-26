@@ -9718,7 +9718,7 @@ def add_creditnotes(request):
         total = request.POST.get('t_total')
         terms_and_conditions = request.POST.get('ter_cond')
         attached_file = request.FILES.get('file')
-
+        
         # Create a new Creditnote instance and save it
         credit_note_instance = Creditnote(
             user=request.user,  # Assuming you have a logged-in user
@@ -9744,7 +9744,7 @@ def add_creditnotes(request):
         credit_note_instance.save()
         
         # Retrieve item data from the POST request and save Credititem objects
-        item_names = request.POST.getlist('item_name[]')
+        item_name_ids = request.POST.getlist('item_name[]')  # Change to item_name_ids
         hsns = request.POST.getlist('hsn')
         quantities = request.POST.getlist('quantity[]')
         rates = request.POST.getlist('rate[]')
@@ -9752,43 +9752,43 @@ def add_creditnotes(request):
         discounts = request.POST.getlist('discount[]')
         amounts = request.POST.getlist('amount[]')
 
-        for item_name, hsn, quantity, rate, tax, discount, amount in zip(item_names, hsns, quantities, rates, taxes, discounts, amounts):
-            # Assuming you have a way to retrieve the AddItem instance based on the item_name
-            try:
-                add_item = AddItem.objects.get(Name=item_name)
-            except AddItem.DoesNotExist:
-                # Handle the case where the AddItem with the given name doesn't exist
-                add_item = None
+    for item_name_id, hsn, quantity, rate, tax, discount, amount in zip(item_name_ids, hsns, quantities, rates, taxes, discounts, amounts):
+        # Query the database to find the AddItem instance based on the item_name_id
+        try:
+            add_item_instance = AddItem.objects.get(pk=item_name_id)  # Change to pk=item_name_id
+        except AddItem.DoesNotExist:
+            # Handle the case where the AddItem with the given ID doesn't exist
+            add_item_instance = None
 
-            if add_item:
-                item = Credititem(
-                    creditnote=credit_note_instance,
-                    item_name=add_item,  # Assign the AddItem instance
-                    hsn=hsn,
-                    quantity=quantity,
-                    rate=rate,
-                    tax=tax,
-                    discount=discount,
-                    amount=amount,
-                )
-                item.save()
-            else:
-                # Handle the case where the AddItem doesn't exist
-                pass
+        if add_item_instance:
+            item = Credititem(
+                creditnote=credit_note_instance,
+                item_name=add_item_instance,  # Use the AddItem instance, not the name
+                hsn=hsn,
+                quantity=quantity,
+                rate=rate,
+                tax=tax,
+                discount=discount,
+                amount=amount,
+            )
+            item.save()
+                
+            return redirect('creditnotes')
+        
+        return render(request, 'creditnotes.html', {'c': [credit_note_instance]})
 
-        return redirect('creditnotes')
-
-    return render(request, 'creditnotes.html', {'c': [credit_note_instance]})
 
 
 def edit_creditnote(request, pk):
+    user = request.user
+    company = company_details.objects.get(user=user)
     cust=customer.objects.all()
     creditnote = get_object_or_404(Creditnote, id=pk)
     credititems = Credititem.objects.filter(creditnote=creditnote)
     itm = AddItem.objects.all()
     print(credititems)  
     
-    return render(request, 'edit_creditnote.html', {'creditnote': creditnote, 'credititems': credititems,'cust':cust,'itm':itm})    
+    return render(request, 'edit_creditnote.html', {'creditnote': creditnote, 'credititems': credititems,'cust':cust,'itm':itm,'company':company})    
       
 
 def editdb(request, pk):
@@ -10063,7 +10063,11 @@ def credit_customer(request):
         
         response_data = {
             "customer_name": cust.customerName,
-            "customer_id": cust.id
+            "customer_id": cust.id,
+            "customer_email": cust.customerEmail,
+            "customer_placeofsupply": cust.placeofsupply,
+            "customer_gsttreatment": cust.GSTTreatment,
+            "customer_gstin": cust.GSTIN
         }
 
         # Return the JSON response
