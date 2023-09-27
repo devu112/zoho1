@@ -9673,7 +9673,7 @@ def creditnotes(request):
 def newcredit(request):
     item=AddItem.objects.all()
     user = request.user
-    unit=Unit.objects.all()
+    units=Unit.objects.all()
     sales=Sales.objects.all()
     company = company_details.objects.get(user=user)
     cust=customer.objects.all()
@@ -9682,7 +9682,7 @@ def newcredit(request):
     purchase=Purchase.objects.all()
     
    
-    return render(request,'newcredit.html',{"c":cust, "pay":pay, "itm":itm,"company":company,"unit":unit, "sales":sales,"purchase":purchase,'item':item })
+    return render(request,'newcredit.html',{"c":cust, "pay":pay, "itm":itm,"company":company,"units":units, "sales":sales,"purchase":purchase,'item':item })
 
 
 def creditnote_view(request,creditnote_id):
@@ -9799,6 +9799,11 @@ def editdb(request, pk):
     if request.method == 'POST':
         # Retrieve customer_id from the form
         customer_id = request.POST.get('customer', None)
+        email=request.POST.get('email')
+        placeofsupply=request.POST.get('place_of_supply')
+        gstteatment=request.POST.get('gst_treatment')
+        gstin=request.POST.get('gstin')
+        baddress=request.POST.get('billing_address')
      
         invoice_number = request.POST.get('sale_no')
         credit_note = request.POST.get('credit_note')
@@ -9823,6 +9828,7 @@ def editdb(request, pk):
             customer_id = None
 
         # Update the fields of the existing Creditnote object
+        
         creditnote.invoice_number = invoice_number
         creditnote.credit_note = credit_note
         creditnote.reference = reference
@@ -9891,11 +9897,11 @@ def get_hsn_and_rate(request):
     try:
         item = AddItem.objects.get(id=id)
         hsn = item.hsn  
-        rate = item.rate 
+        sell_price = item.sell_price 
 
         data = {
             'hsn': hsn,
-            'rate': rate,
+            'sell_price': sell_price,
         }
 
         return JsonResponse(data)
@@ -9923,22 +9929,7 @@ def deletefile1(request,aid):
     return redirect('payroll_view',p.id)
 
 
-def purchase_item_dropdown1(request):
 
-    user = User.objects.get(id=request.user.id)
-
-    options = {}
-    option_objects = AddItem.objects.all()
-    for option in option_objects:
-        options.append({
-            'id': option.id,
-            'Name': option.Name,
-            'hsn': option.hsn,  # Include HSN field in the response
-            'rate': option.rate,  # Include rate field in the response
-        })
-
-
-    return JsonResponse(options)
 
 def fetch_customers_from_creditnotes(request):
     # Retrieve all CreditNote objects
@@ -10014,64 +10005,70 @@ def credit_customer(request):
     
     company = company_details.objects.get(user = request.user)
 
-    if request.method=='POST':
+    if request.user.is_authenticated:
+        if request.method=='POST':
+            tax=request.POST.get('tax')
+            type=request.POST.get('title')
+            first=request.POST['firstname']
+            last=request.POST['lastname']
+            txtFullName= request.POST['display_name']
+            
+            itemtype=request.POST.get('itemtype')
+            cpname=request.POST['company_name']
+            
+            email=request.POST.get('email')
+            wphone=request.POST.get('work_mobile')
+            mobile=request.POST.get('pers_mobile')
+            skname=request.POST.get('skype')
+            desg=request.POST.get('desg')      
+            dept=request.POST.get('dpt')
+            wbsite=request.POST.get('website')
 
-        # title=request.POST.get('title')
-        # first_name=request.POST.get('firstname')
-        # last_name=request.POST.get('lastname')
-        # comp=request.POST.get('company_name')
-        cust_type = request.POST.get('customer_type')
-        name = request.POST.get('display_name')
-        comp_name = request.POST.get('company_name')
-        email=request.POST.get('email')
-        website=request.POST.get('website')
-        w_mobile=request.POST.get('work_mobile')
-        p_mobile=request.POST.get('pers_mobile')
-        fb = request.POST.get('facebook')
-        twitter = request.POST.get('twitter')
-        skype = request.POST.get('skype')
-        desg = request.POST.get('desg')
-        dpt = request.POST.get('dpt')
-        gsttype=request.POST.get('gsttype')
-        gstin=request.POST.get('gstin')
-        panno=request.POST.get('v_pan')
-        supply=request.POST.get('placesupply')
-        tax = request.POST.get('tax_preference')
-        print("Tax Preference:", tax)
-        currency=request.POST.get('currency')
-        balance=request.POST.get('openingbalance')
-        payment=request.POST.get('paymentterms')
-        street1=request.POST.get('street1')
-        street2=request.POST.get('street2')
-        city=request.POST.get('city')
-        state=request.POST.get('state')
-        pincode=request.POST.get('pincode')
-        country=request.POST.get('country')
-        fax=request.POST.get('fax')
-        phone=request.POST.get('phone')
-      
+            gstt=request.POST.get('gsttype')
+            gstin=request.POST.get('gstin')
+            panno=request.POST.get('panno')
 
-        u = User.objects.get(id = request.user.id)
 
-        cust = customer(customerName = name,customerType = cust_type, companyName= comp_name, GSTTreatment=gsttype,GSTIN=gstin, 
-                        customerWorkPhone = w_mobile,customerMobile = p_mobile, customerEmail=email,skype = skype,Facebook = fb, 
-                        Twitter = twitter,placeofsupply=supply,Taxpreference = tax,currency=currency, website=website, 
-                        designation = desg,pan_no=panno, department = dpt,OpeningBalance=balance,Address1=street1,Address2=street2, city=city, 
-                        state=state, PaymentTerms=payment,zipcode=pincode,country=country,  fax = fax,  phone1 = phone,user = u)
-        cust.save()
+            posply=request.POST.get('placesupply')
+            crncy=request.POST.get('currency')
+            obal=request.POST.get('openingbalance')
 
-        
-        response_data = {
-            "customer_name": cust.customerName,
-            "customer_id": cust.id,
-            "customer_email": cust.customerEmail,
-            "customer_placeofsupply": cust.placeofsupply,
-            "customer_gsttreatment": cust.GSTTreatment,
-            "customer_gstin": cust.GSTIN
-        }
+           
+            pterms=request.POST.get('paymentterms')
 
-        # Return the JSON response
-        return JsonResponse(response_data)
+           
+          
+            fbk=request.POST.get('facebook')
+            twtr=request.POST.get('twitter')
+          
+            ctry=request.POST.get('country')
+            
+            street=request.POST.get('street')
+            shipstate=request.POST.get('shipstate')
+            shipcity=request.POST.get('shipcity')
+            bzip=request.POST.get('shippincode')
+            shipfax=request.POST.get('shipfax')
+
+            sal=request.POST.get('title')
+            addres=street +','+ shipcity+',' + shipstate+',' + bzip
+            adress2=addres
+            u = User.objects.get(id = request.user.id)
+
+            print(tax)
+            ctmr=customer(customerName=txtFullName,customerType=itemtype,
+                        companyName=cpname,customerEmail=email,customerWorkPhone=wphone,
+                         customerMobile=mobile,skype=skname,designation=desg,department=dept,
+                           website=wbsite,GSTTreatment=gstt,placeofsupply=posply, Taxpreference=tax,
+                             currency=crncy,OpeningBalance=obal,PaymentTerms=pterms,
+                               Facebook=fbk,Twitter=twtr
+                                 ,country=ctry,Address1=addres,Address2=adress2,
+                                  city=shipcity,state=shipstate,zipcode=bzip,phone1=wphone,
+                                   fax=shipfax,
+                                  user=u ,GSTIN=gstin,pan_no=panno)
+            ctmr.save()
+ 
+            
+            return HttpResponse({"message": "success"})
 
 
 
@@ -10081,10 +10078,7 @@ def customer_dropdown_credit(request):
     options = {}
     option_objects = customer.objects.filter(user = user)
     for option in option_objects:
-        options[option.id] = {
-            "customer_id": option.id,
-            "customer_name": option.customerName
-        }
+        options[option.id] = [option.customerName]
 
     return JsonResponse(options)
 
@@ -10107,3 +10101,95 @@ def update_creditnote_status(request, creditnote_id):
     except Exception as e:
         print(str(e))
         return JsonResponse({"success": False})
+
+
+def purchase_item_credit(request):
+
+    company = company_details.objects.get(user = request.user)
+    print('purchase_item')
+
+    if request.method=='POST':
+        
+        type=request.POST.get('type')
+        
+        name=request.POST['name']
+        
+        ut=int(request.POST.get('unit'))
+        
+        inter=request.POST['inter']
+        
+        intra=request.POST['intra']
+        
+        sell_price=request.POST.get('sell_price')
+        
+        sell_acc=request.POST.get('sell_acc')
+        
+        sell_desc=request.POST.get('sell_desc')
+       
+        cost_price=request.POST.get('cost_price')
+        
+        cost_acc=request.POST.get('cost_acc')
+        
+        cost_desc=request.POST.get('cost_desc')
+        
+        hsn=request.POST.get('item_hsn')
+        
+        units=Unit.objects.get(id=ut)
+        
+        sel=Sales.objects.get(id=sell_acc)
+        
+        cost=Purchase.objects.get(id=cost_acc)
+       
+
+
+        history="Created by " + str(request.user)
+       
+        user = User.objects.get(id = request.user.id)
+        
+
+        item=AddItem(type=type,unit=units,sales=sel,purchase=cost,Name=name,p_desc=cost_desc,s_desc=sell_desc,s_price=sell_price,p_price=cost_price,
+                     user=user,creat=history,interstate=inter,intrastate=intra,hsn=hsn)
+
+        item.save() 
+        print("function")
+        return JsonResponse({"message": "success"})
+    
+def purchase_item_dropdown_credit(request):
+
+    user = User.objects.get(id=request.user.id)
+
+    options = {}
+    option_objects = AddItem.objects.all()
+    for option in option_objects:
+        options[option.id] = option.Name
+
+    return JsonResponse(options)
+
+
+
+def purchase_unit_credit(request):
+    
+    company = company_details.objects.get(user = request.user)
+
+    if request.method=='POST':
+
+        unit =request.POST.get('unit')
+        
+        u = User.objects.get(id = request.user.id)
+
+        unit = Unit(unit= unit)
+        unit.save()
+     
+        return JsonResponse({"message": "success"})
+        
+@login_required(login_url='login')        
+def purchase_unit_dropdown_credit(request):
+
+    user = User.objects.get(id=request.user.id)
+
+    options = {}
+    option_objects = Unit.objects.all()
+    for option in option_objects:
+        options[option.id] = option.unit
+    
+    return JsonResponse(options)

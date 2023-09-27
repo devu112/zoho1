@@ -463,7 +463,7 @@ urlpatterns = [
     path('load_initial_items/', views.load_initial_items, name='load_initial_items'),
     path('get_hsn_and_rate/', views.get_hsn_and_rate, name='get_hsn_and_rate'),
     path('credit_template',views.credit_template,name='credit_template'),
-    path(' purchase_item_dropdown1',views. purchase_item_dropdown1,name='purchase_item_dropdown1'),
+    path(' purchase_item_dropdown_credit/',views. purchase_item_dropdown_credit,name='purchase_item_dropdown_credit'),
     path('file_download1',views.file_download1,name='file_download1'),
     path('deletefile1',views.deletefile1,name='deletefile1'),
     path('editdb/<int:pk>', views.editdb, name='editdb'),
@@ -475,7 +475,9 @@ urlpatterns = [
     path('credit_customer',views.credit_customer,name='credit_customer'),
     path('customer_dropdown_credit',views.customer_dropdown_credit,name='customer_dropdown_credit'),
     path('update_creditnote_status/<int:creditnote_id>/', views.update_creditnote_status, name='update_creditnote_status'),
-
+    path('purchase_item_credit/', views.purchase_item_credit, name='purchase_item_credit'),
+    path('purchase_unit_credit',views.purchase_unit_credit,name='purchase_unit_credit'),
+    path('purchase_unit_dropdown_credit',views.purchase_unit_dropdown_credit,name='purchase_unit_dropdown_credit'),
    
     
     # re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
