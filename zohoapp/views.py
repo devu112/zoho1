@@ -9891,23 +9891,42 @@ def load_initial_items(request):
 
 
 
-def get_hsn_and_rate(request):
-    id = request.GET.get('id')
+# def get_hsn_and_rate(request):
+#     id = request.GET.get('id')
     
+#     try:
+#         item = AddItem.objects.get(id=id)
+#         hsn = item.hsn  
+#         sell_price = item.sell_price 
+
+#         data = {
+#             'hsn': hsn,
+#             'sell_price': sell_price,
+#         }
+
+#         return JsonResponse(data)
+#     except AddItem.DoesNotExist:
+#         # Handle the case where the item does not exist
+#         return JsonResponse({'error': 'Item not found'}, status=404)
+
+def get_item_details(request):
+    id = request.GET.get('id')
+
     try:
         item = AddItem.objects.get(id=id)
-        hsn = item.hsn  
-        sell_price = item.sell_price 
+        hsn = item.hsn
+        rate = item.s_price 
 
         data = {
             'hsn': hsn,
-            'sell_price': sell_price,
+            'rate': rate,
         }
 
         return JsonResponse(data)
     except AddItem.DoesNotExist:
-        # Handle the case where the item does not exist
         return JsonResponse({'error': 'Item not found'}, status=404)
+       
+   
 
 def credit_template(request):
     return render(request,'credit_template.html')    

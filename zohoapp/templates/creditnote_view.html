@@ -416,8 +416,10 @@
                                 <td style="color: #f1f1f1; font-size: medium;"><a href="{% url 'creditnote_view' creditnote.id %}">{{ creditnote.customer.customerName }}
                                     <br>
                                  {{ creditnote.credit_note }}
+                                </td>
+
                                  <br>
-                                ₹ {{ creditnote.total|floatformat:2 }}</a></td>
+                               <td style="color: #f1f1f1; font-size: medium;"> ₹ {{ creditnote.total|floatformat:2 }}</a></td>
                             </tr>
                             {% endfor %}
                         </tbody>

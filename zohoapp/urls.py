@@ -461,7 +461,6 @@ urlpatterns = [
     path('creditnote_view/<int:creditnote_id>/', views.creditnote_view, name='creditnote_view'),
     path('add_creditnotes',views.add_creditnotes ,name='add_creditnotes'),
     path('load_initial_items/', views.load_initial_items, name='load_initial_items'),
-    path('get_hsn_and_rate/', views.get_hsn_and_rate, name='get_hsn_and_rate'),
     path('credit_template',views.credit_template,name='credit_template'),
     path(' purchase_item_dropdown_credit/',views. purchase_item_dropdown_credit,name='purchase_item_dropdown_credit'),
     path('file_download1',views.file_download1,name='file_download1'),
@@ -478,7 +477,7 @@ urlpatterns = [
     path('purchase_item_credit/', views.purchase_item_credit, name='purchase_item_credit'),
     path('purchase_unit_credit',views.purchase_unit_credit,name='purchase_unit_credit'),
     path('purchase_unit_dropdown_credit',views.purchase_unit_dropdown_credit,name='purchase_unit_dropdown_credit'),
-   
+    path('get_item_details/', views.get_item_details, name='get_item_details'),
     
     # re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     

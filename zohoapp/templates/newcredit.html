@@ -279,7 +279,7 @@ $(document).ready(function () {
             <td style="width: 10%;">
                 <div ><select
                         class='form-control bg-light text-dark border-0 item_select itm'
-                        name='item_name[]' id='item1'>
+                        name='item_name[]' id='item1' onchange="fetchItemData(this.value)">
                         <option value=" " selected disabled>Select Item</option>
                         {% for i in itm %}
                           <option value="{{i.Name}}">{{ i.Name  }} </option>
@@ -2096,7 +2096,7 @@ function updateTaxDropdown(placeOfSupply) {
     if (lowerPlaceOfSupply === '[kl]-kerala' || lowerPlaceOfSupply === 'kerala' || lowerPlaceOfSupply === '[kl] kerala') {
         // Add GST options for Kerala
         taxDropdown.append('<optgroup class="text-center" label="GST">' +
-            '<option value="0" selected></option>' +
+            '<option value="0">0% GST(0%)</option>' +
             '<option value="3">3.0% GST(3%)</option>' +
             '<option value="5">5.0% GST(5%)</option>' +
             '<option value="12">12.0% GST(12%)</option>' +
@@ -2161,52 +2161,58 @@ var normalizedPlaceOfSupply = placeOfSupply.replace(/\[|\]|-/g, '').toLowerCase(
 
 // Check if the normalizedPlaceOfSupply contains "kerala"
 if (normalizedPlaceOfSupply.includes('kerala')) {
-    // Calculate CGST and SGST based on the selected GST percentage (half of the GST percentage each)
-    var gstPercentage = parseFloat(selectedTaxType);
-    cgst = (subtotal * (gstPercentage / 2)) / 100;
-    sgst = cgst;
+   // Determine the selected tax type (GST or IGST)
+var selectedTaxType = row.find('select[name^="tax"]').val();
 
-    $('#tr_cgst').show();
-    $('#tr_sgst').show();
-    $('#tr_igst').hide();
+// Get the GST percentage
+var gstPercentage = parseFloat(selectedTaxType);
 
-    // Set IGST input field to zero
-    $('#igst').val('0.00');
+// Calculate the CGST and SGST as half of the GST percentage each
+var cgst = (subtotal * (gstPercentage / 2)) / 100;
+var sgst = cgst;
 
-    // Calculate tax total as the sum of CGST and SGST
-    var taxTotal = cgst + sgst;
+// Update the corresponding input fields for CGST and SGST with the calculated values
+row.find('input[name^="cgst"]').val(cgst.toFixed(2));
+row.find('input[name^="sgst"]').val(sgst.toFixed(2));
 
-    // Show the tax total element and set its value
-    $('#tax_total').show().val(taxTotal.toFixed(2));
+// Show the CGST and SGST rows, hide the IGST row
+$('#tr_cgst').show();
+$('#tr_sgst').show();
+$('#tr_igst').hide();
+
+// Set IGST input field to zero
+$('#igst').val('0.00');
+
+// Calculate tax total as the sum of CGST and SGST
+var taxTotal = cgst + sgst;
+
+// Update the tax total input field with the calculated value
+$('#tax_total').val(taxTotal.toFixed(2));
 } else {
     // Calculate IGST based on the selected GST percentage
     var igstPercentage = parseFloat(selectedTaxType);
     igst = (subtotal * igstPercentage) / 100;
 
+    // Hide CGST and SGST rows, show IGST row
     $('#tr_cgst').hide();
     $('#tr_sgst').hide();
     $('#tr_igst').show();
 
-    if (selectedTaxType === '0') {
-        // If the tax type is GST and place of supply is not Kerala, set CGST and SGST to zero
-        $('#cgst').val('0.00');
-        $('#sgst').val('0.00');
-    }
-
-    if (selectedTaxType !== '0') {
-        // If the tax type is IGST, set CGST and SGST to zero
-        $('#cgst').val('0.00');
-        $('#sgst').val('0.00');
-    }
+    // Set CGST and SGST to zero
+    $('#cgst').val('0.00');
+    $('#sgst').val('0.00');
 
     // Update the IGST input field and tax total to be the same
     $('#igst').val(igst.toFixed(2));
     $('#tax_total').val(igst.toFixed(2));
-
 }
 
             
   });
+  
+
+
+  
 
       // Initial setup for tax dropdown based on place of supply
       var initialPlaceOfSupply = $('#pos_input').val();
@@ -2243,34 +2249,6 @@ $('#adjustment').on('input', function () {
   });
   
 </script>
-
-  
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <script>
   $(document).ready(function () {
@@ -2957,45 +2935,29 @@ $('#adjustment').on('input', function () {
   });
 
 
-///////////////////////////////mine////////////////////////////////////////////////////
+///////////////////////////////get hsn & rate////////////////////////////////////////////////////
 
-// JavaScript code to fetch and display HSN and selling price based on item selection
-$(document).ready(function () {
-    // Event listener for item selection change
-    $("#item_name").change(function () {
-        var selectedItem = $(this).val();
-        if (selectedItem !== '') {
-            // Call a function to fetch data based on the selected item
-            fetchItemData(selectedItem);
-        } else {
-            // Clear the HSN and selling price fields if no item is selected
-            $("#item_hsn").val('');
-            $("#sell_price").val('');
-        }
-    });
-});
 
-// Function to fetch item data based on the selected item (replace with your own logic)
 function fetchItemData(selectedItem) {
-  console.log('saved')
-    // Replace this with your AJAX request to fetch data
     $.ajax({
         type: 'GET',
-        url: '/get_hsn_and_rate/', // Replace with the actual URL
-        data: { item: selectedItem },
+        url: "{% url 'get_item_details' %}",
+        data: {
+            id: selectedItem
+        },
         dataType: 'json',
         success: function (response) {
-            // Update the HSN and selling price fields with the fetched data
-            $("#item_hsn").val(response.hsn);
-            $("#sell_price").val(response.sell_price);
+            // Update the HSN and rate fields with the fetched data
+            $("#hsn1").val(response.hsn);
+            $("#rate1").val(response.rate);
         },
         error: function () {
-            // Handle errors if the data cannot be fetched
+            // Handle errors if the data cannot be fetched or the item doesn't exist
             console.log('Error fetching item data.');
+            // You can display an error message to the user if needed.
         },
     });
 }
- 
 
 
 </script>
