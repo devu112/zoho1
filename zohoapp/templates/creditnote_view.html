@@ -571,8 +571,8 @@
                     <div class="col-5 ">
                         <h3 class="text-uppercase" style="color: black;"><b>{{company.company_name }}</b></h3>
                         <p class="address mx-2 p-2"  style="color: black;"> {{company.company_email}}<br>
-                             <br>
-                            {{company.state}}<br>
+                             
+                            {{company.state}},
                             {{company.pincode}}<br>
                         </p>                    
                     </div>
@@ -616,10 +616,10 @@
                             <div class="col-5">
                                 <p style=" font-size: 18px;  font-weight: 700;">Bill To,</p>
                                 <h6  class="mx-3 text-capitalize" style="color: black; ">{{ creditnote.customer.customerName }} </h6>
-                                <p class="address col-6 mx-4 p-2" style="margin-left: -14px;">
-                                    {{ creditnote.customer.city }}<br>
-                                    {{ creditnote.customer.state }}<br>
-                                    {{ creditnote.customer.zipcode }}<br>
+                                <p class=" col-6  " style="margin-left: -14px;">
+                                    {{ creditnote.customer.city }}
+                                    {{ creditnote.customer.state }},
+                                    {{ creditnote.customer.zipcode }}
                                 </p>
 
                             </div>
@@ -640,6 +640,7 @@
                                 <td>HSN</td>
                                 <td>Quantity</td>
                                 <td>Rate</td>
+                                <td>Tax</td>
                                 <td>Discount</td>
                                 <td>Amount</td>
                             </tr>
@@ -652,6 +653,11 @@
                                 <td>{{ credititem.hsn }}</td>
                                 <td>{{ credititem.quantity }}</td>
                                 <td>{{ credititem.rate }}</td>
+                                {% if creditnote.customer.placeofsupply == "[KL] Kerala" %}
+                                <td>{{credititem.tax}}% GST</td>
+                                {% else %}
+                                <td>{{credititem.tax}}% IGST</td>
+                                {% endif %}
                                 <td>{{ credititem.discount }}</td>
                                 <td>{{ credititem.amount }}</td>
                             </tr>
@@ -782,6 +788,27 @@
                                 </div>
 
                             </div>
+
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                {% for i in credititems %}
+                               
+                                <div class="col-md-6 mt-3">
+                                    <h6 class="mb-0 text-black">Tax :</h6>
+                                </div>
+                                
+                                <div class="col-md-6 mt-3">
+                                    {% if creditnote.customer.placeofsupply == "[KL] Kerala" %}
+                                   
+                                    <p class="mb-0 text-capitalize" style="font-size: 18px; color: #434141;">{{ i.tax }} % GST</p>
+                                    {% else %}
+                                    <p class="mb-0 text-capitalize" style="font-size: 18px; color: #434141;">{{ i.tax }} % IGST</p>
+                                    {% endif %}
+
+                                
+                                </div>
+                                {% endfor %}
+
+                            </div>
                            
                             <!-- <hr class="my-4"> -->
                         </div>
@@ -805,6 +832,7 @@
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <p class="mb-0" style="font-size: 18px; color: #fbf3f3;">{{ creditnote.igst }}</p>
+
                                 </div>
                             </div>
                             {% endif %}

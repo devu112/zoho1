@@ -58,7 +58,6 @@
     }
 
     .flowchart {
-
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -85,41 +84,7 @@
         height: 2px;
         background-color: #ccc;
         margin-top: 0%;
-
     }
-
-    @media (max-width: 768px) {
-        .flowchart {
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .flowchart-item {
-            width: 120px;
-        }
-
-        .flowchart-connector {
-            height: 50px;
-            width: 2px;
-            margin-left: 0%;
-            transform: translateX(-50%);
-        }
-    }
-
-
-    .box {
-        text-align: center;
-        padding: 10px;
-        background-color: lightblue;
-        border: 3px solid rgb(25, 91, 145);
-        border-radius: 5px;
-        width: 150px;
-        color: black;
-        font-size: 12px;
-        margin-top: 10px;
-        margin-left: 10px;
-    }
-
 
     .branch {
         display: flex;
@@ -132,10 +97,6 @@
         width: 0;
         height: 50px;
         border-top: 2px solid black;
-    }
-
-    .branch .box {
-        margin-top: 10px;
     }
 
     .btn {
@@ -224,7 +185,7 @@
                         <a class="dropdown-item" href="#" onclick="filterTable('active')">Active</a>
                         <a class="dropdown-item" href="#" onclick="filterTable('inactive')">Inactive</a>
                     </div>
-                    
+
                     <a href="{% url 'newcredit' %}" class="btn fa fa-plus text-right px-3 py-2" role="button">
                         <span class="mt-2">&nbsp;&nbsp;NEW</span>
                     </a>
@@ -232,132 +193,102 @@
             </div>
         </div>
     </div>
-    
-            <hr>
-            <div class="container-fluid">
-                <table class="table  text-white" id="table">
-                    <thead>
-                        <tr >
 
-                            <th>Date</th>
-                            <th>Customer Name</th>
-                            <th>Email Id</th>
-                            <th>Creditnote No</th>
-                            <th>Amount</th>
-                            <th>Action</th>
-
-
-
-
-                        </tr>
-                    </thead>
-                    <tbody>
-
-
-
-
-
-                        {% for note in credit_notes %}
-                      
-                        <tr data-creditnote-status="{{ note.active|lower }}">
-                            
-
-
-
-                            <td><a href="{% url 'creditnote_view' note.id %}">{{ note.creditnote_date }}</a></td>
-                            <td><a href="{% url 'creditnote_view' note.id %}">{{ note.customer.customerName }}</a></td>
-                            <td>{{ note.customer.customerEmail }}</td>
-                            <td>{{ note.invoice_number }}</td>
-                            <td>{{ note.total }}</td>
-                            <td>
-                                <!-- Add the delete icon and a link/button for delete action -->
-                                <a href="{% url 'delete_creditnote' pk=note.id  %}" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-
-
-                    </tbody>
-                </table>
-
-            </div>
-        </div>
-    </div>
     <hr>
-    <div class="card mt-5" style="width:960px; height: 263px;margin-bottom:-100px;">
-        <div class="card-body">
-            <div class="card-title">
-                <h3 class="mb-0 text-center">Life cycle of a Credit Note</h3>
-                <br>
-                <div class="flowchart">
-                    <div class="flowchart-item text-uppercase" style="width: 200px;">
-                        <i class="fa-sharp fa-solid fa-bag-shopping" style="color: #daa430;"></i> Product returned
-                    </div>
-                    <div class="flowchart-connector"></div>
-                    <div class="flowchart-item text-uppercase" style="width: 210px;">
-                        <i class="fa-sharp fa-solid fa-file" style="color: #daa430;"></i> Credit notes
-                    </div>
-                    <div class="flowchart-connector"></div>
-                    <div class="flowchart-item text-uppercase">
-                        <i class="fa-sharp fa-solid fa-receipt" style="color: #daa430;"></i> REFUND
-                    </div>
-                    <div class="flowchart-connector"> </div>
-                    <div class="flowchart-item text-uppercase">
-                        <i class="fa-sharp fa-solid fa-money-check-dollar" style="color: #3ec61c;"></i>CREDITED
-                    </div>
-                </div><br>
-                <div class="flowchart-connector" style="height:65px;width: 2px;margin-left:122px;margin-top:-44px;">
-                </div>
-                <div class="flowchart-connector"
-                    style="width:150px;margin-left:122px;margin-top:0px;margin-bottom: -25px;"></div>
-                <div class="flowchart-item text-uppercase" style="margin-left:272px;">
-                    <i class="fa-sharp fa-solid fa-money-check-dollar" style="color: #3ec61c;"></i>order cancelled
-                </div>
+    <div class="container-fluid">
+        <table class="table  text-white" id="table">
+            <thead>
+                <tr>
+
+                    <th>Date</th>
+                    <th>Customer Name</th>
+                    <th>Email Id</th>
+                    <th>Creditnote No</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+
+
+
+
+                </tr>
+            </thead>
+            <tbody>
+
+
+
+
+
+                {% for note in credit_notes %}
+
+                <tr data-creditnote-status="{{ note.active|lower }}">
+
+
+
+
+                    <td><a href="{% url 'creditnote_view' note.id %}">{{ note.creditnote_date }}</a></td>
+                    <td><a href="{% url 'creditnote_view' note.id %}">{{ note.customer.customerName }}</a></td>
+                    <td>{{ note.customer.customerEmail }}</td>
+                    <td>{{ note.invoice_number }}</td>
+                    <td>{{ note.total }}</td>
+                    <td>
+                        <!-- Add the delete icon and a link/button for delete action -->
+                        <a href="{% url 'delete_creditnote' pk=note.id  %}" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+
+
+            </tbody>
+        </table>
+        <div class="card-body" style="margin: 200px;">
+            <img src="https://www.zoho.com/books/accounting-software-demo//assets/images/2x/creditnotes-workflow.png" width="700" height="250" alt="">
             </div>
-        </div>
+
     </div>
 </div>
+</div>
+<hr>
 
-
+</div>
 
 </div>
 
 
 
 <script>
-   ////////////////////////////filteerrrrrrrrrrrr/////////////////////////////
-   function filterTable(filterOption) {
-  var table = document.getElementById("table");
-  var rows = table.getElementsByTagName("tr");
-  console.log("Filter option selected:", filterOption);
+    ////////////////////////////filteerrrrrrrrrrrr/////////////////////////////
+    function filterTable(filterOption) {
+        var table = document.getElementById("table");
+        var rows = table.getElementsByTagName("tr");
+        console.log("Filter option selected:", filterOption);
 
-  for (var i = 1; i < rows.length; i++) { // Start from 1 to skip the table header row
-    var isActive = rows[i].dataset.creditnoteStatus;
-    console.log("Row " + i + " isActive:", isActive);
+        for (var i = 1; i < rows.length; i++) { // Start from 1 to skip the table header row
+            var isActive = rows[i].dataset.creditnoteStatus;
+            console.log("Row " + i + " isActive:", isActive);
 
-    // Check if the row should be displayed or hidden based on the filter option
-    if (
-      (filterOption === 'all') ||
-      (filterOption === 'active' && isActive === 'true') ||
-      (filterOption === 'inactive' && isActive === 'false')
-    ) {
-      rows[i].style.display = ""; // Display the row
-    } else {
-      rows[i].style.display = "none"; // Hide the row
+            // Check if the row should be displayed or hidden based on the filter option
+            if (
+                (filterOption === 'all') ||
+                (filterOption === 'active' && isActive === 'true') ||
+                (filterOption === 'inactive' && isActive === 'false')
+            ) {
+                rows[i].style.display = ""; // Display the row
+            } else {
+                rows[i].style.display = "none"; // Hide the row
+            }
+        }
+
+        console.log("Filtering complete.");
     }
-  }
-
-  console.log("Filtering complete.");
-}
 
 
 
 
-/////////////////searchhhhhhhhhhhhh////////////////////////////////
+    /////////////////searchhhhhhhhhhhhh////////////////////////////////
 
-function searchTable() {
+    function searchTable() {
         var input, filter, table, tr, td, i, txtValue;
         input = document.getElementById("search");
         filter = input.value.toLowerCase();
@@ -379,56 +310,56 @@ function searchTable() {
 
 
 
-/////////////////////////sorttttt////////////////////////////////////////////
-function searchTable() {
-    var input, filter, table, tr, td, i, txtValue;
-    input = document.getElementById("search");
-    filter = input.value.toLowerCase();
-    table = document.getElementById("table");
-    tr = table.getElementsByTagName("tr");
+    /////////////////////////sorttttt////////////////////////////////////////////
+    function searchTable() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("search");
+        filter = input.value.toLowerCase();
+        table = document.getElementById("table");
+        tr = table.getElementsByTagName("tr");
 
-    for (i = 1; i < tr.length; i++) { // Start from 1 to skip the table header row
-      td = tr[i].getElementsByTagName("td")[1]; // Assuming you want to search by customer name (change [1] as needed)
-      if (td) {
-        txtValue = td.innerText.toLowerCase();
-        if (txtValue.indexOf(filter) > -1) {
-          tr[i].style.display = "";
-        } else {
-          tr[i].style.display = "none";
+        for (i = 1; i < tr.length; i++) { // Start from 1 to skip the table header row
+            td = tr[i].getElementsByTagName("td")[1]; // Assuming you want to search by customer name (change [1] as needed)
+            if (td) {
+                txtValue = td.innerText.toLowerCase();
+                if (txtValue.indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
         }
-      }
     }
-  }
 
-  /////////////////////////sorttttt////////////////////////////////////////////
-  function sortTable(columnIndex) {
-    console.log('Sorting table by column index:', columnIndex);
-    var table, rows, switching, i, x, y, shouldSwitch;
-    table = document.getElementById("table");
-    switching = true;
-
-    while (switching) {
-      switching = false;
-      rows = table.rows;
-
-      for (i = 1; i < (rows.length - 1); i++) {
-        shouldSwitch = false;
-        x = rows[i].getElementsByTagName("td")[columnIndex].textContent.trim(); // Use textContent
-        y = rows[i + 1].getElementsByTagName("td")[columnIndex].textContent.trim(); // Use textContent
-
-        // Check if it should switch to ascending order
-        if (x.localeCompare(y) > 0) { // Use localeCompare for string comparison
-          shouldSwitch = true;
-          break;
-        }
-      }
-
-      if (shouldSwitch) {
-        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+    /////////////////////////sorttttt////////////////////////////////////////////
+    function sortTable(columnIndex) {
+        console.log('Sorting table by column index:', columnIndex);
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.getElementById("table");
         switching = true;
-      }
+
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("td")[columnIndex].textContent.trim(); // Use textContent
+                y = rows[i + 1].getElementsByTagName("td")[columnIndex].textContent.trim(); // Use textContent
+
+                // Check if it should switch to ascending order
+                if (x.localeCompare(y) > 0) { // Use localeCompare for string comparison
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
     }
-  }
 
 
 

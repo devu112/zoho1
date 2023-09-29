@@ -9695,7 +9695,12 @@ def creditnote_view(request,creditnote_id):
     creditnote_customers = customer.objects.filter(creditnote=creditnote)
     creditnotes = Creditnote.objects.all()  # Fetch all Creditnote objects
     print(creditnote)
-    return render(request,'creditnote_view.html',{'company':company, 'cust': creditnote_customers,'creditnote':creditnote,'cust':cust ,'credititems': credititems,'item':item,'creditnotes': creditnotes})    
+    for item in credititems:
+        customer_for_item = creditnote.customer  # Access the related customer
+        print(f"Place of Supply for Item {item.id}: {customer_for_item.placeofsupply}")
+
+    print(creditnote)
+    return render(request,'creditnote_view.html',{'company':company, 'custs': creditnote_customers,'creditnote':creditnote,'cust':cust ,'credititems': credititems,'item':item,'creditnotes': creditnotes})    
 
 
 
