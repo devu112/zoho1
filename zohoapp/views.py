@@ -10217,3 +10217,5 @@ def purchase_unit_dropdown_credit(request):
         options[option.id] = option.unit
     
     return JsonResponse(options)
+
+

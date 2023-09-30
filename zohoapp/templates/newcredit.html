@@ -209,61 +209,73 @@
             <input type="date" class="form-control bg-light text-dark" id="date1" name="cr_date">
           </div>
       </div>
+      <!-------------------------- new-----------------------------------------  -->
+      <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+      <script>
+      // Function to update customer details when the dropdown selection changes
+      function updateCustomerDetails(selectedCustomer) {
+        var email = selectedCustomer.data('email');
+        var placeOfSupply = selectedCustomer.data('pos');
+        var gstTreatment = selectedCustomer.data('gst');
+        var gstin = selectedCustomer.data('gstin');
+        var billingAddress = selectedCustomer.data('billing_address');
+      
+        $('#email_input').val(email);
+        $('#pos_input').val(placeOfSupply);
+        $('#gst_input').val(gstTreatment);
+        $('#gstin_input').val(gstin);
+        $('#billing_address_input').val(billingAddress);
+      
+        // Show or hide fields based on selection
+        if (selectedCustomer.val() !== '') {
+          $('#email_row').show();
+          $('#pos_row').show();
+          $('#gst_row').show();
+          $('#billing_address_row').show();
+      
+          // Call the function to toggle GSTIN visibility
+          toggleGSTINVisibility(gstTreatment);
+        } else {
+          $('#email_row').hide();
+          $('#pos_row').hide();
+          $('#gst_row').hide();
+          $('#gstin_row').hide();
+          $('#billing_address_row').hide();
+        }
+      }
+      
+      $(document).ready(function () {
+        // Function to hide or show GSTIN based on GST treatment
+        function toggleGSTINVisibility(gstTreatment) {
+          if (
+            gstTreatment.toLowerCase() === "unregistered business-not registered under gst" ||
+            gstTreatment.toLowerCase() === "overseas- persons with whom you do import or exports of supplies outside india"
+          ) {
+            $('#gstin_row').hide();
+          } else {
+            $('#gstin_row').show();
+          }
+        }
+      
+        // Attach the change event listener to the customer dropdown
+        $('#customer_sel').change(function () {
+          var selectedCustomer = $('#customer_sel option:selected');
+          
+          // Call the function to update customer details
+          updateCustomerDetails(selectedCustomer);
+        });
+      
+        // Set the initial GST Treatment value on page load
+        toggleGSTINVisibility("unregistered business-not registered under gst");
+        
+        // Initialize the event handler
+        $('#customer_sel').change();
+      });
+    </script>
+
       
         
-      </div>
-
-      
-<!-------------------------- new-----------------------------------------  -->
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script>
-$(document).ready(function () {
-  // Function to hide or show GSTIN based on GST treatment
-  function toggleGSTINVisibility(gstTreatment) {
-    if (gstTreatment.toLowerCase() === "unregistered business-not registered under GST" || gstTreatment.toLowerCase() === "overseas- persons with whom you do import or exports of supplies outside india") {
-      $('#gstin_row').hide();
-    } else {
-      $('#gstin_row').show();
-    }
-  }
-
-  // Initial visibility check based on the selected customer
-  $('#customer_sel').change(function () {
-    var selectedCustomer = $('#customer_sel');
-    var gstTreatment = selectedCustomer.find('option:selected').data('gst');
-
-    // Content of the placeholders
-    $('#email_input').val(selectedCustomer.find('option:selected').data('email'));
-    $('#pos_input').val(selectedCustomer.find('option:selected').data('pos'));
-    $('#gst_input').val(gstTreatment);
-    $('#gstin_input').val(selectedCustomer.find('option:selected').data('gstin'));
-    $('#billing_address_input').val(selectedCustomer.find('option:selected').data('billing_address'));
-
-    // Show or hide fields based on selection
-    if (selectedCustomer.val() !== '') {
-      $('#email_row, #pos_row, #gst_row, #billing_address_row').show();
-      toggleGSTINVisibility(gstTreatment);
-    } else {
-      $('#email_row, #pos_row, #gst_row, #gstin_row, #billing_address_row').hide();
-    }
-  });
-});
-</script>
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-  
+      </div> 
 <div class="row mt-2">
   <div class="col-md-12 table-responsive-md mt-3">
     <table class="table table-bordered " id="item_table" onclick='toggleDateInput()'>
@@ -1797,78 +1809,78 @@ console.log('saved')
       success: function(response) {
         document.getElementById("modalCustomer").reset();
       // new
-      var newCustomer = $('<option></option>').attr('value', response.id).text(response.name);
-  newCustomer.data('email', response.email);
-  newCustomer.data('pos', response.place_of_supply);
-  newCustomer.data('gst', response.gst_treatment);
-  newCustomer.data('gstin', response.gstin); // Set the data attribute for the GSTIN
-  newCustomer.data('billing_address', response.billing_address);
-  $('#customer_sel').append(newCustomer);
+       // Assuming response contains the ID and name of the new customer
+       var newCustomer = $('<option></option>').attr('value', response.id).text(response.name);
+      newCustomer.data('email', response.email);
+      newCustomer.data('pos', response.place_of_supply);
+      newCustomer.data('gst', response.GSTTreatment);
+      newCustomer.data('gstin', response.GSTIN);
+      newCustomer.data('billing_address', response.Address1);
+      
+      $('#customer_sel').append(newCustomer);
 
-  // Attach the change event listener to the customer dropdown
-  $('#customer_sel').change(function() {
-    // Get the selected customer information
-    var selectedCustomer = $('#customer_sel option:selected');
-    var email = selectedCustomer.data('email');
-    var placeOfSupply = selectedCustomer.data('pos');
-    var gstTreatment = selectedCustomer.data('gst');
-    var gstin = selectedCustomer.data('gstin'); // Get the GSTIN from the data attribute
-    var billingAddress = selectedCustomer.data('billing_address');
+      // Attach the change event listener to the customer dropdown
+      $('#customer_sel').change(function () {
+        // Get the selected customer information
+        var selectedCustomer = $('#customer_sel option:selected');
+        var email = selectedCustomer.data('email');
+        var placeOfSupply = selectedCustomer.data('pos');
+        var gstTreatment = selectedCustomer.data('gst');
+        var gstin = selectedCustomer.data('gstin');
+        var billingAddress = selectedCustomer.data('billing_address');
 
-    // Content of the placeholders
-    $('#email_input').val(email);
-    $('#pos_input').val(placeOfSupply);
-    $('#gst_input').val(gstTreatment);
-    $('#gstin_input').val(gstin); // Set the value of the GSTIN input field
-    $('#billing_address_input').val(billingAddress);
+        // Content of the placeholders
+        $('#email_input').val(email);
+        $('#pos_input').val(placeOfSupply);
+        $('#gst_input').val(gstTreatment);
+        $('#gstin_input').val(gstin);
+        $('#billing_address_input').val(billingAddress);
 
-    // Show or hide fields based on selection
-    if (selectedCustomer.val() !== '') {
-      $('#email_row').show();
-      $('#pos_row').show();
-      $('#gst_row').show();
-      $('#gstin_row').show(); // Show the GSTIN row
-      $('#billing_address_row').show();
-    } else {
-      $('#email_row').hide();
-      $('#pos_row').hide();
-      $('#gst_row').hide();
-      $('#gstin_row').hide(); // Hide the GSTIN row
-      $('#billing_address_row').hide();
+        // Show or hide fields based on selection
+        if (selectedCustomer.val() !== '') {
+          $('#email_row').show();
+          $('#pos_row').show();
+          $('#gst_row').show();
+          $('#gstin_row').show();
+          $('#billing_address_row').show();
+        } else {
+          $('#email_row').hide();
+          $('#pos_row').hide();
+          $('#gst_row').hide();
+          $('#gstin_row').hide();
+          $('#billing_address_row').hide();
+        }
+      });
+
+      reloadcustomer();
+    },
+    error: function (xhr, status, error) {
+      console.error(xhr.responseText);
     }
   });
-
-
-        reloadcustomer();
-
-
-        
-      },
-  });        
 });
 
 function reloadcustomer() {
-
   $.ajax({
     url: "{% url 'customer_dropdown_credit' %}",
     type: "GET",
     dataType: "json",
     data: $(this).serialize(),
     csrfmiddlewaretoken: '{{ csrf_token }}',
+    success: function (data) {
+      var dropdown = $('#customer_sel');
+      dropdown.empty(); // Clear the dropdown before populating it again
 
-    success: function(data) {
-      var dropdow = $('#customer_sel');
-     
-      $.each(data, function(key, value) {
-          dropdow.append($('<option></option>').attr('value', key).text(value).val(key));
+      $.each(data, function (key, value) {
+        dropdown.append($('<option></option>').attr('value', key).text(value).val(key));
       });
     },
-    error: function(xhr, status, error) {
-    console.error(xhr.responseText);
+    error: function (xhr, status, error) {
+      console.error(xhr.responseText);
     }
   });
 }
-
+     
   
 
 
@@ -2212,6 +2224,23 @@ function reloadAccount() {
     // Initial setup for tax dropdown based on place of supply
     var initialPlaceOfSupply = $('#pos_input').val();
     updateTaxDropdown(initialPlaceOfSupply);
+    function calculateSubtotal() {
+  var subtotal = 0;
+  $('#item_table tbody tr').each(function () {
+    var rowAmount = calculateRowAmount($(this));
+    subtotal += rowAmount;
+  });
+  $('#subtotal').val(subtotal.toFixed(2));
+}
+
+function calculateTaxTotal() {
+  var taxTotal = 0;
+  $('#item_table tbody tr').each(function () {
+    var taxAmount = parseFloat($(this).find('.taxamount').val());
+    taxTotal += taxAmount;
+  });
+  $('#tax_total').val(taxTotal.toFixed(2));
+}
 
     // Function to calculate the grand total
     function calculateGrandTotal() {
@@ -2240,8 +2269,133 @@ function reloadAccount() {
       calculateGrandTotal();
     });
   });
-</script>
+  $('#add-row').click(function () {
+    rowCount++; // Increment row counter
+    var newRow = `
+      <tr id='row${rowCount}'>
+       
+            <td style="width: 10%;">
+                <div ><select
+                        class='form-control bg-light text-dark border-0 item_select itm'
+                        name='item_name[]' id='item1${rowCount}' onchange="fetchItemData(this.value)">
+                        <option value=" " selected disabled>Select Item</option>
+                        {% for i in itm %}
+                          <option value="{{i.Name}}">{{ i.Name  }} </option>
+                        {% endfor %}
+                    </select></div>
+            </td>
+            
+          
+             
+            <td style="width: 13%;" class='text-right'><input type='number' id='hsn${rowCount}'
+                    class=' text-right qty form-control bg-light text-dark' name='hsn'
+                    value='0'>
+            </td>
+            <td style="width: 15%;" class='text-right'><input type='number' id='qty${rowCount}'
+                    class=' text-right rate form-control bg-light text-dark' name='quantity[]'
+                    value='0'>
+            </td>
+            <td style="width: 12%;" class='text-right text-dark'><input type='number' id='rate${rowCount}'
+                    class=' text-right discount bg-light text-dark form-control' name='rate[]'
+                    value='0'>
+            </td>
+            <td style="width: 15%;" class='text-right '> <select name='tax[]' id='tax${rowCount}'
+              class='form-control bg-light text-dark  text-right border-0 tax' onclick="toggleDateInput()">
+              <optgroup class="text-center" label="GST">
+                <option value="0" selected></option>
+                <option value="0">0% GST(0%)</option>
+                <option value="3">3.0% GST(3%)</option>
+                <option value="5">5.0% GST(5%)</option>
+                <option value="12">12.0% GST(12%)</option>
+                <option value="18">18.0% GST(18%)</option>
+                <option value="28">28.0% GST(28%)</option>
+              </optgroup>
+              <optgroup  class="text-center" label="IGST">
+                <option value="0">0% IGST(0%)</option>
+                <option value="3">3.0% IGST(3%)</option>
+                <option value="5">5.0% IGST(5%)</option>
+                <option value="12">12.0% IGST(12%)</option>
+                <option value="18">18.0% IGST(18%)</option>
+                <option value="28">28.0% IGST(28%)</option>             
+                </optgroup>
+          </select></td>
+      <td style="display: none;">
+          <input type="text" name='taxamount' id="taxamount${rowCount}"
+              class=" taxamount text-dark" />
+      </td>
+            <td style="width: 15%;" class='text-right'><input type='number' id='discount${rowCount}'
+              class=' text-right form-control amount bg-light text-dark' name='discount[]'
+              value='0.00'></td>
+            <td style="width: 15%;" class='text-right'><input type='number' id='amount${rowCount}'
+                    class=' text-right form-control amount bg-light text-dark' name='amount[]'
+                    value='0.00'></td>
+            <td class='text-center'><button type='button' id='del_btn${rowCount}'
+                    class='btn btn-transparent text-danger btn-sm btn-outline-danger rounded-circle delete-row'
+                    style='width:30px'>X</button></td>
+                    <td class='text-center'>
+                      <button type='button' class='btn btn-transparent text-primary btn-sm btn-outline-primary rounded-circle clone-row' data-row=1 style='width:30px' ><i class="fa fa-clone"></i>
+                      </button>
+                    </td>
+</tr>
+</tbody>
+`;
+  $('#item_table tbody').append(newRow);
+    toggleDateInput();
+    calculateSubtotal();
+    calculateGrandTotal();
+  });
+  $('#item_table').on('click', '.delete-row', function () {
+    $(this).closest('tr').remove();
+    calculateSubtotal();
+    calculateGrandTotal();
+    calculateTaxAmount();
+  });
+  $('#srcofsupply').on('change', function () {
+  var row = $(this).closest('tr');
+  calculateRowAmount(row);
+  calculateSubtotal();
+  calculateGrandTotal();
+  toggleDateInput();
+  calculateTaxAmount();
 
+  // Calculate total tax amount and its IGST amount
+  var totalTaxAmount = 0;
+  var totalIGSTAmount = 0;
+
+  $('#item_table tbody tr').each(function () {
+    var tax = $(this).find('.tax').val();
+    var amount = $(this).find('.amount').val();
+
+    var taxAmount = amount * (tax / 100);
+    totalTaxAmount += taxAmount;
+
+    if (tax.startsWith('IGST')) {
+      totalIGSTAmount += taxAmount;
+    }
+  })
+  });
+  $('#add-row').click(function () {
+  rowCount++; // Increment row counter
+  var newRow = `
+    <tr id='row${rowCount}'>
+      <!-- Your table row content here -->
+    </tr>
+  `;
+
+  $('#item_table tbody').append(newRow);
+
+  // Call functions to update calculations for the new row
+  toggleDateInput();
+  calculateSubtotal();
+  calculateGrandTotal();
+});
+
+
+
+
+
+
+</script>
 
 
 
@@ -2957,6 +3111,9 @@ function fetchItemData(selectedItem) {
 
 
 </script>
+
+
+
 
   
 {% endblock %}

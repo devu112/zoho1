@@ -478,6 +478,7 @@ urlpatterns = [
     path('purchase_unit_credit',views.purchase_unit_credit,name='purchase_unit_credit'),
     path('purchase_unit_dropdown_credit',views.purchase_unit_dropdown_credit,name='purchase_unit_dropdown_credit'),
     path('get_item_details/', views.get_item_details, name='get_item_details'),
+   
     
     # re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     
