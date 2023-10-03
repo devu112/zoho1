@@ -7,6 +7,10 @@
 
 
 <style>
+
+#newpayment {
+  z-index: 2080; /* Adjust this value as needed to ensure it appears above the customer modal */
+}
   .modal{
     z-index: 9999;
     overflow: scroll;
@@ -307,15 +311,15 @@
           
              
             <td style="width: 13%;" class='text-right'><input type='number' id='hsn1'
-                    class=' text-right qty form-control bg-light text-dark' name='hsn'
+                    class=' text-right form-control bg-light text-dark hsn' name='hsn'
                     value='0'>
             </td>
             <td style="width: 15%;" class='text-right'><input type='number' id='qty1'
-                    class=' text-right rate form-control bg-light text-dark' name='quantity[]'
+                    class=' text-right form-control bg-light text-dark' name='quantity[]'
                     value='0'>
             </td>
             <td style="width: 12%;" class='text-right text-dark'><input type='number' id='rate1'
-                    class=' text-right discount bg-light text-dark form-control' name='rate[]'
+                    class=' text-right discount bg-light text-dark form-control rate' name='rate[]'
                     value='0'>
             </td>
             <td style="width: 15%;" class='text-right '> <select name='tax[]' id='tax1'
@@ -542,14 +546,7 @@ $(document).ready(function () {
           calculateRowTotal(row);
         });
         
-        // Add event listener for the "Add another line" button
-        $('#add-row-button').on('click', function () {
-          var lastRow = $('#item_table tbody tr:last');
-          var newRow = lastRow.clone();
-          
-          // Clear any unique identifiers or values in the cloned row
-          newRow.find('input[type="text"]').val('');
-          newRow.find('input[type="number"]').val('0');
+       
           
           // Clear the tax amount field in the cloned row
           newRow.find('input[name="taxamount"]').val('');
@@ -557,7 +554,6 @@ $(document).ready(function () {
           // Append the cloned row to the table
           $('#item_table tbody').append(newRow);
         });
-      });
       </script>
       
 
@@ -934,14 +930,21 @@ $(document).ready(function () {
                   </div>
                   <div class="col-md-6 mt-2">
                     <div class="d-flex">
-                      <select class="form-control bg-light text-dark" id="c_terms" name="c_terms" required>
-    
-                        {% for p in pay %}
+                      <select class="form-control text-dark bg-light" id="c_terms" name="c_terms" required>
+                        <option selected value="15">NET 15</option>
+                        <option value="30">NET 30</option>
+                        <option value="45">NET 45</option>
+                        <option value="60">NET 60</option>
+                        <option value="90">NET 90</option>
+                        <option value="">Due end of the month</option>
+                        <option value="recpt">Due on receipt</option>
+                        {% for p in payments %}
                         <option value="{{p.Terms}} {{p.id}}">{{p.Terms}}</option>
                         {% endfor %}
                       </select>                
+                      <a href="#" class="btn btn-outline-secondary py-2 my-1" data-target="#newpayment" data-toggle="modal">+</a>   
                     </div>
-                  </div>       
+                  </div>          
                 </div>
                 
 
@@ -1569,6 +1572,156 @@ $(document).ready(function () {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
+<script>
+
+////////////////////old code//////////////////////////////////////////////
+
+  $(document).ready(function () {
+  var rowCount = 2; // Initialize rowCount to the next available number
+
+  // Event handler for clone button
+  $('#item_table').on('click', '.clone-row', function () {
+    var row = $(this).closest('tr');
+   
+    var newRowId = 'row' + rowCount; // Generate a new ID for the cloned row
+    clonedRow.attr('id', newRowId); // Set the new ID for the cloned row
+
+    // Clone the options for tax, account, and item (if needed)
+    // ...
+
+    rowCount++; // Increment row counter
+
+    $('#item_table tbody').append(clonedRow);
+    calculateRowAmount(row);
+    calculateSubtotal();
+    calculateGrandTotal();
+    toggleDateInput();
+    calculateTaxAmount();
+    toggleDateInput();
+  });
+
+  // Event handler for "Add another line" button
+  $('#add-row-button').click(function () {
+    var lastRow = $('#item_table tbody tr:last'); // Get the last row
+    var newRow = lastRow.clone(); // Clone the last row
+    var newRowId = 'row' + rowCount; // Generate a new ID for the cloned row
+    newRow.attr('id', newRowId); // Set the new ID for the cloned row
+
+    // Clear input values in the cloned row if needed
+    newRow.find('input[type="number"]').val(0);
+
+    $('#item_table tbody').append(newRow);
+    rowCount++; // Increment row counter
+  });
+});
+
+
+// Change event listener for the tax dropdown
+$('#item_table').on('change', 'select[name^="tax"]', function () {
+    // Calculate CGST, SGST, or IGST based on the selected tax type
+    var selectedTaxType = $(this).val();
+    var subtotal = parseFloat($('#subtotal').val()) || 0;
+
+    if (selectedTaxType === '0' || selectedTaxType === '3' || selectedTaxType === '5' || selectedTaxType === '12' || selectedTaxType === '18' || selectedTaxType === '28') {
+        // GST selected
+        var gstPercentage = parseFloat(selectedTaxType);
+        var cgst = (subtotal * (gstPercentage / 2)) / 100;
+        var sgst = cgst;
+
+        $('#tr_cgst').show();
+        $('#tr_sgst').show();
+        $('#tr_igst').hide();
+
+        $('#cgst').val(cgst.toFixed(2));
+        $('#sgst').val(sgst.toFixed(2));
+        $('#igst').val('0.00');
+    } else {
+        // IGST selected
+        $('#tr_cgst').hide();
+        $('#tr_sgst').hide();
+        $('#tr_igst').show();
+
+        $('#cgst').val('0.00');
+        $('#sgst').val('0.00');
+        $('#igst').val(subtotal.toFixed(2));
+    }
+
+    // Update tax total
+    calculateTaxTotal();
+});
+</script>
+
+
+
+
+<!-- Payment -->
+<script>
+     
+  // Select the form and the container for the terms rows
+const form = document.getElementById('terms-form');
+const termsContainer = document.getElementById('terms-container');
+
+// Select the button that adds new rows
+const addTermRowBtn = document.querySelector('.add-term-row');
+
+// Add event listener to the button
+addTermRowBtn.addEventListener('click', () => {
+  // Create a new row div
+  const newRow = document.createElement('div');
+  newRow.classList.add('form-row');
+
+  // Create the first input field for the new row
+  const termsInput = document.createElement('div');
+  termsInput.classList.add('col-6');
+  const termsField = document.createElement('input');
+  termsField.type = 'text';
+  termsField.name = 'term';
+  termsField.placeholder = 'Terms';
+  termsField.classList.add('form-control');
+  termsField.classList.add('text-black');
+  termsInput.appendChild(termsField);
+  newRow.appendChild(termsInput);
+
+  // Create the second input field for the new row
+  const daysInput = document.createElement('div');
+  daysInput.classList.add('col-5');
+  const daysField = document.createElement('input');
+  daysField.type = 'text';
+  daysField.name = 'days';
+  daysField.placeholder = 'No of Days';
+  daysField.classList.add('form-control');
+  daysField.classList.add('text-black');
+  daysInput.appendChild(daysField);
+  newRow.appendChild(daysInput);
+
+  // Create the delete button for the new row
+  const deleteBtn = document.createElement('div');
+  deleteBtn.classList.add('col-1');
+  const deleteBtnEl = document.createElement('button');
+  deleteBtnEl.type = 'button';
+  deleteBtnEl.classList.add('btn', 'btn-danger', 'delete-term-row');
+  deleteBtnEl.innerText = '-';
+  deleteBtn.appendChild(deleteBtnEl);
+  newRow.appendChild(deleteBtn);
+
+  // Append the new row to the container
+  termsContainer.appendChild(newRow);
+});
+
+// Add event listener to the form to delete rows
+termsContainer.addEventListener('click', (event) => {
+  // If the target element is a delete button
+  if (event.target.classList.contains('delete-term-row')) {
+    // Find the row to delete
+    const row = event.target.closest('.form-row');
+    // Remove the row
+    row.remove();
+  }
+});
+
+</script>
+
+
 
 
 
@@ -1717,6 +1870,7 @@ $(document).on("click", "#payment", function() {
       
       
       $('#newpayment').hide();
+      
       $(".modal-backdrop").remove();
       data = response.pay_term;
       const pay = document.getElementById("pay_term");
@@ -2132,270 +2286,6 @@ function reloadAccount() {
 </script>
 <!-- Tax dropdown according to place of supply -->
 
-<script>
-  $(document).ready(function () {
-
-    // Function to update tax dropdown options based on place of supply
-    function updateTaxDropdown(placeOfSupply) {
-      var taxDropdown = $('#tax1');
-
-      // Remove existing options
-      taxDropdown.empty(); // Clear the dropdown options
-
-      // Convert the placeOfSupply to lowercase for case-insensitive comparison
-      var lowerPlaceOfSupply = placeOfSupply.toLowerCase();
-
-      if (lowerPlaceOfSupply === '[kl]-kerala' || lowerPlaceOfSupply === 'kerala' || lowerPlaceOfSupply === '[kl] kerala') {
-        // Add GST options for Kerala
-        taxDropdown.append('<optgroup class="text-center" label="GST">' +
-          '<option value="0">0% GST(0%)</option>' +
-          '<option value="3">3.0% GST(3%)</option>' +
-          '<option value="5">5.0% GST(5%)</option>' +
-          '<option value="12">12.0% GST(12%)</option>' +
-          '<option value="18">18.0% GST(18%)</option>' +
-          '<option value="28">28.0% GST(28%)</option>' +
-          '</optgroup>');
-      } else {
-        // Add IGST options for other states
-        taxDropdown.append('<optgroup class="text-center" label="IGST">' +
-          '<option value="0">0% IGST(0%)</option>' +
-          '<option value="3">3.0% IGST(3%)</option>' +
-          '<option value="5">5.0% IGST(5%)</option>' +
-          '<option value="12">12.0% IGST(12%)</option>' +
-          '<option value="18">18.0% IGST(18%)</option>' +
-          '<option value="28">28.0% IGST(28%)</option>' +
-          '</optgroup>');
-      }
-    }
-
-    // Change event listener for the customer dropdown
-    $('#customer_sel').change(function () {
-      var selectedCustomer = $('#customer_sel option:selected');
-      var placeOfSupply = selectedCustomer.data('pos');
-
-      // Update tax dropdown based on place of supply
-      updateTaxDropdown(placeOfSupply);
-    });
-
-    // Event handler for changes in quantity, rate, and discount fields
-    $(document).on('change keyup', 'input[name^="quantity"], input[name^="rate"], input[name^="discount"], select[name^="tax"]', function () {
-      // Get the parent row of the changed input
-      var row = $(this).closest('tr');
-
-      // Get the values of quantity, rate, and discount for the row
-      var quantity = parseFloat(row.find('input[name^="quantity"]').val()) || 0;
-      var rate = parseFloat(row.find('input[name^="rate"]').val()) || 0;
-      var discount = parseFloat(row.find('input[name^="discount"]').val()) || 0;
-
-      // Calculate the total amount for the row
-      var totalAmount = (quantity * rate) - discount;
-
-      // Update the corresponding total amount input field with the calculated value
-      row.find('input[name^="amount"]').val(totalAmount.toFixed(2));
-
-      // Calculate the subtotal
-      var subtotal = 0;
-
-      // Loop through all the rows in the table
-      $('input[name^="amount"]').each(function () {
-        subtotal += parseFloat($(this).val()) || 0;
-      });
-
-      // Update the subtotal input field with the calculated value
-      $('#subtotal').val(subtotal.toFixed(2));
-
-      // Calculate tax total
-      var taxTotal = 0;
-
-      // Determine the selected tax type (GST or IGST)
-      var selectedTaxType = row.find('select[name^="tax"]').val();
-
-      if (selectedTaxType !== undefined) {
-        taxTotal = (subtotal * parseFloat(selectedTaxType)) / 100;
-      }
-
-      // Update the tax total input field with the calculated value
-      $('#tax_total').val(taxTotal.toFixed(2));
-
-      // Calculate the grand total
-      calculateGrandTotal();
-    });
-
-    // Initial setup for tax dropdown based on place of supply
-    var initialPlaceOfSupply = $('#pos_input').val();
-    updateTaxDropdown(initialPlaceOfSupply);
-    function calculateSubtotal() {
-  var subtotal = 0;
-  $('#item_table tbody tr').each(function () {
-    var rowAmount = calculateRowAmount($(this));
-    subtotal += rowAmount;
-  });
-  $('#subtotal').val(subtotal.toFixed(2));
-}
-
-function calculateTaxTotal() {
-  var taxTotal = 0;
-  $('#item_table tbody tr').each(function () {
-    var taxAmount = parseFloat($(this).find('.taxamount').val());
-    taxTotal += taxAmount;
-  });
-  $('#tax_total').val(taxTotal.toFixed(2));
-}
-
-    // Function to calculate the grand total
-    function calculateGrandTotal() {
-      var subtotal = parseFloat($('#subtotal').val()) || 0;
-      var taxTotal = parseFloat($('#tax_total').val()) || 0;
-      var shippingCharge = parseFloat($('#shipping').val()) || 0;
-      var adjustment = parseFloat($('#adjustment').val()) || 0;
-
-      console.log('Subtotal:', subtotal);
-      console.log('Tax Total:', taxTotal);
-      console.log('Shipping Charge:', shippingCharge);
-      console.log('Adjustment:', adjustment);
-
-      var grandTotal = subtotal + taxTotal + shippingCharge + adjustment;
-
-      console.log('Grand Total:', grandTotal);
-
-      $('#grandtotal').val(grandTotal.toFixed(2));
-    }
-
-    $('#shipping').on('blur', function () {
-      calculateGrandTotal();
-    });
-
-    $('#adjustment').on('input', function () {
-      calculateGrandTotal();
-    });
-  });
-  $('#add-row').click(function () {
-    rowCount++; // Increment row counter
-    var newRow = `
-      <tr id='row${rowCount}'>
-       
-            <td style="width: 10%;">
-                <div ><select
-                        class='form-control bg-light text-dark border-0 item_select itm'
-                        name='item_name[]' id='item1${rowCount}' onchange="fetchItemData(this.value)">
-                        <option value=" " selected disabled>Select Item</option>
-                        {% for i in itm %}
-                          <option value="{{i.Name}}">{{ i.Name  }} </option>
-                        {% endfor %}
-                    </select></div>
-            </td>
-            
-          
-             
-            <td style="width: 13%;" class='text-right'><input type='number' id='hsn${rowCount}'
-                    class=' text-right qty form-control bg-light text-dark' name='hsn'
-                    value='0'>
-            </td>
-            <td style="width: 15%;" class='text-right'><input type='number' id='qty${rowCount}'
-                    class=' text-right rate form-control bg-light text-dark' name='quantity[]'
-                    value='0'>
-            </td>
-            <td style="width: 12%;" class='text-right text-dark'><input type='number' id='rate${rowCount}'
-                    class=' text-right discount bg-light text-dark form-control' name='rate[]'
-                    value='0'>
-            </td>
-            <td style="width: 15%;" class='text-right '> <select name='tax[]' id='tax${rowCount}'
-              class='form-control bg-light text-dark  text-right border-0 tax' onclick="toggleDateInput()">
-              <optgroup class="text-center" label="GST">
-                <option value="0" selected></option>
-                <option value="0">0% GST(0%)</option>
-                <option value="3">3.0% GST(3%)</option>
-                <option value="5">5.0% GST(5%)</option>
-                <option value="12">12.0% GST(12%)</option>
-                <option value="18">18.0% GST(18%)</option>
-                <option value="28">28.0% GST(28%)</option>
-              </optgroup>
-              <optgroup  class="text-center" label="IGST">
-                <option value="0">0% IGST(0%)</option>
-                <option value="3">3.0% IGST(3%)</option>
-                <option value="5">5.0% IGST(5%)</option>
-                <option value="12">12.0% IGST(12%)</option>
-                <option value="18">18.0% IGST(18%)</option>
-                <option value="28">28.0% IGST(28%)</option>             
-                </optgroup>
-          </select></td>
-      <td style="display: none;">
-          <input type="text" name='taxamount' id="taxamount${rowCount}"
-              class=" taxamount text-dark" />
-      </td>
-            <td style="width: 15%;" class='text-right'><input type='number' id='discount${rowCount}'
-              class=' text-right form-control amount bg-light text-dark' name='discount[]'
-              value='0.00'></td>
-            <td style="width: 15%;" class='text-right'><input type='number' id='amount${rowCount}'
-                    class=' text-right form-control amount bg-light text-dark' name='amount[]'
-                    value='0.00'></td>
-            <td class='text-center'><button type='button' id='del_btn${rowCount}'
-                    class='btn btn-transparent text-danger btn-sm btn-outline-danger rounded-circle delete-row'
-                    style='width:30px'>X</button></td>
-                    <td class='text-center'>
-                      <button type='button' class='btn btn-transparent text-primary btn-sm btn-outline-primary rounded-circle clone-row' data-row=1 style='width:30px' ><i class="fa fa-clone"></i>
-                      </button>
-                    </td>
-</tr>
-</tbody>
-`;
-  $('#item_table tbody').append(newRow);
-    toggleDateInput();
-    calculateSubtotal();
-    calculateGrandTotal();
-  });
-  $('#item_table').on('click', '.delete-row', function () {
-    $(this).closest('tr').remove();
-    calculateSubtotal();
-    calculateGrandTotal();
-    calculateTaxAmount();
-  });
-  $('#srcofsupply').on('change', function () {
-  var row = $(this).closest('tr');
-  calculateRowAmount(row);
-  calculateSubtotal();
-  calculateGrandTotal();
-  toggleDateInput();
-  calculateTaxAmount();
-
-  // Calculate total tax amount and its IGST amount
-  var totalTaxAmount = 0;
-  var totalIGSTAmount = 0;
-
-  $('#item_table tbody tr').each(function () {
-    var tax = $(this).find('.tax').val();
-    var amount = $(this).find('.amount').val();
-
-    var taxAmount = amount * (tax / 100);
-    totalTaxAmount += taxAmount;
-
-    if (tax.startsWith('IGST')) {
-      totalIGSTAmount += taxAmount;
-    }
-  })
-  });
-  $('#add-row').click(function () {
-  rowCount++; // Increment row counter
-  var newRow = `
-    <tr id='row${rowCount}'>
-      <!-- Your table row content here -->
-    </tr>
-  `;
-
-  $('#item_table tbody').append(newRow);
-
-  // Call functions to update calculations for the new row
-  toggleDateInput();
-  calculateSubtotal();
-  calculateGrandTotal();
-});
-
-
-
-
-
-
-</script>
 
 
 
@@ -3088,7 +2978,7 @@ function calculateTaxTotal() {
 ///////////////////////////////get hsn & rate////////////////////////////////////////////////////
 
 
-function fetchItemData(selectedItem) {
+function fetchItemData(selectedItem, row) {
     $.ajax({
         type: 'GET',
         url: "{% url 'get_item_details' %}",
@@ -3097,9 +2987,9 @@ function fetchItemData(selectedItem) {
         },
         dataType: 'json',
         success: function (response) {
-            // Update the HSN and rate fields with the fetched data
-            $("#hsn1").val(response.hsn);
-            $("#rate1").val(response.rate);
+            // Update the HSN and rate fields in the current row with the fetched data
+            row.find(".hsn").val(response.hsn);
+            row.find(".rate").val(response.rate);
         },
         error: function () {
             // Handle errors if the data cannot be fetched or the item doesn't exist
@@ -3109,11 +2999,204 @@ function fetchItemData(selectedItem) {
     });
 }
 
+// Add event handler for changes in item selection
+$(document).on('change', '.item_select', function () {
+    var selectedItem = $(this).val();
+    var row = $(this).closest('tr');
+    fetchItemData(selectedItem, row);
+});
 
-</script>
+
+// Add event handler for changes in item selection
+$(document).on('change', '.item_select', function () {
+  var selectedItem = $(this).val();
+  var row = $(this).closest('tr');
+  
+  $.ajax({
+    type: 'GET',
+    url: "{% url 'get_item_details' %}",
+    data: {
+      id: selectedItem
+    },
+    dataType: 'json',
+    success: function (response) {
+      // Update the HSN and rate fields in the current row with the fetched data
+      row.find(".hsn").val(response.hsn);
+      row.find(".rate").val(response.rate);
+    },
+    error: function () {
+      // Handle errors if the data cannot be fetched or the item doesn't exist
+      console.log('Error fetching item data.');
+      // You can display an error message to the user if needed.
+    },
+  });
+});
 
 
+
+  </script>
+  <script>
+    $(document).ready(function () {
+  var rowCount = 2; // Initialize rowCount to the next available number
+
+  // Function to calculate the subtotal based on row amounts
+  function calculateSubtotal() {
+    var subtotal = 0;
+    $('input[name^="amount"]').each(function () {
+      var amount = parseFloat($(this).val()) || 0;
+      subtotal += amount;
+    });
+    $('#subtotal').val(subtotal.toFixed(2));
+  }
 
 
   
+  // Function to update tax dropdown options based on place of supply
+  function updateTaxDropdown(placeOfSupply) {
+      var taxDropdown = $('#tax1');
+  
+      // Remove existing options
+      taxDropdown.empty(); // Clear the dropdown options
+  
+      // Convert the placeOfSupply to lowercase for case-insensitive comparison
+      var lowerPlaceOfSupply = placeOfSupply.toLowerCase();
+  
+      if (lowerPlaceOfSupply === '[kl]-kerala' || lowerPlaceOfSupply === 'kerala' || lowerPlaceOfSupply === '[kl] kerala') {
+          // Add GST options for Kerala
+          taxDropdown.append('<optgroup class="text-center" label="GST">' +
+              '<option value="0" selected></option>' +
+              '<option value="3">3.0% GST(3%)</option>' +
+              '<option value="5">5.0% GST(5%)</option>' +
+              '<option value="12">12.0% GST(12%)</option>' +
+              '<option value="18">18.0% GST(18%)</option>' +
+              '<option value="28">28.0% GST(28%)</option>' +
+              '</optgroup>');
+      } else {
+          // Add IGST options for other states
+          taxDropdown.append('<optgroup class="text-center" label="IGST">' +
+              '<option value="0">0% IGST(0%)</option>' +
+              '<option value="3">3.0% IGST(3%)</option>' +
+              '<option value="5">5.0% IGST(5%)</option>' +
+              '<option value="12">12.0% IGST(12%)</option>' +
+              '<option value="18">18.0% IGST(18%)</option>' +
+              '<option value="28">28.0% IGST(28%)</option>' +
+              '</optgroup>');
+      }
+  }
+  
+        // Change event listener for the customer dropdown
+        $('#customer_sel').change(function () {
+            var selectedCustomer = $('#customer_sel option:selected');
+            var placeOfSupply = selectedCustomer.data('pos');
+  
+            // Update tax dropdown based on place of supply
+            updateTaxDropdown(placeOfSupply);
+        });
+  
+        // Event handler for changes in quantity, rate, and discount fields
+  $(document).on('change keyup', 'input[name^="quantity"], input[name^="rate"], input[name^="discount"], select[name^="tax"]', function () {
+    // Get the parent row of the changed input
+    var row = $(this).closest('tr');
+
+    // Get the values of quantity, rate, and discount for the row
+    var quantity = parseFloat(row.find('input[name^="quantity"]').val()) || 0;
+    var rate = parseFloat(row.find('input[name^="rate"]').val()) || 0;
+    var discount = parseFloat(row.find('input[name^="discount"]').val()) || 0;
+
+    // Calculate the total amount for the row
+    var totalAmount = (quantity * rate) - discount;
+
+    // Update the corresponding total amount input field with the calculated value
+    row.find('input[name^="amount"]').val(totalAmount.toFixed(2));
+
+    // Calculate the subtotal whenever there's a change in row amounts
+    calculateSubtotal();
+
+    // Determine the selected tax type (GST or IGST)
+    var selectedTaxType = row.find('select[name^="tax"]').val();
+  
+            var selectedCustomer = $('#customer_sel option:selected');
+  var placeOfSupply = selectedCustomer.data('pos');
+  
+  // Calculate tax based on the selected tax type and place of supply
+  var normalizedPlaceOfSupply = placeOfSupply.replace(/\[|\]|-/g, '').toLowerCase();
+  
+  // Check if the normalizedPlaceOfSupply contains "kerala"
+  if (normalizedPlaceOfSupply.includes('kerala')) {
+      // Calculate CGST and SGST based on the selected GST percentage (half of the GST percentage each)
+      var gstPercentage = parseFloat(selectedTaxType);
+      cgst = (subtotal * (gstPercentage / 2)) / 100;
+      sgst = cgst;
+  
+      $('#tr_cgst').show();
+      $('#tr_sgst').show();
+      $('#tr_igst').hide();
+  
+      // Set IGST input field to zero
+      $('#igst').val('0.00');
+  
+      // Calculate tax total as the sum of CGST and SGST
+      var taxTotal = cgst + sgst;
+  
+      // Show the tax total element and set its value
+      $('#tax_total').show().val(taxTotal.toFixed(2));
+  } else {
+      // Calculate IGST based on the selected GST percentage
+      var igstPercentage = parseFloat(selectedTaxType);
+      igst = (subtotal * igstPercentage) / 100;
+  
+      $('#tr_cgst').hide();
+      $('#tr_sgst').hide();
+      $('#tr_igst').show();
+  
+      if (selectedTaxType === '0') {
+          // If the tax type is GST and place of supply is not Kerala, set CGST and SGST to zero
+          $('#cgst').val('0.00');
+          $('#sgst').val('0.00');
+      }
+  
+      if (selectedTaxType !== '0') {
+          // If the tax type is IGST, set CGST and SGST to zero
+          $('#cgst').val('0.00');
+          $('#sgst').val('0.00');
+      }
+  
+      // Update the IGST input field and tax total to be the same
+      $('#igst').val(igst.toFixed(2));
+      $('#tax_total').val(igst.toFixed(2));
+  
+  }
+  
+              
+    });
+  
+        // Initial setup for tax dropdown based on place of supply
+        var initialPlaceOfSupply = $('#pos_input').val();
+        updateTaxDropdown(initialPlaceOfSupply);
+  
+        // Function to calculate the grand total
+        function calculateGrandTotal() {
+            var subtotal = parseFloat($('#subtotal').val()) || 0;
+            var taxTotal = parseFloat($('#tax_total').val()) || 0;
+            var shippingCharge = parseFloat($('#shipping').val()) || 0;
+            var Adjustment = parseFloat($('#adjustment').val()) || 0;
+  
+            console.log('Subtotal:', subtotal);
+            console.log('Tax Total:', taxTotal);
+            console.log('Shipping Charge:', shippingCharge);
+            console.log('Adjustment:', Adjustment);
+  
+            var grandTotal = subtotal + taxTotal + shippingCharge + Adjustment;
+  
+            console.log('Grand Total:', grandTotal);
+  
+            $('#grandtotal').val(grandTotal.toFixed(2));
+        }
+  
+        $('#adjustment').on('input', function () {
+            calculateGrandTotal();
+        });
+    });
+  </script>
+
 {% endblock %}
