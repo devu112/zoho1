@@ -458,7 +458,7 @@
                         data-toggle="tooltip" title="PDF"></a>
 
                         <a href="" class=" fa fa-print btns px-2 py-2"   data-toggle="tooltip"
-                            title="PRINT" onclick="window.print()"> </a>     
+                            title="PRINT" onclick="window.print()" > </a>     
                     </div>
                     <div class="m-0">
                         <div class="dropdown m-0 p-0">
@@ -716,7 +716,7 @@
 
 
             <!-- overview -->
-            <div id="Overview" class="tabcontent mt-0 border-0 p-4 mx-0" style="overflow-x: hidden; border-top: #ccc double 2px; background-color: burlywood ;border-radius: 5px;">
+            <div id="Overview" class="tabcontent mt-0 border-0 p-4 mx-0"  style="overflow-x: hidden; border-top: #ccc double 2px; background-color: burlywood ;border-radius: 5px;">
                 <h3 class="mb-0 mx-5 text-muted" style="color: rgb(161, 195, 226);">{{ company.company_name }}</h3>
                 <center>
                     <h2 class="mb-4" style=" color: #434141;">CreditNote Bill</h2>
@@ -1161,6 +1161,7 @@ $(document).ready(function () {
             event.preventDefault();
             var element = document.getElementById('Template');
             
+            
             var opt =
             {
                 margin: 0,
@@ -1374,6 +1375,22 @@ $(document).ready(function () {
     
     
     </script>
+    <script>
+        function toggleAndPrint(sectionId) {
+            var templateSection = document.getElementById("Template");
+            var overviewSection = document.getElementById("Overview");
+    
+            if (sectionId === "Template") {
+                templateSection.style.display = "block";
+                overviewSection.style.display = "none";
+            } else {
+                templateSection.style.display = "none";
+                overviewSection.style.display = "block";
+            }
+    
+            window.print();
+        }
+    </script>
     
     
        </div>
@@ -1480,8 +1497,6 @@ function updateDetails(data) {
   editButton.href = `/edit_expense/${data.id}/`;
   // deleteButton.href = `/delete_expense/${data.id}/`;
 }
-
-
 </script>
 {% comment %} <script>
   function changeProfileName(profileName) {
