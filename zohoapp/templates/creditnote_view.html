@@ -457,9 +457,25 @@
                         <a href=" " class="fa fa-file-pdf btns toPDF px-2 py-2" id="toPDF"
                         data-toggle="tooltip" title="PDF"></a>
 
-                        <a href="" class=" fa fa-print btns px-2 py-2"   data-toggle="tooltip"
-                            title="PRINT" onclick="window.print()" > </a>     
+                        <a href="" class=" fa fa-print btns px-2 py-2"   
+                            title="PRINT" id="printbtn" onclick="toggleAndPrint('Template')"> </a>
                     </div>
+                    <script>
+                        function toggleAndPrint(sectionId) {
+                            var templateSection = document.getElementById("Template");
+                            var overviewSection = document.getElementById("Overview");
+                    
+                            if (sectionId === "Template") {
+                                templateSection.style.display = "block";
+                                overviewSection.style.display = "none";
+                            } else {
+                                templateSection.style.display = "none";
+                                overviewSection.style.display = "block";
+                            }
+                    
+                            window.print();
+                        }
+                    </script>
                     <div class="m-0">
                         <div class="dropdown m-0 p-0">
                             <a href=" " class=" fas fa-paperclip dropdown-toggle btns px-2 py-2"  

@@ -216,67 +216,52 @@
       <!-------------------------- new-----------------------------------------  -->
       <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
       <script>
-      // Function to update customer details when the dropdown selection changes
-      function updateCustomerDetails(selectedCustomer) {
-        var email = selectedCustomer.data('email');
-        var placeOfSupply = selectedCustomer.data('pos');
-        var gstTreatment = selectedCustomer.data('gst');
-        var gstin = selectedCustomer.data('gstin');
-        var billingAddress = selectedCustomer.data('billing_address');
+        $(document).ready(function () {
+          // Change event listener for the customer dropdown
+          $('#customer_sel').change(function () {
+            var selectedCustomer = $('#customer_sel option:selected');
+            var email = selectedCustomer.data('email');
+            var placeOfSupply = selectedCustomer.data('pos');
+            var gstTreatment = selectedCustomer.data('gst');
+            var gstin = selectedCustomer.data('gstin'); // Get the GSTIN from the data attribute
+            var billingAddress = selectedCustomer.data('billing_address');
       
-        $('#email_input').val(email);
-        $('#pos_input').val(placeOfSupply);
-        $('#gst_input').val(gstTreatment);
-        $('#gstin_input').val(gstin);
-        $('#billing_address_input').val(billingAddress);
+            // Content of the placeholders
+            $('#email_input').val(email);
+            $('#pos_input').val(placeOfSupply);
+            $('#gst_input').val(gstTreatment);
+            $('#gstin_input').val(gstin); // Set the value of the GSTIN input field
+            $('#billing_address_input').val(billingAddress);
       
-        // Show or hide fields based on selection
-        if (selectedCustomer.val() !== '') {
-          $('#email_row').show();
-          $('#pos_row').show();
-          $('#gst_row').show();
-          $('#billing_address_row').show();
+            // Show or hide fields based on selection
+            if (selectedCustomer.val() !== '') {
+              $('#email_row').show();
+              $('#pos_row').show();
+              $('#gst_row').show();
       
-          // Call the function to toggle GSTIN visibility
-          toggleGSTINVisibility(gstTreatment);
-        } else {
-          $('#email_row').hide();
-          $('#pos_row').hide();
-          $('#gst_row').hide();
-          $('#gstin_row').hide();
-          $('#billing_address_row').hide();
-        }
-      }
+              // Conditionally show/hide the GSTIN row based on GST treatment
+              if (
+                gstTreatment.toLowerCase() === "unregistered business-not registered under gst" ||
+                gstTreatment.toLowerCase() === "overseas- persons with who you do import or exports of supplies outside india"
+              ) {
+                $('#gstin_row').hide(); // Hide the GSTIN row
+              } else {
+                $('#gstin_row').show(); // Show the GSTIN row
+              }
       
-      $(document).ready(function () {
-        // Function to hide or show GSTIN based on GST treatment
-        function toggleGSTINVisibility(gstTreatment) {
-          if (
-            gstTreatment.toLowerCase() === "unregistered business-not registered under gst" ||
-            gstTreatment.toLowerCase() === "overseas- persons with whom you do import or exports of supplies outside india"
-          ) {
-            $('#gstin_row').hide();
-          } else {
-            $('#gstin_row').show();
-          }
-        }
-      
-        // Attach the change event listener to the customer dropdown
-        $('#customer_sel').change(function () {
-          var selectedCustomer = $('#customer_sel option:selected');
-          
-          // Call the function to update customer details
-          updateCustomerDetails(selectedCustomer);
+              $('#billing_address_row').show();
+            } else {
+              $('#email_row').hide();
+              $('#pos_row').hide();
+              $('#gst_row').hide();
+              $('#gstin_row').hide(); // Hide the GSTIN row
+              $('#billing_address_row').hide();
+            }
+          });
         });
       
-        // Set the initial GST Treatment value on page load
-        toggleGSTINVisibility("unregistered business-not registered under gst");
-        
-        // Initialize the event handler
-        $('#customer_sel').change();
-      });
-    </script>
-
+       
+        </script>
       
         
       </div> 
@@ -477,7 +462,7 @@ $(document).ready(function () {
               <tr>
                 <td>Adjustment</td>
                 <td></td>
-                <td><input type="number" id="adjustment" name="adjustment" step="any" value="0"
+                <td><input type="number" id="adjustment" name="adjustment" step="any" 
                     class="form-control bg-transparent border-0 text-right adjustment" ></td>
               </tr>
               
@@ -3064,7 +3049,8 @@ $(document).on('change', '.item_select', function () {
       if (lowerPlaceOfSupply === '[kl]-kerala' || lowerPlaceOfSupply === 'kerala' || lowerPlaceOfSupply === '[kl] kerala') {
           // Add GST options for Kerala
           taxDropdown.append('<optgroup class="text-center" label="GST">' +
-              '<option value="0" selected></option>' +
+              
+              '<option value="0">0% GST(0%)</option>'+
               '<option value="3">3.0% GST(3%)</option>' +
               '<option value="5">5.0% GST(5%)</option>' +
               '<option value="12">12.0% GST(12%)</option>' +
@@ -3086,13 +3072,15 @@ $(document).on('change', '.item_select', function () {
   
         // Change event listener for the customer dropdown
         $('#customer_sel').change(function () {
-            var selectedCustomer = $('#customer_sel option:selected');
-            var placeOfSupply = selectedCustomer.data('pos');
-  
-            // Update tax dropdown based on place of supply
-            updateTaxDropdown(placeOfSupply);
+    var selectedCustomer = $('#customer_sel option:selected');
+    var placeOfSupply = selectedCustomer.data('pos');
 
-        });
+    // Debugging: Log the placeOfSupply to the console
+    console.log('Place of Supply:', placeOfSupply);
+
+    // Update tax dropdown based on place of supply
+    updateTaxDropdown(placeOfSupply);
+});
   
         // Event handler for changes in quantity, rate, and discount fields
   $(document).on('change keyup', 'input[name^="quantity"], input[name^="rate"], input[name^="discount"], select[name^="tax"]', function () {
@@ -3112,6 +3100,11 @@ $(document).on('change', '.item_select', function () {
 
     // Calculate the subtotal whenever there's a change in row amounts
     calculateSubtotal();
+    // Calculate tax total as the sum of CGST and SGST (or IGST)
+    var taxTotal = cgst + sgst + igst;
+
+    // Show the tax total element and set its value
+    $('#tax_total').show().val(taxTotal.toFixed(2));
 
     // Determine the selected tax type (GST or IGST)
     var selectedTaxType = row.find('select[name^="tax"]').val();
@@ -3128,45 +3121,43 @@ $(document).on('change', '.item_select', function () {
       var gstPercentage = parseFloat(selectedTaxType);
       cgst = (subtotal * (gstPercentage / 2)) / 100;
       sgst = cgst;
-  
-      $('#tr_cgst').show();
-      $('#tr_sgst').show();
-      $('#tr_igst').hide();
-  
-      // Set IGST input field to zero
       $('#igst').val('0.00');
   
-      // Calculate tax total as the sum of CGST and SGST
-      var taxTotal = cgst + sgst;
-  
-      // Show the tax total element and set its value
-      $('#tax_total').show().val(taxTotal.toFixed(2));
-  } else {
-      // Calculate IGST based on the selected GST percentage
-      var igstPercentage = parseFloat(selectedTaxType);
-      igst = (subtotal * igstPercentage) / 100;
-  
-      $('#tr_cgst').hide();
-      $('#tr_sgst').hide();
-      $('#tr_igst').show();
-  
-      if (selectedTaxType === '0') {
-          // If the tax type is GST and place of supply is not Kerala, set CGST and SGST to zero
-          $('#cgst').val('0.00');
-          $('#sgst').val('0.00');
-      }
-  
-      if (selectedTaxType !== '0') {
-          // If the tax type is IGST, set CGST and SGST to zero
-          $('#cgst').val('0.00');
-          $('#sgst').val('0.00');
-      }
-  
-      // Update the IGST input field and tax total to be the same
-      $('#igst').val(igst.toFixed(2));
-      $('#tax_total').val(igst.toFixed(2));
-  
+      $('#tr_cgst').show();
+  $('#tr_sgst').show();
+  $('#tr_igst').hide();
+
+ 
+} else {
+  // Calculate IGST based on the selected GST percentage
+  var igstPercentage = parseFloat(selectedTaxType);
+  igst = (subtotal * igstPercentage) / 100;
+
+  $('#tr_cgst').hide();
+  $('#tr_sgst').hide();
+  $('#tr_igst').show();
+
+  if (selectedTaxType === '0') {
+    // If the tax type is GST and place of supply is not Kerala, set CGST and SGST to zero
+    $('#cgst').val('0.00');
+    $('#sgst').val('0.00');
   }
+
+  if (selectedTaxType !== '0') {
+    // If the tax type is IGST, set CGST and SGST to zero
+    $('#cgst').val('0.00');
+    $('#sgst').val('0.00');
+  }
+
+  // Update the IGST input field
+  $('#igst').val(igst.toFixed(2));
+}
+
+// Calculate tax total as the sum of CGST and SGST (or IGST)
+// var taxTotal = cgst + sgst + igst;
+
+// // Show the tax total element and set its value
+// $('#tax_total').show().val(taxTotal.toFixed(2));
   
               
     });
@@ -3175,30 +3166,34 @@ $(document).on('change', '.item_select', function () {
         var initialPlaceOfSupply = $('#pos_input').val();
         updateTaxDropdown(initialPlaceOfSupply);
   
-        // Function to calculate the grand total
-        function calculateGrandTotal() {
-            var subtotal = parseFloat($('#subtotal').val()) || 0;
-            var taxTotal = parseFloat($('#tax_total').val()) || 0;
-            var shippingCharge = parseFloat($('#shipping').val()) || 0;
-            var Adjustment = parseFloat($('#adjustment').val()) || 0;
-  
-            console.log('Subtotal:', subtotal);
-            console.log('Tax Total:', taxTotal);
-            console.log('Shipping Charge:', shippingCharge);
-            console.log('Adjustment:', Adjustment);
-  
-            var grandTotal = subtotal + taxTotal + shippingCharge + Adjustment;
-  
-            console.log('Grand Total:', grandTotal);
-  
-            $('#grandtotal').val(grandTotal.toFixed(2));
-        }
-  
-        $('#adjustment').on('input', function () {
-            calculateGrandTotal();
-        });
-    });
+       // Function to calculate the grand total
+       function calculateGrandTotal() {
+    var subtotal = parseFloat($('#subtotal').val()) || 0;
+    var taxTotal = parseFloat($('#tax_total').val()) || 0;
+    var shippingCharge = parseFloat($('#shipping').val()) || 0;
+    var adjustment = parseFloat($('#adjustment').val()) || 0;
 
+    console.log('Subtotal:', subtotal);
+    console.log('Tax Total:', taxTotal);
+    console.log('Shipping Charge:', shippingCharge);
+    console.log('Adjustment:', adjustment);
+
+    // Calculate the grand total by adding subtotal, taxTotal, shippingCharge, and adjustment
+    var grandTotal = subtotal + taxTotal + shippingCharge + adjustment;
+
+    console.log('Grand Total:', grandTotal);
+
+    $('#grandtotal').val(grandTotal.toFixed(2));
+}
+
+// Event listener for changes in shipping charge and adjustment fields
+$('#shipping, #adjustment').on('input', function () {
+    calculateGrandTotal();
+});
+
+// Initial calculation of grand total when the page loads
+calculateGrandTotal();
+    });
 
 
     
