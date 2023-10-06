@@ -9724,7 +9724,7 @@ def add_creditnotes(request):
         terms_and_conditions = request.POST.get('ter_cond')
         attached_file = request.FILES.get('file')
         
-        # Create a new Creditnote instance and save it
+        
         credit_note_instance = Creditnote(
             user=request.user,  # Assuming you have a logged-in user
             customer_id=customer_id,
@@ -9750,12 +9750,20 @@ def add_creditnotes(request):
         
         # Retrieve item data from the POST request and save Credititem objects
         item_name_ids = request.POST.getlist('item_name[]')  # Change to item_name_ids
-        hsns = request.POST.getlist('hsn')
+        hsns = request.POST.getlist('hsn[]')
         quantities = request.POST.getlist('quantity[]')
         rates = request.POST.getlist('rate[]')
         taxes = request.POST.getlist('tax[]')
         discounts = request.POST.getlist('discount[]')
         amounts = request.POST.getlist('amount[]')
+        print("Received Item Data:")
+        print(f"item_name_ids: {item_name_ids}")
+        print(f"hsns: {hsns}")
+        print(f"quantities: {quantities}")
+        print(f"rates: {rates}")
+        print(f"taxes: {taxes}")
+        print(f"discounts: {discounts}")
+        print(f"amounts: {amounts}")
 
     for item_name_id, hsn, quantity, rate, tax, discount, amount in zip(item_name_ids, hsns, quantities, rates, taxes, discounts, amounts):
         # Query the database to find the AddItem instance based on the item_name_id
@@ -9778,9 +9786,12 @@ def add_creditnotes(request):
             )
             item.save()
                 
-            return redirect('creditnotes')
+    return redirect('creditnotes')
         
-        return render(request, 'creditnotes.html', {'c': [credit_note_instance]})
+    return render(request, 'creditnotes.html', {'c': [credit_note_instance]})
+    
+
+    
 
 
 

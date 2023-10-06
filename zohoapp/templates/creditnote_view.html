@@ -1169,28 +1169,36 @@
 
   
 
-$(document).ready(function () {
-        console.log('print');
+    // $(document).ready(function () {
+    // console.log('print');
 
-        $(document).on('click', '.toPDF', function (event) {
-            console.log('print1');
-            event.preventDefault();
-            var element = document.getElementById('Template');
-            
-            
-            var opt =
-            {
-                margin: 0,
-                filename: 'creditnote_'+$("#pid").text() + '.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 3 },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save();
+    $(document).on('click', '.toPDF', function (event) {
+  event.preventDefault();
 
-        });
+  // Debugging: Output a message to the console
+  console.log('Generating PDF from the Template section');
 
- });
+  // Get a reference to the Template section
+  var templateSection = document.getElementById('Template');
+
+  // Debugging: Output a message to the console to verify if the section is found
+  console.log('Template section:', templateSection);
+
+  // Generate the PDF from the Template section
+  var opt = {
+    margin: 0,
+    filename: 'creditnote_' + $("#pid").text() + '.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 3 },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+
+  // Debugging: Output a message to the console to confirm that the PDF generation is triggered
+  console.log('Generating PDF...');
+
+  html2pdf().set(opt).from(templateSection).save();
+});
+// });
 
 </script>
 
