@@ -9723,10 +9723,10 @@ def add_creditnotes(request):
         total = request.POST.get('t_total')
         terms_and_conditions = request.POST.get('ter_cond')
         attached_file = request.FILES.get('file')
-        
-        
+
+        # Create credit_note_instance
         credit_note_instance = Creditnote(
-            user=request.user,  # Assuming you have a logged-in user
+            user=request.user,
             customer_id=customer_id,
             invoice_number=invoice_number,
             credit_note=credit_note,
@@ -9744,51 +9744,45 @@ def add_creditnotes(request):
             attached_file=attached_file,
             adjustment=adjustment,
             active=True
-            # Assign values to other fields
         )
         credit_note_instance.save()
-        
-        # Retrieve item data from the POST request and save Credititem objects
-        item_name_ids = request.POST.getlist('item_name[]')  # Change to item_name_ids
+
+        # Retrieve item data from the POST request
+        item_name_ids = request.POST.getlist('item_name[]')
         hsns = request.POST.getlist('hsn[]')
         quantities = request.POST.getlist('quantity[]')
         rates = request.POST.getlist('rate[]')
         taxes = request.POST.getlist('tax[]')
         discounts = request.POST.getlist('discount[]')
         amounts = request.POST.getlist('amount[]')
-        print("Received Item Data:")
-        print(f"item_name_ids: {item_name_ids}")
-        print(f"hsns: {hsns}")
-        print(f"quantities: {quantities}")
-        print(f"rates: {rates}")
-        print(f"taxes: {taxes}")
-        print(f"discounts: {discounts}")
-        print(f"amounts: {amounts}")
 
-    for item_name_id, hsn, quantity, rate, tax, discount, amount in zip(item_name_ids, hsns, quantities, rates, taxes, discounts, amounts):
-        # Query the database to find the AddItem instance based on the item_name_id
-        try:
-            add_item_instance = AddItem.objects.get(pk=item_name_id)  # Change to pk=item_name_id
-        except AddItem.DoesNotExist:
-            # Handle the case where the AddItem with the given ID doesn't exist
-            add_item_instance = None
+        # Query the database to find the AddItem instances based on the item_name_ids
+        add_item_instances = AddItem.objects.filter(pk__in=item_name_ids)
 
-        if add_item_instance:
-            item = Credititem(
-                creditnote=credit_note_instance,
-                item_name=add_item_instance,  # Use the AddItem instance, not the name
-                hsn=hsn,
-                quantity=quantity,
-                rate=rate,
-                tax=tax,
-                discount=discount,
-                amount=amount,
-            )
-            item.save()
-                
-    return redirect('creditnotes')
-        
+        if len(add_item_instances) > 0:  # Check the length before proceeding
+            # Create a list of Credititem instances
+            credit_item_instances = []
+            for i, add_item_instance in enumerate(add_item_instances):
+                item = Credititem(
+                    creditnote=credit_note_instance,
+                    item_name=add_item_instance,
+                    hsn=hsns[i],
+                    quantity=quantities[i],
+                    rate=rates[i],
+                    tax=taxes[i],
+                    discount=discounts[i],
+                    amount=amounts[i],
+                )
+                credit_item_instances.append(item)
+
+            # Save the Credititem instances
+            for credit_item_instance in credit_item_instances:
+                credit_item_instance.save()
+
+            return redirect('creditnotes')
+
     return render(request, 'creditnotes.html', {'c': [credit_note_instance]})
+
     
 
     
