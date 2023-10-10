@@ -9811,7 +9811,7 @@ def editdb(request, pk):
         customer_id = request.POST.get('customer', None)
         email=request.POST.get('email')
         placeofsupply=request.POST.get('place_of_supply')
-        gstteatment=request.POST.get('gst_treatment')
+        gsttreatment=request.POST.get('gst_treatment')
         gstin=request.POST.get('gstin')
         baddress=request.POST.get('billing_address')
      
@@ -9838,6 +9838,9 @@ def editdb(request, pk):
             customer_id = None
 
         # Update the fields of the existing Creditnote object
+        creditnote.email=email
+        creditnote.placeofsupply=placeofsupply
+        creditnote.gsttreatment=gsttreatment
         
         creditnote.invoice_number = invoice_number
         creditnote.credit_note = credit_note

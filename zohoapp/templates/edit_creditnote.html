@@ -356,73 +356,28 @@
                             value='{{creditnote.rate}}'>
                     </td>
                     <td style="width: 15%;" class='text-right '> 
-                        <select name='tax[]' class='form-control bg-light text-dark  text-right border-0 tax' onclick="toggleTaxField(this)">
-                            <option class="text-dark">{{creditnote.tax}}</option>
+                        <select name='tax[]' class='form-control bg-light text-dark  text-right border-0 tax'>
+                            {% if creditnote.customer.placeofsupply == "[KL] Kerala" %}
+                            <option class="text-dark">{{creditnote.tax}}%GST</option>
                             <option value="0" class="text-dark">0% GST</option>
                             <option value="3" class="text-dark">3% GST</option>
                             <option value="5" class="text-dark">5% GST</option>
                             <option value="12" class="text-dark">12% GST</option>
                             <option value="18" class="text-dark">18% GST</option>
                             <option value="28" class="text-dark">28% GST</option>
+                            {% else %}
+                            <option class="text-dark">{{creditnote.tax}}%IGST</option>
+                            <option value="0" class="text-dark">0% IGST</option>
+                            <option value="3" class="text-dark">3% IGST</option>
+                            <option value="5" class="text-dark">5% IGST</option>
+                            <option value="12" class="text-dark">12% IGST</option>
+                            <option value="18" class="text-dark">18% IGST</option>
+                            <option value="28" class="text-dark">28% IGST</option>   
+                            {% endif %}              
                         </select>
                     </td>
-                    <script>
-                        // Function to show/hide the tax field in a specific row
-                        function toggleTaxField(selectElement) {
-                            const selectedOption = selectElement.value;
-                            const taxField = selectElement.parentElement.parentElement.querySelector('.tax-field');
                     
-                            // Check the customer's tax status (GST or IGST)
-                            const customerTaxStatus = document.getElementById('customer_sel').value;
                     
-                            // Update tax options based on customer's tax status
-                            if (customerTaxStatus === "GST") {
-                                // Show GST tax options
-                                taxField.innerHTML = `
-                                    <option value="0" class="text-dark">0% GST</option>
-                                    <option value="3" class="text-dark">3% GST</option>
-                                    <option value="5" class="text-dark">5% GST</option>
-                                    <option value="12" class="text-dark">12% GST</option>
-                                    <option value="18" class="text-dark">18% GST</option>
-                                    <option value="28" class="text-dark">28% GST</option>
-                                `;
-                            } else if (customerTaxStatus === "IGST") {
-                                // Show IGST tax options
-                                taxField.innerHTML = `
-                                    <option value="0" class="text-dark">0% IGST</option>
-                                    <option value="3" class="text-dark">3% IGST</option>
-                                    <option value="5" class="text-dark">5% IGST</option>
-                                    <option value="12" class="text-dark">12% IGST</option>
-                                    <option value="18" class="text-dark">18% IGST</option>
-                                    <option value="28" class="text-dark">28% IGST</option>
-                                    
-                                `;
-                            }
-                    
-                            if (selectedOption === "0") {
-                                // If the selected option is 0%, hide the tax field
-                                taxField.style.display = "none";
-                            } else {
-                                taxField.style.display = "block";
-                            }
-                        }
-                    
-                        // Add event listener to the customer select element
-                        const customerSelect = document.getElementById('customer_sel');
-                        customerSelect.addEventListener("change", function () {
-                            // Call the function to update tax options when the customer changes
-                            const taxSelectElements = document.querySelectorAll('.tax');
-                            taxSelectElements.forEach(function (element) {
-                                toggleTaxField(element);
-                            });
-                        });
-                    
-                        // Call the function initially to set the initial state for all rows
-                        const taxSelectElements = document.querySelectorAll('.tax');
-                        taxSelectElements.forEach(function (element) {
-                            toggleTaxField(element);
-                        });
-                    </script>
                     <td style="width: 15%;" class='text-right'><input type='number' id='discount'
                             class=' text-right form-control amount bg-light text-dark' name='discount[]'
                             value='{{creditnote.discount}}'></td>
@@ -501,7 +456,7 @@ $(document).ready(function () {
   });
   </script>
   
-  
+  <button type="button" class="btn btn-sm text-white" style="background-color: rgb(210, 132, 30);" id="add-row-button">Add another line</button>
   
 
   <div class="row border-bottom pb-5">
