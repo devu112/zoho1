@@ -9724,7 +9724,7 @@ def add_creditnotes(request):
         terms_and_conditions = request.POST.get('ter_cond')
         attached_file = request.FILES.get('file')
 
-        # Create credit_note_instance
+        # Create the Creditnote instance
         credit_note_instance = Creditnote(
             user=request.user,
             customer_id=customer_id,
@@ -9745,10 +9745,12 @@ def add_creditnotes(request):
             adjustment=adjustment,
             active=True
         )
+
+        # Save the Creditnote instance
         credit_note_instance.save()
 
-        # Retrieve item data from the POST request
-        item_name_ids = request.POST.getlist('item_name[]')
+        # Handle Credititem data
+        items = request.POST.getlist('item_name[]')
         hsns = request.POST.getlist('hsn[]')
         quantities = request.POST.getlist('quantity[]')
         rates = request.POST.getlist('rate[]')
@@ -9756,13 +9758,11 @@ def add_creditnotes(request):
         discounts = request.POST.getlist('discount[]')
         amounts = request.POST.getlist('amount[]')
 
-        # Query the database to find the AddItem instances based on the item_name_ids
-        add_item_instances = AddItem.objects.filter(pk__in=item_name_ids)
+        if len(items) == len(hsns) == len(quantities) == len(rates) == len(discounts) == len(taxes) == len(amounts):
+            for i in range(len(items)):
+                add_item_instance = get_object_or_404(AddItem, pk=items[i])
+                add_item_instance.save()
 
-        if len(add_item_instances) > 0:  # Check the length before proceeding
-            # Create a list of Credititem instances
-            credit_item_instances = []
-            for i, add_item_instance in enumerate(add_item_instances):
                 item = Credititem(
                     creditnote=credit_note_instance,
                     item_name=add_item_instance,
@@ -9773,15 +9773,15 @@ def add_creditnotes(request):
                     discount=discounts[i],
                     amount=amounts[i],
                 )
-                credit_item_instances.append(item)
-
-            # Save the Credititem instances
-            for credit_item_instance in credit_item_instances:
-                credit_item_instance.save()
+                item.save()
 
             return redirect('creditnotes')
 
     return render(request, 'creditnotes.html', {'c': [credit_note_instance]})
+
+
+
+
 
     
 
@@ -9838,9 +9838,7 @@ def editdb(request, pk):
             customer_id = None
 
         # Update the fields of the existing Creditnote object
-        creditnote.email=email
-        creditnote.placeofsupply=placeofsupply
-        creditnote.gsttreatment=gsttreatment
+       
         
         creditnote.invoice_number = invoice_number
         creditnote.credit_note = credit_note

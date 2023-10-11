@@ -346,15 +346,19 @@
 </tr>
 </tbody>
 </table>
+
+
 <script>
-  /////////////////////////////////Remove/////////////////////////////////////////////
+
+/////////////////////////////////Remove/////////////////////////////////////////////
 $(document).ready(function () {
-  // Add event listener for the "X" button clicks
-  $('#item_table').on('click', '.delete-row', function () {
-    $(this).closest('tr').remove(); // Remove the closest <tr> (row) to the clicked button
-  });
+// Add event listener for the "X" button clicks
+$('#item_table').on('click', '.delete-row', function () {
+  $(this).closest('tr').remove(); // Remove the closest <tr> (row) to the clicked button
+});
 });
 </script>
+ 
 
 <script>
   ////////////////////////////clone/////////////////////////////////////
@@ -374,8 +378,8 @@ $(document).ready(function () {
       clonedItemField.val(originalItemField.val());
       
       // Clone the HSN, quantity, rate, discount, and amount fields
-      var originalHSNField = rowToClone.find('input[name="hsn"]');
-      var clonedHSNField = newRow.find('input[name="hsn"]');
+      var originalHSNField = rowToClone.find('input[name="hsn[]"]');
+      var clonedHSNField = newRow.find('input[name="hsn[]"]');
       clonedHSNField.val(originalHSNField.val());
       
       var originalQtyField = rowToClone.find('input[name="quantity[]"]');
@@ -507,8 +511,14 @@ $(document).ready(function () {
        
       </div>
     </form>
+  
+
+
 <!---------------------------- add another line -------------------------- -->
     <script>
+      
+
+
       $(document).ready(function () {
         // Function to calculate and update the total for a row
         function calculateRowTotal(row) {

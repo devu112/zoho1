@@ -224,6 +224,7 @@
             page-break-before: always;
             page-break-inside: avoid;
         }
+         
 
         @page {
             size:100%;
@@ -463,24 +464,22 @@
                         data-toggle="tooltip" title="PDF"></a>
 
                         <a href="" class=" fa fa-print btns px-2 py-2"   
-                            title="PRINT" id="printbtn" onclick="toggleAndPrint('Template')"> </a>
+                            title="PRINT"  onclick="printSection('Template')"> </a>
                     </div>
-                    <script>
-                        function toggleAndPrint(sectionId) {
-                            var templateSection = document.getElementById("Template");
-                            var overviewSection = document.getElementById("Overview");
+                    <script>  
+                        function printSection(sectionId) {
+                        var printContents = document.getElementById(sectionId).innerHTML;
+                        var originalContents = document.body.innerHTML;
                     
-                            if (sectionId === "Template") {
-                                templateSection.style.display = "block";
-                                overviewSection.style.display = "none";
-                            } else {
-                                templateSection.style.display = "none";
-                                overviewSection.style.display = "block";
-                            }
+                        document.body.innerHTML = printContents;
                     
-                            window.print();
-                        }
-                    </script>
+                        window.print();
+                       
+                    
+                        document.body.innerHTML = originalContents;
+                        window.location.reload();
+                    }
+                 </script>
                     <div class="m-0">
                         <div class="dropdown m-0 p-0">
                             <a href=" " class=" fas fa-paperclip dropdown-toggle btns px-2 py-2"  
