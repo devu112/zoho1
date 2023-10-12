@@ -165,14 +165,16 @@
         </div>
       </div>
       
-      <div class="row mt-2" id="billing_address_row" style="display:none;">
+      {% if cust.Address1 %}
+      <div class="row mt-2" id="billing_address_row">
         <div class="col-md-3">
           <label for="billing_address">Billing Address</label>
         </div>
         <div class="col-md-6">
-          <input type="text" class="form-control bg-light text-dark" id="billing_address_input" name="billing_address" rows="2"   disabled>
+          <input type="text" class="form-control bg-light text-dark" id="billing_address_input" name="billing_address" rows="2" disabled>
         </div>
       </div>
+    {% endif %}
       
       <div class="row mt-2">
         <div class="col-md-3">
@@ -231,7 +233,6 @@
             $('#pos_input').val(placeOfSupply);
             $('#gst_input').val(gstTreatment);
             $('#gstin_input').val(gstin); // Set the value of the GSTIN input field
-            $('#billing_address_input').val(billingAddress);
       
             // Show or hide fields based on selection
             if (selectedCustomer.val() !== '') {
@@ -239,29 +240,30 @@
               $('#pos_row').show();
               $('#gst_row').show();
       
-              // Conditionally show/hide the GSTIN row based on GST treatment
-              if (
-                gstTreatment.toLowerCase() === "unregistered business-not registered under gst" ||
-                gstTreatment.toLowerCase() === "overseas- persons with who you do import or exports of supplies outside india"
-              ) {
+              if (gstTreatment.toLowerCase() === "unregistered business-not registered under gst" ||
+                  gstTreatment.toLowerCase() === "overseas- persons with who you do import or exports of supplies outside india") {
                 $('#gstin_row').hide(); // Hide the GSTIN row
               } else {
                 $('#gstin_row').show(); // Show the GSTIN row
               }
       
-              $('#billing_address_row').show();
+              if (billingAddress.trim() !== '') {
+                $('#billing_address_row').show();
+              } else {
+                $('#billing_address_row').hide();
+              }
             } else {
               $('#email_row').hide();
               $('#pos_row').hide();
               $('#gst_row').hide();
-              $('#gstin_row').hide(); // Hide the GSTIN row
+              $('#gstin_row').hide();
               $('#billing_address_row').hide();
             }
-          });
+          }).change(); // Trigger the change event on page load
         });
+      </script>
       
-       
-        </script>
+      
       
         
       </div> 
@@ -466,7 +468,7 @@ $('#item_table').on('click', '.delete-row', function () {
                 <td>Adjustment</td>
                 <td></td>
                 <td><input type="number" id="adjustment" name="adjustment" step="any" 
-                    class="form-control bg-transparent border-0 text-right adjustment" ></td>
+                    class="form-control bg-transparent border-0 text-right adjustment" value="0.00"></td>
               </tr>
               
               <tr>
@@ -1584,6 +1586,86 @@ $('#item_table').on('click', '.delete-row', function () {
     // ...
 
     rowCount++; // Increment row counter
+    $('#add-row').click(function () {
+    rowCount++; // Increment row counter
+    console.log()
+    var newRow = `
+      <tr id='row${rowCount}'>
+        <td style="width: 10%;">
+          <div>
+            <select class='form-control bg-light text-dark  border-0 item_select itm' name='item[]' id='item${rowCount}'>
+              <option value=" " selected disabled>Select Item</option>
+              {% for i in itm %}
+                <option value="{{i.Name}}">{{ i.Name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </td>
+        <td style="width: 13%;" class='text-right'><input type='number' id='hsn${rowCount}'
+                    class=' text-right form-control bg-light text-dark hsn' name='hsn[]'
+                    value='0'>
+            </td>
+
+      
+
+        
+        <td style="width: 13%;" class='text-right'>
+          <input type='number' id='qty${rowCount}' class='text-right bg-light text-dark qty form-control' name='quantity[]' value='0'>
+        </td>
+        
+        <td style="width: 15%;" class='text-right'>
+          <input type='number' id='rate${rowCount}' class='text-right bg-light text-dark rate form-control' name='rate[]' value='0'>
+        </td>
+        
+        <td style="width: 12%;" class='text-right'>
+          <input type='number' id='discount${rowCount}' class='text-right bg-light text-dark discount form-control' name='des[]' value='0'>
+        </td>
+        
+        <td style="width: 15%;" class='text-right'>
+          <select name='tax[]'  id='tax${rowCount}' class='form-control bg-light text-dark text-right border-0 tax' onclick=' toggleDateInput()'>
+            <optgroup class="text-center" label="GST">
+                            <option value="0" selected></option>
+                            <option value="0">0% GST(0%)</option>
+                            <option value="3">3.0% GST(3%)</option>
+                            <option value="5">5.0% GST(5%)</option>
+                            <option value="12">12.0% GST(12%)</option>
+                            <option value="18">18.0% GST(18%)</option>
+                            <option value="28">28.0% GST(28%)</option>
+                          </optgroup>
+                          <optgroup  class="text-center" label="IGST">
+                           
+                            <option value="0">0% IGST(0%)</option>
+                            <option value="3">3.0% IGST(3%)</option>
+                            <option value="5">5.0% IGST(5%)</option>
+                            <option value="12">12.0% IGST(12%)</option>
+                            <option value="18">18.0% IGST(18%)</option>
+                            <option value="28">28.0% IGST(28%)</option>             
+                            </optgroup>
+          </select>
+        </td>
+        
+        <td style="display: none;">
+          <input type="text" name='taxamount' id="taxamount${rowCount}" class="form-control bg-light text-dark taxamount" />
+        </td>
+        
+        <td style="width: 15%;" class='text-right'>
+          <input type='number' id='amount${rowCount}' class='text-right bg-light text-dark form-control amount' name='amount[]' value='0.00'>
+        </td>
+        
+        <td class='text-center'>
+          <button type='button' id='del_btn${rowCount}' class='btn btn-transparent text-danger btn-sm btn-outline-danger rounded-circle delete-row' style='width:30px'>X</button>
+        </td>
+        <td class='text-center'>
+        <button type='button' class='btn btn-transparent text-primary btn-sm btn-outline-primary rounded-circle clone-row' data-row='${rowCount}' style='width:30px'><i class="fa fa-clone"></i>
+</button>
+      </td>
+      </tr>
+    `;
+  $('#item_table tbody').append(newRow);
+    toggleDateInput();
+    calculateSubtotal();
+    calculateGrandTotal();
+  });
 
     $('#item_table tbody').append(clonedRow);
     calculateRowAmount(row);
@@ -2188,6 +2270,7 @@ $(document).ready(function() {
                   cost_desc : $("#cost_desc").val(),
 
                   item_hsn: $("#item_hsn").val(),  
+                
                   
                 
                   
@@ -3163,27 +3246,27 @@ $(document).on('change', '.item_select', function () {
         updateTaxDropdown(initialPlaceOfSupply);
   
         // Function to calculate the grand total
-        function calculateGrandTotal() {
-            var subtotal = parseFloat($('#subtotal').val()) || 0;
-            var taxTotal = parseFloat($('#tax_total').val()) || 0;
-            var shippingCharge = parseFloat($('#shipping').val()) || 0;
-            var Adjustment = parseFloat($('#adjustment').val()) || 0;
-  
-            console.log('Subtotal:', subtotal);
-            console.log('Tax Total:', taxTotal);
-            console.log('Shipping Charge:', shippingCharge);
-            console.log('Adjustment:', Adjustment);
-  
-            var grandTotal = subtotal + taxTotal + shippingCharge + Adjustment;
-  
-            console.log('Grand Total:', grandTotal);
-  
-            $('#grandtotal').val(grandTotal.toFixed(2));
-        }
-  
-        $('#adjustment').on('input', function () {
-            calculateGrandTotal();
-        });
+function calculateGrandTotal() {
+    var subtotal = parseFloat($('#subtotal').val()) || 0;
+    var taxTotal = parseFloat($('#tax_total').val()) || 0;
+    var shippingCharge = parseFloat($('#shipping').val()) || 0;
+    var Adjustment = parseFloat($('#adjustment').val()) || 0;
+
+    console.log('Subtotal:', subtotal);
+    console.log('Tax Total:', taxTotal);
+    console.log('Shipping Charge:', shippingCharge);
+    console.log('Adjustment:', Adjustment);
+
+    var grandTotal = subtotal + taxTotal + shippingCharge + Adjustment;
+
+    console.log('Grand Total:', grandTotal);
+
+    $('#grandtotal').val(grandTotal.toFixed(2));
+}
+
+$('#shipping, #adjustment').on('input', function () {
+    calculateGrandTotal();
+})
     });
   </script>
   

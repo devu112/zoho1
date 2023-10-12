@@ -606,8 +606,8 @@
                                     <p class="text-capitalize" id="pid" hidden>{{c.credit_note}}</p>
                                 </div>
                                 <div class="position-relative">
-                                    <p>Creditnote No : &nbsp <span style="color: black;">{{creditnote.credit_note}}</span></p>
-                                    <p>Invoice No: &nbsp <span style="color: black;">{{creditnote.invoice_number}}</span></p>
+                                    <p style="color: black;">Creditnote No : &nbsp <span style="color: black;">{{creditnote.credit_note}}</span></p>
+                                    <p style="color: black;">Invoice No: &nbsp <span style="color: black;">{{creditnote.invoice_number}}</span></p>
                                     {% comment %} <p>Term : &nbsp <span style="color: black;">NET {{creditnote.payment_terms}}</span></p>  {% endcomment %}
                                 </div>
                             </div>
@@ -634,9 +634,9 @@
                             </div> -->
 
                             <div class="col-5">
-                                <p style=" font-size: 18px;  font-weight: 700;">Bill To,</p>
+                                <p style=" font-size: 18px;  font-weight: 700; color: black; ">Bill To,</p>
                                 <h6  class="mx-3 text-capitalize" style="color: black; ">{{ creditnote.customer.customerName }} </h6>
-                                <p class=" col-6  " style="margin-left: -14px;">
+                                <p class=" col-6  " style="margin-left: -14px; color: black;">
                                     {{ creditnote.customer.city }}
                                     {{ creditnote.customer.state }},
                                     {{ creditnote.customer.zipcode }}
@@ -720,6 +720,12 @@
                                     <td style="font-weight:bold">Shipping Charge:</td>
                                     <td style="font-weight:bold">{{ creditnote.shipping_charge|floatformat:2 }}</td>
                                 </tr>
+
+                                <tr class="table-hover-custom">
+
+                                    <td style="font-weight:bold">Adjustment:</td>
+                                    <td style="font-weight:bold">{{ creditnote.adjustment|floatformat:2 }}</td>
+                                </tr>
                                 <tr class="table-hover-custom">
                                     <tfoot>
                                         <td style="font-weight:bold">Total:</td>
@@ -791,14 +797,36 @@
                             </div>
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-6 mt-3">
-                                    <h6 class="mb-0 text-black">Payment Terms:</h6>
+                                    <h6 class="mb-0 text-black">GST Treatment:</h6>
                                 </div>
                                 <div class="col-md-6 mt-3">
-                                    <p class="mb-0" style="font-size: 18px; color: #434141;"> NET {{ expense.payment_terms }}</p>
+                                    <p class="mb-0" style="font-size: 18px; color: #434141;"> {{creditnote.customer.GSTTreatment }}</p>
+                                </div>
+                            </div>
+                        {% assign creditnote_customer_gst_treatment_exclude_list = ["Unregistered Business-not Registered under GST", "Overseas- Persons with who you do import or exports of supplies outside india"] %}
+
+                            {% if creditnote.customer.GSTTreatment not in creditnote_customer_gst_treatment_exclude_list %}
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-6 mt-3">
+                                        <h6 class="mb-0 text-black">GSTIN:</h6>
+                                    </div>
+                                    <div class="col-md-6 mt-3">
+                                        <p class="mb-0" style="font-size: 18px; color: #434141;"> {{creditnote.customer.GSTIN }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+
+
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-6 mt-3">
+                                    <h6 class="mb-0 text-black">Payment terms:</h6>
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <p class="mb-0" style="font-size: 18px; color: #434141;">NET {{creditnote.customer.PaymentTerms }}</p>
                                 </div>
                             </div>
 
-                           
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-6 mt-3">
                                     <h6 class="mb-0 text-black">Source of Supply :</h6>
