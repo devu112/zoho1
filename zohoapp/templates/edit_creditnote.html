@@ -117,14 +117,13 @@
           <label >Customer Name *</label>
         </div>
         <div class="col-md-6">
-            <select name="customer" id="customer_sel" class="form-control bg-light text-dark">
+            <select name="cx_name"  id="customer_sel" class="form-control bg-light text-dark">
                 <option value="{{ creditnote.customer.customer_id }}">
                     {{ creditnote.customer.customerName }}
                 </option>
-                {% for customer_obj in cust %}
-                <option value="{{ customer_obj.customer_id }}"
-                    {% if customer_obj.customer_id == creditnote.customer_id %} selected {% endif %}>
-                    {{ customer_obj.customerName }}</option>
+                {% for cust in cust %}
+                <option value="{{cust.id}}" data-email="{{ cust.customerEmail }}" data-gst="{{ cust.GSTTreatment }}" data-gstin="{{cust.GSTIN}}" data-pos="{{cust.placeofsupply}}" data-billing_address="{{ cust.Address1 }} ,{{cust.state}}"
+                >{{cust.customerName}}</option>
                 {% endfor %}
             </select>
           <a href="" data-toggle="modal" data-target="#newcustomer">+ Add New Customer</a>
@@ -144,50 +143,13 @@
           <label for="pos">Place of Supply</label>
         </div>
         <div class="col-md-6">
-            <select name="srcofsupply" id="srcofsupply"  onchange="toggleDateInput(this.value)" oncha="calculateTaxAmount()" class="form-control bg-light text-dark">
-                <option selected value="{{ creditnote.customer.placeofsupply }}" class="form-control bg-light text-dark" id="pos_input" name="place_of_supply">{{ creditnote.customer.placeofsupply }}</option>
-                <option value="[AN] Andaman and Nicobar Islads">[AN] Andaman and Nicobar Islads</option>
-                <option value="[AD] Andhra Predhesh">[AD] Andhra Predhesh</option>
-                <option value="[AR] Arunachal Predesh">[AR] Arunachal Predesh</option>
-                <option value="[AS] Assam">[AS] Assam</option>
-                <option value="[BR] Bihar">[BR] Bihar</option>
-                <option value="[CH] Chandigarh">[CH] Chandigarh</option>
-                <option value="[CG] Chhattisgarh">[CG] Chhattisgarh</option>
-                <option value="[DNH] Dadra and Nagar Haveli">[DNH] Dadra and Nagar Haveli</option>
-                <option value="[DD] Damn anad Diu">[DD] Damn anad Diu</option>
-                <option value="[DL] Delhi">[DL] Delhi</option>
-                <option value="[GA] Goa">[GA] Goa</option>
-                <option value="[GJ] Gujarat">[GJ] Gujarat</option>
-                <option value="[HR] Haryana">[HR] Haryana</option>
-                <option value="[HP] Himachal Predesh">[HP] Himachal Predesh</option>
-                <option value="[JK] Jammu and Kashmir">[JK] Jammu and Kashmir</option>
-                <option value="[JH] Jharkhand">[JH] Jharkhand</option>
-                <option value="[KA] Karnataka">[KA] Karnataka</option>
-                <option  value="[KL] Kerala">[KL] Kerala</option>
-                <option value="[LA] Ladakh">[LA] Ladakh</option>
-                <option value="[LD] Lakshadweep">[LD] Lakshadweep</option>
-                <option value="[MP] Madhya Predesh">[MP] Madhya Predesh</option>
-                <option value="[MH] Maharashtra">[MH] Maharashtra</option>
-                <option value="[MN] Manipur">[MN] Manipur</option>
-                <option value="[ML] Meghalaya">[ML] Meghalaya</option>
-                <option value="[MZ] Mizoram">[MZ] Mizoram</option>
-                <option value="[NL] Nagaland">[NL] Nagaland</option>
-                <option value="[OD] Odisha">[OD] Odisha</option>
-                <option value="[PY] Puducherry">[PY] Puducherry</option>
-                <option value="[PB] Punjab">[PB] Punjab</option>
-                <option value="[RJ] Rajasthan">[RJ] Rajasthan</option>
-                <option value="[SK] Sikkim">[SK] Sikkim</option>
-                <option value="[TN] Tamil Nadu">[TN] Tamil Nadu</option>
-                <option value="[TS] Telangana">[TS] Telangana</option>
-                <option value="[TR] Tripura">[TR] Tripura</option>
-                <option value="[UP] Uttar Predesh">[UP] Uttar Predesh</option>
-                <option value="[UK] Uttarakhand">[UK] Uttarakhand</option>
-                <option value="[WB] West Bengal">[WB] West Bengal</option>
-                <option value="[OT] Other Territory">[OT] Other Territory</option>
-            </select>
-            
+            <div>
+            <input type="text" value="{{ creditnote.customer.placeofsupply }}" class="form-control bg-light text-dark" id="pos_input" name="place_of_supply" disabled>
+          </div>
         </div>
+        
       </div>
+      
       
       <div class="row mt-2" id="gst_row" >
         <div class="col-md-3">
@@ -198,15 +160,15 @@
         </div>
       </div>
 
-      <div class="row mt-2" id="gstin_row" >
+      <div class="row mt-2" id="gstin_row" {% if not creditnote.customer.GSTIN %}style="display: none;"{% endif %}>
         <div class="col-md-3">
-          <label for="gst">GSTIN </label>
+            <label for="gst">GSTIN</label>
         </div>
         <div class="col-md-6">
-          <input type="text" value="{{ creditnote.customer.GSTIN }}" class="form-control bg-light text-dark" id="gstin_input" name="gstin">
+            <input type="text" value="{{ creditnote.customer.GSTIN }}" class="form-control bg-light text-dark" id="gstin_input" name="gstin">
         </div>
-      </div>
-      
+    </div>
+    {% if cust.Address1 %} 
       <div class="row mt-2" id="billing_address_row" >
         <div class="col-md-3">
           <label for="billing_address">Billing Address</label>
@@ -215,6 +177,7 @@
           <input type="text" value="{{ creditnote.customer.Address1 }},{{ creditnote.customer.state }}" class="form-control bg-light text-dark" id="billing_address_input" name="billing_address" rows="2"   disabled>
         </div>
       </div>
+    {% endif %} 
       
       <div class="row mt-2">
         <div class="col-md-3">
@@ -261,53 +224,52 @@
     </div>
       <!-------------------------- new-----------------------------------------  -->
       <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-      <script>
-        $(document).ready(function () {
-          // Change event listener for the customer dropdown
-          $('#customer_sel').change(function () {
+<script>
+    $(document).ready(function () {
+        // Change event listener for the customer dropdown
+        $('#customer_sel').change(function () {
             var selectedCustomer = $('#customer_sel option:selected');
             var email = selectedCustomer.data('email');
             var placeOfSupply = selectedCustomer.data('pos');
             var gstTreatment = selectedCustomer.data('gst');
             var gstin = selectedCustomer.data('gstin'); // Get the GSTIN from the data attribute
             var billingAddress = selectedCustomer.data('billing_address');
-      
+
             // Content of the placeholders
             $('#email_input').val(email);
             $('#pos_input').val(placeOfSupply);
             $('#gst_input').val(gstTreatment);
             $('#gstin_input').val(gstin); // Set the value of the GSTIN input field
             $('#billing_address_input').val(billingAddress);
-      
+
             // Show or hide fields based on selection
             if (selectedCustomer.val() !== '') {
-              $('#email_row').show();
-              $('#pos_row').show();
-              $('#gst_row').show();
-      
-              // Conditionally show/hide the GSTIN row based on GST treatment
-              if (
-                gstTreatment.toLowerCase() === "unregistered business-not registered under gst" ||
-                gstTreatment.toLowerCase() === "overseas- persons with who you do import or exports of supplies outside india"
-              ) {
-                $('#gstin_row').hide(); // Hide the GSTIN row
-              } else {
-                $('#gstin_row').show(); // Show the GSTIN row
-              }
-      
-              $('#billing_address_row').show();
+                $('#email_row').show();
+                $('#pos_row').show();
+                $('#gst_row').show();
+
+                // Conditionally show/hide the GSTIN row based on GST treatment
+                if (
+                    gstTreatment.toLowerCase() === "unregistered business-not registered under gst" ||
+                    gstTreatment.toLowerCase() === "overseas- persons with who you do import or exports of supplies outside india"
+                ) {
+                    $('#gstin_row').hide(); // Hide the GSTIN row
+                } else {
+                    $('#gstin_row').show(); // Show the GSTIN row
+                }
+
+                $('#billing_address_row').show();
             } else {
-              $('#email_row').hide();
-              $('#pos_row').hide();
-              $('#gst_row').hide();
-              $('#gstin_row').hide(); // Hide the GSTIN row
-              $('#billing_address_row').hide();
+                $('#email_row').hide();
+                $('#pos_row').hide();
+                $('#gst_row').hide();
+                $('#gstin_row').hide(); // Hide the GSTIN row
+                $('#billing_address_row').hide();
             }
-          });
         });
-      
-       
-        </script>
+    });
+</script>
+
       
         
       </div> 
@@ -331,20 +293,24 @@
                     {% for creditnote in credititems %}
                     <tr id="row1">
                         <td style="width: 10%;">
-                            <div> <select class='form-control bg-light text-dark border-0 item_select itm'
-                                    name='item_name[]'>
-                                    <option value="" disabled>Select Item</option>
-                                    {% for i in itm %}
-                                    <option value="{{ i.Name }}"
-                                        {% if i.Name == credititem.item_name %} selected {% endif %}>
-                                        {{ i.Name }}</option>
-                                    {% endfor %}
-                                </select></div>
+                            <div> 
+                                <input type="hidden" name="selected_customer_id" id="selected_customer_id">
+                                <select class='form-control bg-light text-dark border-0 item_select itm' name='item_name[]' onchange="fetchCustomerHSNAndRate(this.value)" id="item1">
+                                <option value="{{ creditnote.item_name.id }}"  selected >{{ creditnote.item_name.Name }}</option>
+                                <script>console.log(creditnote.item_name)</script>
+                                {% for i in itm %}
+                                    <option value="{{ i.id }}" >
+                                        {{ i.Name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            
+                            </div>
                         </td>
           
              
                         <td style="width: 13%;" class='text-right'><input type='number' id='hsn1'
-                            class=' text-right qty form-control bg-light text-dark' name='hsn'
+                            class=' text-right qty form-control bg-light text-dark' name='hsn[]'
                             value="{{ creditnote.hsn }}">
                     </td>
                     <td style="width: 15%;" class='text-right'><input type='number' id='qty1'
@@ -474,27 +440,27 @@ $(document).ready(function () {
                         class="bg-transparent border-0 text-right subtotal text-white"
                         value="{{ creditnote.subtotal }}"></td>
             </tr>
-            <tr id="tr_igst">
+            <tr id="tr_igst" {% if creditnote.igst == 0 %}style="display: none;"{% endif %}>
                 <td>IGST</td>
                 <td></td>
-                <td><input type="number" id='igst' name="igst" step="any"
+                <td><input type="number" id="igst" name="igst" step="any"
                         value="{{ creditnote.igst }}"
-                        class="form-control bg-transparent border-0 text-right igst  text-white"></td>
-            </tr>
-            <tr  id="tr_cgst">
+                        class="form-control bg-transparent border-0 text-right igst text-white"></td>
+            </tr>            
+            <tr id="tr_cgst" {% if creditnote.cgst == 0 %}style="display: none;"{% endif %}>
                 <td>CGST</td>
                 <td></td>
-                <td><input type="number" value="{{ creditnote.cgst }}" id='cgst' name="cgst"
+                <td><input type="number" value="{{ creditnote.cgst }}" id="cgst" name="cgst"
                         step="any" 
                         class="form-control bg-transparent border-0 text-right cgst text-white">
                 </td>
             </tr>
-            <tr  id="tr_sgst">
+            <tr id="tr_sgst" {% if creditnote.sgst == 0 %}style="display: none;"{% endif %}>
                 <td>SGST</td>
                 <td></td>
-                <td><input value="{{ creditnote.sgst }}" type="number" id='sgst' name="sgst"
+                <td><input value="{{ creditnote.sgst }}" type="number" id="sgst" name="sgst"
                         step="any" 
-                        class="form-control bg-transparent border-0 text-right sgst  text-white">
+                        class="form-control bg-transparent border-0 text-right sgst text-white">
                 </td>
             </tr>
             <tr>
@@ -3016,63 +2982,27 @@ function reloadAccount() {
 ///////////////////////////////get hsn & rate////////////////////////////////////////////////////
 
 
-function fetchItemData(selectedItem, row) {
-    $.ajax({
-        type: 'GET',
-        url: "{% url 'get_item_details' %}",
-        data: {
-            id: selectedItem
-        },
-        dataType: 'json',
-        success: function (response) {
-            // Update the HSN and rate fields in the current row with the fetched data
-            row.find(".hsn").val(response.hsn);
-            row.find(".rate").val(response.rate);
-        },
-        error: function () {
-            // Handle errors if the data cannot be fetched or the item doesn't exist
-            console.log('Error fetching item data.');
-            // You can display an error message to the user if needed.
-        },
-    });
+function fetchCustomerHSNAndRate(selectElement) {
+    var selected_customer_id = document.getElementById("selected_customer_id").value;
+    var selected_item_id = selectElement.value;
+
+    // Make an AJAX request to fetch the HSN and rate for the selected customer and item
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", `/api/customers/${selected_customer_id}/items/${selected_item_id}/hsn_and_rate/`, true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var response = JSON.parse(xhr.responseText);
+
+            // Update the HSN and rate fields in the form
+            document.getElementById("hsn").value = response.hsn;
+            document.getElementById("rate").value = response.rate;
+        }
+    };
+    xhr.send();
 }
-
-// Add event handler for changes in item selection
-$(document).on('change', '.item_select', function () {
-    var selectedItem = $(this).val();
-    var row = $(this).closest('tr');
-    fetchItemData(selectedItem, row);
-});
+</script>
 
 
-// Add event handler for changes in item selection
-$(document).on('change', '.item_select', function () {
-  var selectedItem = $(this).val();
-  var row = $(this).closest('tr');
-  
-  $.ajax({
-    type: 'GET',
-    url: "{% url 'get_item_details' %}",
-    data: {
-      id: selectedItem
-    },
-    dataType: 'json',
-    success: function (response) {
-      // Update the HSN and rate fields in the current row with the fetched data
-      row.find(".hsn").val(response.hsn);
-      row.find(".rate").val(response.rate);
-    },
-    error: function () {
-      // Handle errors if the data cannot be fetched or the item doesn't exist
-      console.log('Error fetching item data.');
-      // You can display an error message to the user if needed.
-    },
-  });
-});
-
-
-
-  </script>
   
   <script>
     $(document).ready(function () {

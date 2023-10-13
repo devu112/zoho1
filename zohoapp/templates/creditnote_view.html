@@ -637,6 +637,8 @@
                                 <p style=" font-size: 18px;  font-weight: 700; color: black; ">Bill To,</p>
                                 <h6  class="mx-3 text-capitalize" style="color: black; ">{{ creditnote.customer.customerName }} </h6>
                                 <p class=" col-6  " style="margin-left: -14px; color: black;">
+                                    {{ creditnote.customer.GSTIN}}
+                                    {{ creditnote.customer.customerEmail }}
                                     {{ creditnote.customer.city }}
                                     {{ creditnote.customer.state }},
                                     {{ creditnote.customer.zipcode }}
@@ -768,6 +770,15 @@
                                     <p class="mb-0 " style="font-size: 18px; color: #434141;">{{ creditnote.customer.customerName }}</p>
                                 </div>
                             </div>
+
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-6 mt-3">
+                                    <h6 class="mb-0 text-black">Customer Email:</h6>
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <p class="mb-0 " style="font-size: 18px; color: #434141;">{{ creditnote.customer.customerEmail }}</p>
+                                </div>
+                            </div>
             
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-6 mt-3">
@@ -803,18 +814,25 @@
                                     <p class="mb-0" style="font-size: 18px; color: #434141;"> {{creditnote.customer.GSTTreatment }}</p>
                                 </div>
                             </div>
-                        {% assign creditnote_customer_gst_treatment_exclude_list = ["Unregistered Business-not Registered under GST", "Overseas- Persons with who you do import or exports of supplies outside india"] %}
-
-                            {% if creditnote.customer.GSTTreatment not in creditnote_customer_gst_treatment_exclude_list %}
-                                <div class="row mb-4 d-flex justify-content-between align-items-center">
-                                    <div class="col-md-6 mt-3">
-                                        <h6 class="mb-0 text-black">GSTIN:</h6>
-                                    </div>
-                                    <div class="col-md-6 mt-3">
-                                        <p class="mb-0" style="font-size: 18px; color: #434141;"> {{creditnote.customer.GSTIN }}</p>
-                                    </div>
+                        {% if creditnote.customer.GSTIN %}
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-6 mt-3">
+                                    <h6 class="mb-0 text-black">GSTIN:</h6>
                                 </div>
-                            {% endif %}
+                                <div class="col-md-6 mt-3">
+                                    <p class="mb-0" style="font-size: 18px; color: #434141;"> {{ creditnote.customer.GSTIN }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="row mb-4 d-flex justify-content-between align-items-center">
+                            <div class="col-md-6 mt-3">
+                                <h6 class="mb-0 text-black">Address:</h6>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <p class="mb-0" style="font-size: 18px; color: #434141;"> {{creditnote.customer.Address1 }}</p>
+                            </div>
+                        </div>
 
 
 
@@ -863,6 +881,73 @@
                     </div>
                     <div class="col-md-5  " style="background-color:#8b3131; border-radius: 5px;" >
                         <div class="p-5">
+                           
+                            <div class="d-block justify-content-between mb-5">
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-6 mt-3">
+                                    <h6 class="mb-0 text-black">Item:</h6>
+                                </div>
+                                {% for credititem in credititems %}
+                                <div class="col-md-6 mt-3">
+                                    <p class="mb-0" style="font-size: 18px; color: #fbf3f3;">{{ credititem.item_name.Name }}</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="d-block justify-content-between mb-5">
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-6 mt-3">
+                                    <h6 class="mb-0 text-black">HSN:</h6>
+                                </div>
+                                {% for credititem in credititems %}
+                                <div class="col-md-6 mt-3">
+                                    <p class="mb-0" style="font-size: 18px; color: #fbf3f3;">{{ credititem.hsn }}</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="d-block justify-content-between mb-5">
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-6 mt-3">
+                                    <h6 class="mb-0 text-black">Quantity :</h6>
+                                </div>
+                                {% for credititem in credititems %}
+                                <div class="col-md-6 mt-3">
+                                    <p class="mb-0" style="font-size: 18px; color: #fbf3f3;">{{ credititem.quantity }}</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="d-block justify-content-between mb-5">
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-6 mt-3">
+                                    <h6 class="mb-0 text-black">Rate :</h6>
+                                </div>
+                                {% for credititem in credititems %}
+                                <div class="col-md-6 mt-3">
+                                    <p class="mb-0" style="font-size: 18px; color: #fbf3f3;">{{ credititem.item_name.s_price }}</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                          {% if credititems.discount %}
+                            <div class="d-block justify-content-between mb-5">
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-6 mt-3">
+                                    <h6 class="mb-0 text-black">Discount :</h6>
+                                </div>
+                                {% for credititem in credititems %}
+                                <div class="col-md-6 mt-3">
+                                    <p class="mb-0" style="font-size: 18px; color: #fbf3f3;">{{ credititem.discount }}</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                          {% endif %}
+
+
+
+
+
                             <div class="d-block justify-content-between mb-5">
                                 <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-6 mt-3">
@@ -926,6 +1011,16 @@
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <p class="mb-0" style="font-size: 18px; color:#fbf3f3;">{{ creditnote.shipping_charge }}</p>
+                                </div>
+                            </div>
+
+                         <!-- Adjustment -->
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-6 mt-3">
+                                    <h6 class="mb-0 text-black">Adjustment :</h6>
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <p class="mb-0" style="font-size: 18px; color:#fbf3f3;">{{ creditnote.adjustment }}</p>
                                 </div>
                             </div>
             

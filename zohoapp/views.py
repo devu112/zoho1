@@ -9804,11 +9804,12 @@ def edit_creditnote(request, pk):
 def editdb(request, pk):
     creditnote = get_object_or_404(Creditnote, id=pk)
     cust = customer.objects.all()
+    print(cust)
     itm = AddItem.objects.all()
 
     if request.method == 'POST':
         # Retrieve customer_id from the form
-        customer_id = request.POST.get('customer', None)
+        customer_id = request.POST.get('cx_name')
         email=request.POST.get('email')
         placeofsupply=request.POST.get('place_of_supply')
         gsttreatment=request.POST.get('gst_treatment')
@@ -9854,6 +9855,7 @@ def editdb(request, pk):
         creditnote.total = total
         creditnote.terms_and_conditions = terms_and_conditions
         creditnote.adjustment = adjustment
+       
 
         # Set the customer_id field
         if customer_id is not None:
@@ -9870,16 +9872,19 @@ def editdb(request, pk):
         taxes = request.POST.getlist('tax[]')
         discounts = request.POST.getlist('discount[]')
         amounts = request.POST.getlist('amount[]')
+        selected_item_id = request.POST.get('selected_item_id')
 
         for item_id, item_name, hsn, quantity, rate, tax, discount, amount in zip(item_ids, item_names, hsns, quantities, rates, taxes, discounts, amounts):
             credititem = Credititem.objects.get(id=item_id)
-            credititem.item_name = item_name
+            credititem.item_name_id = item_name
             credititem.hsn = hsn
             credititem.quantity = quantity
             credititem.rate = rate
             credititem.tax = tax
             credititem.discount = discount
             credititem.amount = amount
+            creditnote.selected_item_id = selected_item_id
+       
           
             credititem.save()
 
